@@ -5,7 +5,7 @@ class Parent {
     @PrimaryGeneratedColumn()
     public id: number;
 
-    @Column({ nullable: false })
+    @Column({ nullable: false, unique: true })
     public username: string;
 
     @Column({ nullable: false })

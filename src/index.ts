@@ -1,11 +1,17 @@
+import 'reflect-metadata';
 import * as express from 'express';
-
+import * as dotenv from 'dotenv';
 import { createConnection } from 'typeorm';
-import { authRoutes } from './routes/auth.routes';
+
+import { globalMiddleware } from './middleware';
+import { authRoutes } from './routes';
+
+dotenv.config();
 
 createConnection().then(() => {
     const app = express();
-    app.use(express.json());
+    globalMiddleware(app);
+
     app.use('/auth', authRoutes);
 
     app.listen(4000);
