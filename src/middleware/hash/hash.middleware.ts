@@ -16,7 +16,7 @@ const Hash: Middleware = () => async (req, res, next) => {
 
         next();
     } catch (err) {
-        res.status(401).send({ error: err.toString() });
+        res.status(400).send({ error: err.toString() });
     }
 };
 
@@ -31,7 +31,7 @@ const ValidateHash: Middleware = () => async (req, res, next) => {
         next();
     } catch (err) {
         console.log(err);
-        res.status(403).send({ error: 'Failed to login, check your username and password...' });
+        res.status(401).send({ error: 'Failed to login, check your username and password...' });
     }
 };
 
