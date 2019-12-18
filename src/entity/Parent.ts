@@ -5,10 +5,10 @@ class Parent {
     @PrimaryGeneratedColumn()
     public id: number;
 
-    @Column()
+    @Column({ nullable: false })
     public username: string;
 
-    @Column()
+    @Column({ nullable: false })
     public password: string;
 }
 
