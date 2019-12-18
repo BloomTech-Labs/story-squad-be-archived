@@ -1,15 +1,15 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
-export class Example {
+class Parent {
     @PrimaryGeneratedColumn()
     public id: number;
 
     @Column()
-    public name: string = '';
+    public username: string;
 
     @Column()
-    public isComplete: boolean = false;
+    public password: string;
 }
 
-export default Example;
+export { Parent };
