@@ -8,12 +8,12 @@
     "database": "story-squad",
     "synchronize": true,
     "logging": false,
-    "entities": ["src/entity/**/*.ts"],
-    "migrations": ["src/migration/**/*.ts"],
-    "subscribers": ["src/subscriber/**/*.ts"],
+    "entities": ["src/database/entity/**/*.ts"],
+    "migrations": ["src/database/migration/**/*.ts"],
+    "subscribers": ["src/database/subscriber/**/*.ts"],
     "cli": {
-        "entitiesDir": "src/entity",
-        "migrationsDir": "src/migration",
-        "subscribersDir": "src/subscriber"
+        "entitiesDir": "src/database/entity",
+        "migrationsDir": "src/database/migration",
+        "subscribersDir": "src/database/subscriber"
     }
 }
