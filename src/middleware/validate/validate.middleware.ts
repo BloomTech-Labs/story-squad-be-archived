@@ -16,9 +16,10 @@ const Validation: Middleware = () => async (req, res, next) => {
         next();
     } catch (err) {
         const validationErrors = err as ValidationError[];
-        const errors = validationErrors.reduce((errors, { constraints }) => {
-            return [...errors, ...Object.values(constraints)];
-        }, []);
+        const errors = validationErrors.reduce(
+            (errors, { constraints }) => [...errors, ...Object.values(constraints)],
+            []
+        );
 
         res.status(400).json({ errors });
     }
