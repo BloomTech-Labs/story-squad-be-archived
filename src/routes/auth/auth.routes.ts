@@ -2,8 +2,8 @@ import { Router } from 'express';
 import { getRepository } from 'typeorm';
 import { sign } from 'jsonwebtoken';
 
-import { Parent } from '../entity/Parent';
-import { Hash, ValidateHash } from '../middleware';
+import { Parent } from '../../database/entity/Parent';
+import { Hash, ValidateHash } from '../../middleware';
 
 const authRoutes = Router();
 

@@ -1,9 +1,9 @@
 import { ValidationError } from 'class-validator';
 import { transformAndValidate } from 'class-transformer-validator';
 
-import { Middleware } from '../models/common/Middleware';
-import { RegisterDTO } from '../models/dto/register.dto';
-import { LoginDTO } from '../models/dto/login.dto';
+import { Middleware } from '../../models/common/Middleware';
+import { RegisterDTO } from '../../models/dto/register.dto';
+import { LoginDTO } from '../../models/dto/login.dto';
 
 const Validation: Middleware = () => async (req, res, next) => {
     try {

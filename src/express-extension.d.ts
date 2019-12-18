@@ -1,6 +1,6 @@
 import { RegisterDTO } from './models/dto/register.dto';
 import { LoginDTO } from './models/dto/login.dto';
-import { Parent } from './entity/Parent';
+import { Parent } from './database/entity/Parent';
 
 declare global {
     namespace Express {

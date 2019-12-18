@@ -1,8 +1,8 @@
 import { hash, compare } from 'bcrypt';
 import { getRepository } from 'typeorm';
 
-import { Middleware } from '../models/common/Middleware';
-import { Parent } from '../entity/Parent';
+import { Middleware } from '../../models/common/Middleware';
+import { Parent } from '../../database/entity/Parent';
 
 const Hash: Middleware = () => async (req, res, next) => {
     try {
@@ -30,7 +30,8 @@ const ValidateHash: Middleware = () => async (req, res, next) => {
         req.user = user;
         next();
     } catch (err) {
-        res.status(403).send({ error: err.toString() });
+        console.log(err);
+        res.status(403).send({ error: 'Failed to login, check your username and password...' });
     }
 };
 
