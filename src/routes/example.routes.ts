@@ -5,9 +5,13 @@ import { Example } from '../entity/Example';
 
 const exampleRoutes = Router();
 
-exampleRoutes.get('/', (req, res) => res.send('Hello World'));
-exampleRoutes.post('/', (req, res) => {
-    getRepository(Example).save({ id: 1, name: 'test', isComplete: false });
+exampleRoutes.get('/', async (req, res) => {
+    const resp = await getRepository(Example).find();
+    res.json(resp);
+});
+exampleRoutes.post('/', async (req, res) => {
+    const resp = await getRepository(Example).save({ name: 'test', isComplete: false });
+    res.status(201).json(resp);
 });
 
 export { exampleRoutes };
