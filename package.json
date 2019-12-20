@@ -15,7 +15,8 @@
         "jsonwebtoken": "^8.5.1",
         "pg": "^7.15.0",
         "reflect-metadata": "^0.1.13",
-        "typeorm": "^0.2.21"
+        "typeorm": "^0.2.21",
+        "typeorm-seeding": "^1.2.0"
     },
     "devDependencies": {
         "@types/bcryptjs": "^2.4.2",
