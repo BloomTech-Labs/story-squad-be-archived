@@ -11,7 +11,8 @@ authRoutes.use('/register', Hash());
 authRoutes.post('/register', async (req, res) => {
     try {
         const { password, ...user } = await getRepository(Parent).save(req.register);
-        res.status(201).json(user);
+        const token = sign(user, process.env.SECRET_SIGNATURE);
+        res.status(201).json({ token });
     } catch (err) {
         res.status(500).json(err.toString());
     }
