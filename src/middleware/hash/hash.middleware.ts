@@ -1,4 +1,4 @@
-import { hash, compare } from 'bcrypt';
+import { hash, compare } from 'bcryptjs';
 import { getRepository } from 'typeorm';
 
 import { Middleware } from '../../models/common/Middleware';
