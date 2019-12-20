@@ -7,6 +7,9 @@ class Cannon {
 
     @Column({ nullable: false })
     public base64: string;
+
+    @Column()
+    public week: number;
 }
 
 export { Cannon };
