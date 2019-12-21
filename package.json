@@ -5,6 +5,7 @@
     "main": "dist/index.js",
     "scripts": {
         "start": "ts-node-dev src/index.ts",
+        "seed": "ts-node ./node_modules/typeorm-seeding/dist/cli.js seed",
         "test": "jest --watch"
     },
     "dependencies": {

@@ -8,7 +8,7 @@ class Cannon {
     @Column({ nullable: false })
     public base64: string;
 
-    @Column()
+    @Column({ nullable: true })
     public week: number;
 }
 

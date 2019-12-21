@@ -12,10 +12,14 @@
         "entities": ["src/database/entity/**/*.ts"],
         "migrations": ["src/database/migration/**/*.ts"],
         "subscribers": ["src/database/subscriber/**/*.ts"],
+        "seeds": ["src/database/seeds/**/*.ts"],
+        "factories": ["src/database/factories/**/*.ts"],
         "cli": {
             "entitiesDir": "src/database/entity",
             "migrationsDir": "src/database/migration",
-            "subscribersDir": "src/database/subscriber"
+            "subscribersDir": "src/database/subscriber",
+            "seeds": "src/database/seeds",
+            "factories": "src/database/factories"
         }
     },
     {
@@ -30,6 +34,8 @@
         "logging": false,
         "entities": ["src/database/entity/**/*.ts"],
         "migrations": ["src/database/migration/**/*.ts"],
-        "subscribers": ["src/database/subscriber/**/*.ts"]
+        "subscribers": ["src/database/subscriber/**/*.ts"],
+        "seeds": ["src/database/seeds/**/*.ts"],
+        "factories": ["src/database/factories/**/*.ts"]
     }
 ]
