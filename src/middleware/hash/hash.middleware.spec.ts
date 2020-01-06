@@ -20,9 +20,9 @@ describe('Hash()', () => {
             send: jest.fn(),
         });
         const next = jest.fn();
+
         const HashMiddleware = Hash();
         await HashMiddleware(req, res, next);
-
         expect(next).toHaveBeenCalled();
     });
 
@@ -34,8 +34,8 @@ describe('Hash()', () => {
             }),
         };
         const next = jest.fn();
-        await Hash()(req, res, next);
 
+        await Hash()(req, res, next);
         expect(next).not.toHaveBeenCalled();
     });
 });
