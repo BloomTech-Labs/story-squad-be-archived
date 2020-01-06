@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import * as express from 'express';
 import * as dotenv from 'dotenv';
-import { createConnection, ConnectionOptions } from 'typeorm';
+import { createConnection, getConnection, ConnectionOptions } from 'typeorm';
 
 import { globalMiddleware } from './middleware';
 import { authRoutes } from './routes';
@@ -21,7 +21,9 @@ const options: ConnectionOptions = process.env.DATABASE_URL
       }
     : null;
 
-createConnection(options).then(() => {
+createConnection(options).then(async () => {
+    await getConnection().synchronize();
+
     const app = express();
     globalMiddleware(app);
 
