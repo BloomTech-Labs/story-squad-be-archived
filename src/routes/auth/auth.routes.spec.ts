@@ -1,44 +1,59 @@
 import * as request from 'supertest';
 import * as express from 'express';
-
-import { getRepository, createConnection } from 'typeorm';
+import * as dotenv from 'dotenv';
 
 import { globalMiddleware } from '../../middleware';
-import { Parent } from '../../database/entity/Parent';
 import { authRoutes } from './auth.routes';
+
+dotenv.config();
+
+import typeorm = require('typeorm');
 
 const app = express();
 globalMiddleware(app);
 app.use('/auth', authRoutes);
 
-beforeAll(async () => {
-    await createConnection('testing');
-});
-
-beforeEach(async () => {
-    const repo = getRepository(Parent, 'testing');
-    await repo.clear();
-
-    const seed = new Parent();
-    seed.username = 'Test@gmail.com';
-    seed.password = '$2b$10$Hb9cjpL3DQGfn37705j5gu3vHJfgiTuS15U45NvYJhNzmoOmm/OdS';
-    await repo.save(seed);
+typeorm.getRepository = jest.fn().mockReturnValue({
+    find: jest.fn().mockResolvedValue([
+        {
+            username: 'Test@mail.com',
+            password: '$2a$10$wOMxfPlKxunOi9ZqQ1ND9eJC4frWYmCaMRMaM.GESdvn8NR.c2FBq',
+        },
+    ]),
+    save: jest.fn().mockResolvedValue({
+        username: 'NewTest@gmail.com',
+        password: '$2a$10$wOMxfPlKxunOi9ZqQ1ND9eJC4frWYmCaMRMaM.GESdvn8NR.c2FBq',
+    }),
 });
 
 describe('POST /login', () => {
-    it('should return 200 Okay', async () => {
+    it('should return 200 when logging in correctly', async () => {
         await request(app)
             .post('/auth/login')
-            .send({ username: 'Test@gmail.com', password: 'Test1234' })
+            .send({ username: 'Test@mail.com', password: 'Test1234' })
             .expect(200);
+    });
+
+    it('should return 401 when login fails', async () => {
+        await request(app)
+            .post('/auth/login')
+            .send({ username: 'Test@mail.com', password: 'WRONG' })
+            .expect(401);
     });
 });
 
 describe('POST /register', () => {
-    it('POST should return 201 Created when registration is completed', async () => {
+    it('should return 201 when registration is completed', async () => {
         await request(app)
             .post('/auth/register')
-            .send({ username: 'NewTest@gmail.com', password: 'Test1234' })
+            .send({ username: 'NewTest@gmail.com', password: 'Test1234', termsOfService: true })
             .expect(201);
+    });
+
+    it('should return 401 if termsOfService are not accepted', async () => {
+        await request(app)
+            .post('/auth/register')
+            .send({ username: 'NewerTest@gmail.com', password: 'Test1234', termsOfService: false })
+            .expect(401);
     });
 });

@@ -26,11 +26,10 @@ const ValidateHash: Middleware = () => async (req, res, next) => {
 
         const { username } = req.login;
         const [{ password, ...user }] = await getRepository(Parent).find({ username });
-        await compare(req.login.password, password);
+        if (!(await compare(req.login.password, password))) throw new Error();
         req.user = user;
         next();
     } catch (err) {
-        console.log(err);
         res.status(401).send({ error: 'Failed to login, check your username and password...' });
     }
 };
