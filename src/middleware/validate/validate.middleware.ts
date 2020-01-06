@@ -4,6 +4,18 @@ import { transformAndValidate } from 'class-transformer-validator';
 import { Middleware } from '../../models/common/Middleware';
 import { RegisterDTO } from '../../models/dto/register.dto';
 import { LoginDTO } from '../../models/dto/login.dto';
+import { Parent } from '../../database/entity/Parent';
+
+// Declare changes to Request Object
+declare global {
+    namespace Express {
+        interface Request {
+            register: RegisterDTO;
+            login: LoginDTO;
+            user: Omit<Parent, 'password'>;
+        }
+    }
+}
 
 const Validation: Middleware = () => async (req, res, next) => {
     try {

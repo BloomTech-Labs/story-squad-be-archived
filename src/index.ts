@@ -14,6 +14,7 @@ createConnection().then(() => {
 
     app.use('/auth', authRoutes);
 
-    app.listen(4000);
-    console.log(`Listening on port ${4000}`);
+    const port = process.env.PORT;
+    app.listen(port);
+    console.log(`Listening on port ${port}`);
 });
