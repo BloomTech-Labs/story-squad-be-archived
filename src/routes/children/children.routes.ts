@@ -37,3 +37,30 @@ childrenRoutes.get('/id', async (req, res) => {
         res.status(500).json(error.toString());
     }
 });
+
+childrenRoutes.put('/id', async (req, res) => {
+    try {
+        // TODO: restrict to parent
+        // May need to convert req.params.id to a number?
+        const [username, week, grade]: [String, Number, Number] = req.body;
+        const child = await getRepository(Children).update(req.params.id, {
+            username,
+            week,
+            grade,
+        });
+        if (child) res.json(child);
+        else res.status(404).json(`child ${req.params.id} not found`);
+    } catch (err) {
+        res.status(500).json(err.toString());
+    }
+});
+
+childrenRoutes.delete('/id', async (req, res) => {
+    try {
+        // TODO: restrict to parent
+        const child = await getRepository(Children).delete(req.params.id);
+        res.sendStatus(204);
+    } catch (error) {
+        res.status(500).json(error.toString());
+    }
+});
