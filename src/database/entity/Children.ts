@@ -17,3 +17,5 @@ class Children {
     @Column()
     grade: number;
 }
+
+export { Children };
