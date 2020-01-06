@@ -10,6 +10,7 @@ const authRoutes = Router();
 authRoutes.use('/register', Hash());
 authRoutes.post('/register', async (req, res) => {
     try {
+        if (!req.register.termsOfService) throw new Error('Accepting Terms of Service is Required');
         const { password, ...user } = await getRepository(Parent).save(req.register);
         const token = sign(user, process.env.SECRET_SIGNATURE);
         res.status(201).json({ token });

@@ -1,4 +1,4 @@
-import { IsEmail, IsString, Length } from 'class-validator';
+import { IsEmail, IsString, Length, IsBoolean } from 'class-validator';
 import { LoginDTO } from './login.dto';
 
 class RegisterDTO extends LoginDTO {
@@ -8,6 +8,9 @@ class RegisterDTO extends LoginDTO {
     @IsString()
     @Length(8)
     password: string;
+
+    @IsBoolean()
+    termsOfService: boolean;
 }
 
 export { RegisterDTO };
