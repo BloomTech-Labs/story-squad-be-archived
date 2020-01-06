@@ -4,6 +4,7 @@ import { sign } from 'jsonwebtoken';
 
 import { Parent } from '../../database/entity/Parent';
 import { Hash, ValidateHash } from '../../middleware';
+import { connection } from '../../util/typeorm-connection';
 
 const authRoutes = Router();
 
@@ -12,7 +13,7 @@ authRoutes.post('/register', async (req, res) => {
     try {
         if (!req.register.termsOfService)
             throw new Error('401: Accepting Terms of Service is Required');
-        const { password, ...user } = await getRepository(Parent).save(req.register);
+        const { password, ...user } = await getRepository(Parent, connection()).save(req.register);
         const token = sign(user, process.env.SECRET_SIGNATURE);
         res.status(201).json({ token });
     } catch (err) {

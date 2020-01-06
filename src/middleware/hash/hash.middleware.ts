@@ -3,6 +3,7 @@ import { getRepository } from 'typeorm';
 
 import { Middleware } from '../../models/common/Middleware';
 import { Parent } from '../../database/entity/Parent';
+import { connection } from '../../util/typeorm-connection';
 
 const Hash: Middleware = () => async (req, res, next) => {
     try {
@@ -25,7 +26,9 @@ const ValidateHash: Middleware = () => async (req, res, next) => {
         if (!req.login) throw new Error('No login object on body...');
 
         const { username } = req.login;
-        const [{ password, ...user }] = await getRepository(Parent).find({ username });
+        const [{ password, ...user }] = await getRepository(Parent, connection()).find({
+            username,
+        });
         if (!(await compare(req.login.password, password))) throw new Error();
         req.user = user;
         next();
