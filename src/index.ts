@@ -1,14 +1,27 @@
 import 'reflect-metadata';
 import * as express from 'express';
 import * as dotenv from 'dotenv';
-import { createConnection } from 'typeorm';
+import { createConnection, ConnectionOptions } from 'typeorm';
 
 import { globalMiddleware } from './middleware';
 import { authRoutes } from './routes';
 
 dotenv.config();
 
-createConnection().then(() => {
+//Connect to Heroku DB
+const options: ConnectionOptions = process.env.DATABASE_URL
+    ? {
+          type: 'postgres',
+          extra: {
+              ssl: true,
+          },
+
+          url: process.env.DATABASE_URL,
+          synchronize: true,
+      }
+    : null;
+
+createConnection(options).then(() => {
     const app = express();
     globalMiddleware(app);
 
