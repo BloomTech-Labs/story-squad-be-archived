@@ -20,7 +20,9 @@
         "pg": "^7.15.0",
         "reflect-metadata": "^0.1.13",
         "segal-decorators": "^0.3.1",
-        "typeorm": "^0.2.21"
+        "typeorm": "^0.2.21",
+        "ts-node": "^8.5.4",
+        "typescript": "^3.7.2"
     },
     "devDependencies": {
         "@types/bcryptjs": "^2.4.2",
@@ -38,9 +40,6 @@
         "jest": "^24.9.0",
         "supertest": "^4.0.2",
         "ts-jest": "^24.2.0",
-        "ts-loader": "^6.2.1",
-        "ts-node": "^8.5.4",
-        "ts-node-dev": "^1.0.0-pre.44",
-        "typescript": "^3.7.2"
+        "ts-node-dev": "^1.0.0-pre.44"
     }
 }
