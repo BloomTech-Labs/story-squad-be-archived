@@ -64,3 +64,5 @@ childrenRoutes.delete('/id', async (req, res) => {
         res.status(500).json(error.toString());
     }
 });
+
+export { childrenRoutes };
