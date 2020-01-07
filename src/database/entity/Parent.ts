@@ -11,8 +11,11 @@ class Parent {
     @Column({ nullable: false })
     public password: string;
 
+    @Column({ nullable: false })
+    public email: string;
+
     @Column({ nullable: true })
-    public stripeId: string;
+    public stripe: jsonb;
 }
 
 export { Parent };
