@@ -8,7 +8,7 @@ import { connection } from '../../util/typeorm-connection';
 const Hash: Middleware = () => async (req, res, next) => {
     try {
         if (!req.register) throw new Error('No register object on body...');
-        const salt: number = parseInt(process.env.SALT, 10);
+        const salt: number = parseInt(process.env.SALT || '3', 10);
 
         req.register = {
             ...req.register,
@@ -25,9 +25,9 @@ const ValidateHash: Middleware = () => async (req, res, next) => {
     try {
         if (!req.login) throw new Error('No login object on body...');
 
-        const { username } = req.login;
+        const { email: username } = req.login;
         const [{ password, ...user }] = await getRepository(Parent, connection()).find({
-            username,
+            email: username,
         });
         if (!(await compare(req.login.password, password))) throw new Error();
         req.user = user;
