@@ -1,6 +1,9 @@
 {
     "compilerOptions": {
         "emitDecoratorMetadata": true,
-        "experimentalDecorators": true
+        "experimentalDecorators": true,
+        "target": "es5",
+        "sourceMap": true,
+        "outDir": "./build/"
     }
 }

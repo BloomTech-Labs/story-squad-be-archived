@@ -1,14 +1,23 @@
+import 'reflect-metadata';
 import * as express from 'express';
-
+import * as dotenv from 'dotenv';
 import { createConnection } from 'typeorm';
-import { exampleRoutes } from './routes/example.routes';
-import { childrenRoutes } from './routes/children/children.routes';
 
-createConnection().then(() => {
+import { globalMiddleware } from './middleware';
+import { authRoutes, childrenRoutes } from './routes';
+import { connection } from './util/typeorm-connection';
+
+dotenv.config();
+
+createConnection(connection()).then(async () => {
     const app = express();
-    app.use(exampleRoutes);
+
+    globalMiddleware(app);
+
+    app.use('/auth', authRoutes);
     app.use(childrenRoutes);
 
-    app.listen(4000);
-    console.log(`Listening on port ${4000}`);
+    const port = process.env.PORT || 4000;
+    app.listen(port);
+    console.log(`Listening on port ${port}`);
 });
