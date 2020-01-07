@@ -4,7 +4,9 @@ import { Cannon } from '../entity/Cannon';
 
 export default class CreateCannon implements Seeder {
     public async run(factory: Factory, connection: Connection): Promise<any> {
-        await connection.getRepository(Cannon).clear();
+        await connection
+            .getRepository(Cannon)
+            .query(`TRUNCATE TABLE ${connection.getMetadata(Cannon).tableName} RESTART IDENTITY`);
 
         await connection
             .createQueryBuilder()
