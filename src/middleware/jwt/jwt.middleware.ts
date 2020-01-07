@@ -1,20 +1,19 @@
-import { sign, verify } from 'jsonwebtoken';
+import { decode } from 'jsonwebtoken';
 import { getRepository } from 'typeorm';
 
-import { Middleware } from '../../models';
+import { Middleware, JWT } from '../../models';
 import { Parent } from '../../database/entity/Parent';
+import { connection } from '../../util/typeorm-connection';
 
-const ValidateHash: Middleware = () => async (req, res, next) => {
+
+const CheckJwt: Middleware = () => async (req, res, next) => {
     try {
-        const token = req.headers.authorization;
-        if (!token) throw new Error('Authentication on header not detected...');
-        const id = verify(token, process.env.SECRET_SIGNATURE);
-        const [{ password, ...user }] = await getRepository(Parent).find({ username });
-        
+        const { id } = decode(req.body.token) as JWT;
+        const { password, ...user } = await getRepository(Parent, connection()).findOne(id);
         req.user = user;
         next();
     } catch (err) {
-        console.log(err);
-        res.status(401).send({ error: err.toString() });
+        res.status(401).send({ error: 'Authentication failed... Please sign in again!' });
     }
 };
+export { CheckJwt };

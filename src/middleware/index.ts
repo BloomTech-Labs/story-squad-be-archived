@@ -10,5 +10,6 @@ const globalMiddleware = (app: Express) => {
 };
 
 export * from './hash/hash.middleware';
+export * from './jwt/jwt.middleware';
 export * from './validate/validate.middleware';
 export { globalMiddleware };

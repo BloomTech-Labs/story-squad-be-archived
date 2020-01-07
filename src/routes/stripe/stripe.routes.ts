@@ -1,19 +1,24 @@
 import { Router } from 'express';
 import { getRepository } from 'typeorm';
-import { sign } from 'jsonwebtoken';
+import * as Stripe from 'stripe';
 
-import { Parent } from '../../database/entity/Parent';
-import { Hash, ValidateHash } from '../../middleware';
+import { CheckJwt } from '../../middleware';
 
 const stripeRoutes = Router();
+const stripe = new Stripe('sk_test_v666XmnGJcP1Oz3GBg2iFmvd004Q3qp4jZ');
 
-
-
-stripeRoutes.use('/charge', ValidateHash());
+// stripeRoutes.use('/charge', CheckJwt());
 stripeRoutes.use('/charge', async (req, res) => {
+    console.log(req.body);
     try {
-        const token = sign(req.user, process.env.SECRET_SIGNATURE);
-        res.json({ token });
+        let { status } = await stripe.charges.create({
+            amount: 2000,
+            currency: 'usd',
+            description: 'An example charge',
+            source: req.body,
+        });
+
+        res.json({ status });
     } catch (err) {
         res.status(500).json(err.toString());
     }

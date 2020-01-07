@@ -4,7 +4,7 @@ import * as dotenv from 'dotenv';
 import { createConnection } from 'typeorm';
 
 import { globalMiddleware } from './middleware';
-import { authRoutes } from './routes';
+import { authRoutes, stripeRoutes } from './routes';
 import { connection } from './util/typeorm-connection';
 
 dotenv.config();
@@ -14,6 +14,7 @@ createConnection(connection()).then(async () => {
     globalMiddleware(app);
 
     app.use('/auth', authRoutes);
+    app.use(stripeRoutes);
 
     const port = process.env.PORT || 4000;
     app.listen(port);
