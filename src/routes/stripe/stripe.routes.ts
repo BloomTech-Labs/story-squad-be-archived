@@ -5,7 +5,7 @@ import * as Stripe from 'stripe';
 import { CheckJwt } from '../../middleware';
 
 const stripeRoutes = Router();
-const stripe = new Stripe('sk_test_v666XmnGJcP1Oz3GBg2iFmvd004Q3qp4jZ');
+const stripe = require('stripe')('sk_test_v666XmnGJcP1Oz3GBg2iFmvd004Q3qp4jZ');
 
 stripeRoutes.use('/subscribe', CheckJwt());
 stripeRoutes.use('/subscribe', async (req, res) => {
@@ -20,8 +20,8 @@ stripeRoutes.use('/subscribe', async (req, res) => {
             },
             source: req.body.token,
         });
-
-        res.json({ customer });
+        const parent = await getRepository(Parent).save({ id as stripeId});
+        res.status(201).json({message: 'parent successfully registered as customer'})
     } catch (err) {
         res.status(500).json(err.toString());
     }
