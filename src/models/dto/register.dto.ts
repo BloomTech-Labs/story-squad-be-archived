@@ -3,7 +3,7 @@ import { LoginDTO } from './login.dto';
 
 class RegisterDTO extends LoginDTO {
     @IsEmail()
-    username: string;
+    email: string;
 
     @IsString()
     @Length(8)

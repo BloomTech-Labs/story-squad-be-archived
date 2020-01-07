@@ -6,7 +6,7 @@ class Parent {
     public id: number;
 
     @Column({ nullable: false, unique: true })
-    public username: string;
+    public email: string;
 
     @Column({ nullable: false })
     public password: string;
