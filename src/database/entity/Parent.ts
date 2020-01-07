@@ -10,6 +10,9 @@ class Parent {
 
     @Column({ nullable: false })
     public password: string;
+
+    @Column({ nullable: true })
+    public stripeId: string;
 }
 
 export { Parent };
