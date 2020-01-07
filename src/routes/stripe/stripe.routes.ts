@@ -9,13 +9,14 @@ const stripe = new Stripe('sk_test_v666XmnGJcP1Oz3GBg2iFmvd004Q3qp4jZ');
 
 // stripeRoutes.use('/charge', CheckJwt());
 stripeRoutes.use('/charge', async (req, res) => {
-    console.log(req.body);
     try {
+        stripe.
+
         let { status } = await stripe.charges.create({
             amount: 2000,
             currency: 'usd',
             description: 'An example charge',
-            source: req.body,
+            source: req.body.token,
         });
 
         res.json({ status });
