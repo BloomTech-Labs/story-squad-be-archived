@@ -17,17 +17,6 @@ childrenRoutes.get('/', async (req, res) => {
     }
 });
 
-childrenRoutes.post('/', async (req, res) => {
-    try {
-        // TODO: restrict to parent
-        const child = req.child;
-        const resp = await getRepository(Child, connection()).save(child);
-        res.status(201).json(resp);
-    } catch (err) {
-        res.status(500).json(err.toString());
-    }
-});
-
 // by id or JWT?
 childrenRoutes.get('/id', async (req, res) => {
     try {
