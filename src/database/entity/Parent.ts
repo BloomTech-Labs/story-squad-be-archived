@@ -1,9 +1,16 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Child } from './Child';
 
 @Entity()
 class Parent {
     @PrimaryGeneratedColumn()
     public id: number;
+
+    @OneToMany(
+        (type) => Child,
+        (child) => child.parent
+    )
+    public children: Child[];
 
     @Column({ nullable: false, unique: true })
     public email: string;
