@@ -13,17 +13,17 @@ const app = express();
 globalMiddleware(app);
 app.use('/auth', authRoutes);
 
-// Requires Secret of `secret` to pass
+// Requires SALT to be 3 which is the default without a secret to pass
 typeorm.getRepository = jest.fn().mockReturnValue({
     find: jest.fn().mockResolvedValue([
         {
             email: 'Test@mail.com',
-            password: '$2a$04$6f5LiaN/0BDE5O3m.plVjuaj3bSIE0X5BUr9rK57sgs.wj.f3BapO',
+            password: '$2a$04$6f5LiaN/0BDE5O3m.plVjuaj3bSIE0X5BUr9rK57sgs.wj.f3BapO', //Test1234
         },
     ]),
     save: jest.fn().mockResolvedValue({
         email: 'NewTest@gmail.com',
-        password: '$2a$04$6f5LiaN/0BDE5O3m.plVjuaj3bSIE0X5BUr9rK57sgs.wj.f3BapO',
+        password: '$2a$04$6f5LiaN/0BDE5O3m.plVjuaj3bSIE0X5BUr9rK57sgs.wj.f3BapO', //Test1234
     }),
 });
 
