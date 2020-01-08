@@ -2,10 +2,9 @@ import 'reflect-metadata';
 import * as express from 'express';
 import * as dotenv from 'dotenv';
 import { createConnection } from 'typeorm';
-import { cannonRoutes } from './routes/cannon/cannon.routes';
 
 import { globalMiddleware } from './middleware';
-import { authRoutes } from './routes';
+import { authRoutes, cannonRoutes } from './routes';
 import { connection } from './util/typeorm-connection';
 
 dotenv.config();
