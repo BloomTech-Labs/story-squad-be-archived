@@ -15,7 +15,7 @@ class Parent {
     public email: string;
 
     @Column({ nullable: true })
-    public stripeInfo;
+    public stripeId: string;
 }
 
 export { Parent };
