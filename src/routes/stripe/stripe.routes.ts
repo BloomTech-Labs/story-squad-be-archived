@@ -17,9 +17,17 @@ stripeRoutes.use('/subscribe', async (req, res) => {
             email: req.body.token.email,
             invoice_settings: req.body.token.invoice_settings,
         });
-        const stripeInfo = req.body;
+        const stripeInfo = res.customer;
         const parent = await getRepository(Parent).update(req.body.token.id, { stripeInfo });
-        parent
+
+        //the plan id used here is for the 'test plan' in our Stripe account
+        const subscription = await stripe.subscriptions.create({
+            customer: stripeInfo,
+            items: [{ plan: 'plan_GVQ796LiwZugJ9' }],
+            expand: ['latest_invoice.payment_intent'],
+        });
+
+        subscription
             ? res.status(201).json({ message: 'parent successfully registered as customer' })
             : res.status(404).json({ message: 'could not find parent account' });
     } catch (err) {
