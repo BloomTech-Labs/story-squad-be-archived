@@ -4,7 +4,7 @@ import * as dotenv from 'dotenv';
 import { createConnection } from 'typeorm';
 
 import { globalMiddleware } from './middleware';
-import { authRoutes, cannonRoutes } from './routes';
+import { authRoutes, canonRoutes } from './routes';
 import { connection } from './util/typeorm-connection';
 
 dotenv.config();
@@ -14,7 +14,7 @@ createConnection(connection()).then(async () => {
     globalMiddleware(app);
 
     app.use('/auth', authRoutes);
-    app.use('/cannon', cannonRoutes);
+    app.use('/canon', canonRoutes);
 
     const port = process.env.PORT || 4000;
     app.listen(port);
