@@ -15,7 +15,7 @@ class Parent {
     public email: string;
 
     @Column({ nullable: true })
-    public stripe: jsonb;
+    public stripeInfo;
 }
 
 export { Parent };
