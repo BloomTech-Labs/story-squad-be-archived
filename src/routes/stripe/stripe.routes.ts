@@ -44,10 +44,21 @@ stripeRoutes.put('/add-card', async (req, res) => {
 });
 
 // ADD SUBSCRIPTION
-// //the plan id used here is for the 'test plan' in our Stripe account
-// const subscription = await stripe.subscriptions.create({
-//     customer: stripeInfo,
-//     items: [{ plan: 'plan_GVQ796LiwZugJ9' }],
-//     expand: ['latest_invoice.payment_intent'],
-// });
+//the plan id used here is for the 'test plan' in our Stripe account
+stripeRoutes.use('/subscribe', CheckJwt());
+stripeRoutes.use('/subscribe', async (req, res) => {
+    try {
+        const subscription = await stripe.subscriptions.create({
+            customer: req.customer.id,
+            items: [{ plan: 'plan_GVQ796LiwZugJ9' }],
+            expand: ['latest_invoice.payment_intent'],
+        });
+        subscription
+            ? res.status(201).json({ message: 'successfully subscribed' })
+            : res.status(404).json({ message: 'could not process subscription' });
+    } catch (err) {
+        res.status(500).json(err.toString());
+    }
+});
+
 export { stripeRoutes };
