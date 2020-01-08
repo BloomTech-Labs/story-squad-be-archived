@@ -8,7 +8,7 @@ const childrenRoutes = Router();
 
 childrenRoutes.get('/', async (req, res) => {
     try {
-        // TODO: restrict to parent
+        // TODO: restrict to child
         const children = await getRepository(Child).find();
 
         res.json(children);
