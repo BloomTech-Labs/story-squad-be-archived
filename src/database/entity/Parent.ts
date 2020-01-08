@@ -19,4 +19,6 @@ class Parent {
     public password: string;
 }
 
-export { Parent };
+type SecureParent = Omit<Parent, 'password'>;
+
+export { Parent, SecureParent };

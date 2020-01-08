@@ -2,20 +2,7 @@ import { ValidationError } from 'class-validator';
 import { transformAndValidate } from 'class-transformer-validator';
 
 import { Middleware } from '../../models/common/Middleware';
-import { RegisterDTO, LoginDTO, CreateChildDTO } from '../../models';
-import { Parent } from '../../database/entity/Parent';
-
-// Declare changes to Request Object
-declare global {
-    namespace Express {
-        interface Request {
-            register: RegisterDTO;
-            login: LoginDTO;
-            child: CreateChildDTO;
-            user: Omit<Parent, 'password'>;
-        }
-    }
-}
+import { RegisterDTO, LoginDTO, UpdateChildDTO } from '../../models';
 
 const Validation: Middleware = () => async (req, res, next) => {
     try {
@@ -25,8 +12,11 @@ const Validation: Middleware = () => async (req, res, next) => {
         if (req.path === '/auth/login')
             req.login = (await transformAndValidate(LoginDTO, req.body)) as LoginDTO;
 
-        if (req.path === '/parents/addchild')
-            req.child = (await transformAndValidate(CreateChildDTO, req.body)) as CreateChildDTO;
+        if (req.path.includes('/child') && !(req.method === 'GET' || req.method === 'DELETE'))
+            req.childUpdate = (await transformAndValidate(
+                UpdateChildDTO,
+                req.body
+            )) as UpdateChildDTO;
 
         next();
     } catch (err) {
