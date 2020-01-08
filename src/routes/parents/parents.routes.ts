@@ -19,11 +19,21 @@ parentsRoutes.get('/', async (req, res) => {
 });
 
 parentsRoutes.post('/addchild', async (req, res) => {
+    if (!req.headers || !req.headers.authorization) {
+        return res.status(400).json({ message: 'Missing authorization header' });
+    }
+
     try {
-        // TODO: restrict to parent
-        const child = req.child;
-        const resp = await getRepository(Child).save(child);
-        res.status(201).json(resp);
+        const token = req.headers.authorization;
+        verify(token, process.env.SECRET_SIGNATURE || 'secret', async (err: any, parent: any) => {
+            if (err) {
+                res.status(401).json({ message: 'Invalid Credentials' });
+            } else {
+                const child = { ...req.child, week: 1, parent: parent.id };
+                const resp = await getRepository(Child).save(child);
+                res.status(201).json(resp);
+            }
+        });
     } catch (err) {
         res.status(500).json(err.toString());
     }
