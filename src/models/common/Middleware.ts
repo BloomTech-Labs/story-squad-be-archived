@@ -5,4 +5,8 @@ import * as express from 'express';
 // Returns a function with the shape of (req, res, next) => void
 export type Middleware<T = {}> = (
     options?: T
-) => (req: express.Request, res: express.Response, next: express.NextFunction) => void;
+) => (
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+) => void | Promise<void>;
