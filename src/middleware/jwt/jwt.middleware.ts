@@ -11,7 +11,7 @@ const CheckJwt: Middleware = () => async (req, res, next) => {
         const childRepo = getRepository(Child, connection());
 
         const { parentID, childID } = verify(
-            req.headers.authorization,
+            req.headers.authorization.replace('Bearer ', ''),
             process.env.SECRET_SIGNATURE || 'secret'
         ) as JWT;
 
