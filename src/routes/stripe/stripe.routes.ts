@@ -29,16 +29,19 @@ stripeRoutes.post('/new-customer', async (req, res) => {
 });
 
 // ADD CARD
-// stripeRoutes.use('/add-card', CheckJwt());
-// stripeRoutes.put('/add-card', async (req, res) => {
-//     try {
-//         stripe.customers.update(
-//             req.customer.id,
-//             {
-//                 source: req.customer.sources.object
-//             },
-//     }
-// })
+stripeRoutes.use('/add-card', CheckJwt());
+stripeRoutes.put('/add-card', async (req, res) => {
+    try {
+        const customer = await stripe.customers.update(req.customer.id, {
+            source: req.customer.sources.object,
+        });
+        customer
+            ? res.status(201).json({ message: 'successfully added payment information' })
+            : res.status(404).json({ message: 'could not update payment information' });
+    } catch (err) {
+        res.status(500).json(err.toString());
+    }
+});
 
 // ADD SUBSCRIPTION
 // //the plan id used here is for the 'test plan' in our Stripe account
