@@ -19,6 +19,27 @@ childRoutes.get('/me', Only(Child), async (req, res) => {
     }
 });
 
+childRoutes.get('/preferences', Only(Child), async (req, res) => {
+    try {
+        const { preferences } = req.user as Child;
+        res.json({ preferences });
+    } catch (err) {
+        res.status(500).json(err.toString());
+    }
+});
+
+childRoutes.get('/parent', Only(Child), async (req, res) => {
+    try {
+        const {
+            parent: { password, ...parent },
+        } = req.user as Child;
+
+        res.json({ parent });
+    } catch (err) {
+        res.status(500).json(err.toString());
+    }
+});
+
 childRoutes.post('/:id/login', Only(Parent), async (req, res) => {
     try {
         const children = (req.user as Parent).children;

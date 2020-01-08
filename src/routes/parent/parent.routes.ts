@@ -1,8 +1,6 @@
 import { Router } from 'express';
-import { getRepository } from 'typeorm';
 
 import { Parent } from '../../database/entity';
-import { connection } from '../../util/typeorm-connection';
 import { Only } from '../../middleware';
 
 const parentRoutes = Router();

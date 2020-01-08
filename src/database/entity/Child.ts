@@ -1,6 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 
 import { Parent } from './Parent';
+import { Preferences } from './Preferences';
 
 @Entity()
 class Child {
@@ -21,6 +22,9 @@ class Child {
 
     @Column()
     grade: number;
+
+    @Column((type) => Preferences)
+    preferences: Preferences;
 }
 
 export { Child };
