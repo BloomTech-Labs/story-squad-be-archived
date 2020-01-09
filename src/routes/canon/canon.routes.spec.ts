@@ -25,9 +25,31 @@ typeorm.getRepository = jest.fn().mockReturnValue({
 });
 
 describe('GET /canon/:id', () => {
-    it('should return 200 with correct id', async () => {
+    it('should return 200 with correct week', async () => {
         await request(app)
             .get('/canon/1')
             .expect(200);
+    });
+
+    it('should return 404 with incorrect week', async () => {
+        await request(app)
+            .get('/canon/2')
+            .expect(404);
+    });
+});
+
+describe('POST /canon', () => {
+    it('should return 201 when pdf is created', async () => {
+        await request(app)
+            .post('/canon')
+            .send({ week: 1, base64: 'pdf' })
+            .expect(201);
+    });
+
+    it('should return 400 with incorrect body', async () => {
+        await request(app)
+            .post('/canon')
+            .send({ base64: 'pdf', week: undefined })
+            .expect(400);
     });
 });

@@ -7,6 +7,8 @@ import { Canon } from '../../database/entity/Canon';
 const canonRoutes = Router();
 
 canonRoutes.get('/:id', async (req, res) => {
+    // TODO
+    // add token restriction
     try {
         const chapter = await getRepository(Canon, connection()).findOne(req.params.id);
         if (chapter) res.json(chapter);
@@ -16,18 +18,12 @@ canonRoutes.get('/:id', async (req, res) => {
     }
 });
 
-interface pdf {
-    base64: string;
-    week: number;
-}
-
 canonRoutes.post('/', async (req, res) => {
     // TODO
     // add admin restriction
     try {
-        const pdf: pdf = req.body;
-        const chapter = await getRepository(Canon, connection()).save(pdf);
-        res.json(chapter);
+        const chapter = await getRepository(Canon, connection()).save(req.canon);
+        res.status(201).json(chapter);
     } catch (err) {
         res.status(500).json(err.toString());
     }
