@@ -24,7 +24,7 @@ const Validation: Middleware = () => async (req, res, next) => {
         if (req.path === '/auth/login')
             req.login = (await transformAndValidate(LoginDTO, req.body)) as LoginDTO;
 
-        if (req.path === '/payment' && req.body.card)
+        if (req.path.includes('/payment') && req.body.card)
             req.card = (await transformAndValidate(CardDTO, req.body.card)) as CardDTO;
 
         next();
