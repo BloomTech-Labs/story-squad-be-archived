@@ -14,7 +14,6 @@ stripeRoutes.get('/cards', Only(Parent), async (req, res) => {
         const cards = data.map((card) => ({ brand: card.brand, last4: card.last4 }));
         res.json({ cards });
     } catch (err) {
-        console.log(err);
         res.status(500).json({ message: 'Could not fetch cards' });
     }
 });
