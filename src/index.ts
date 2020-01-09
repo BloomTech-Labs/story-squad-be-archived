@@ -16,8 +16,8 @@ createConnection(connection()).then(async () => {
     globalMiddleware(app);
 
     app.use('/auth', authRoutes);
-    app.use('/child', CheckJwt(), childRoutes);
-    app.use('/parent', CheckJwt(), parentRoutes);
+    app.use('/children', CheckJwt(), childRoutes);
+    app.use('/parents', CheckJwt(), parentRoutes);
 
     const port = process.env.PORT || 4000;
     app.listen(port);

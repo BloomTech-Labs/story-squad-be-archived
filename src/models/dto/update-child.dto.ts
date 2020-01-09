@@ -11,10 +11,10 @@ class UpdateChildDTO implements Partial<Child> {
     grade: number;
 
     @IsEmpty({ message: 'IDs cannot be changed' })
-    id: null;
+    id?: null;
 
     @IsEmpty({ message: 'You cannot change your parent at this time' })
-    parent: null;
+    parent?: null;
 
     @IsOptional()
     @IsInt()

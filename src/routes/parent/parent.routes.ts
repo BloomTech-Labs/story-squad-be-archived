@@ -8,7 +8,7 @@ const parentRoutes = Router();
 parentRoutes.get('/me', Only(Parent), async (req, res) => {
     try {
         const { password, ...parent } = req.user as Parent;
-        res.json(parent);
+        res.json({ parent });
     } catch (error) {
         res.status(500).json(error.toString());
     }

@@ -12,8 +12,8 @@ const childRoutes = Router();
 
 childRoutes.get('/me', Only(Child), async (req, res) => {
     try {
-        const { parent, ...child } = req.user as Child;
-        res.json({ child });
+        const { parent, ...me } = req.user as Child;
+        res.json({ me });
     } catch (err) {
         res.status(500).json(err.toString());
     }

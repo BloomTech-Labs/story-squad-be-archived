@@ -13,7 +13,7 @@ const Validation: Middleware = () => async (req, res, next) => {
             req.login = (await transformAndValidate(LoginDTO, req.body)) as LoginDTO;
 
         if (
-            req.path.includes('/child') &&
+            req.path.includes('/children') &&
             !req.path.includes('/login') &&
             !(req.method === 'GET' || req.method === 'DELETE')
         )
