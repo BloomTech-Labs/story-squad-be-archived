@@ -1,7 +1,27 @@
 import { Express, json } from 'express';
 import * as cors from 'cors';
 
+import { Parent, Child } from '../database/entity';
+import { RegisterDTO, LoginDTO, UpdateChildDTO } from '../models';
 import { Validation } from './validate/validate.middleware';
+
+declare global {
+    namespace Express {
+        interface Request {
+            /**
+             * @description The current JWT verified user.
+             * BE SURE TO REMOVE THE PASSWORD WHEN RETURNING!!
+             * @type {(Parent | Child)}
+             * @memberof Request
+             */
+            user: Parent | Child;
+
+            register: RegisterDTO;
+            login: LoginDTO;
+            childUpdate: UpdateChildDTO;
+        }
+    }
+}
 
 const globalMiddleware = (app: Express) => {
     app.use(json());
@@ -10,5 +30,6 @@ const globalMiddleware = (app: Express) => {
 };
 
 export * from './hash/hash.middleware';
+export * from './only/only.middleware';
 export * from './validate/validate.middleware';
 export { globalMiddleware };
