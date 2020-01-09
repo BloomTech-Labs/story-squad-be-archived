@@ -12,7 +12,7 @@ class Parent {
     public password: string;
 
     @Column({ nullable: true })
-    public stripeId: string;
+    public stripeID: string;
 }
 
 export { Parent };

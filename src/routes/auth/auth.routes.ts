@@ -15,13 +15,14 @@ authRoutes.post('/register', async (req, res) => {
     try {
         if (!req.register.termsOfService)
             throw new Error('401: Accepting Terms of Service is Required');
+
+        const { id: stripeID } = await stripe.customers.create({
+            email: req.register.email,
+        });
+
         const newUser: Parent = {
             ...req.register,
-            stripeId: (
-                await stripe.customers.create({
-                    email: req.register.email,
-                })
-            ).id,
+            stripeID,
         };
 
         const { id } = await getRepository(Parent, connection()).save(newUser);
