@@ -6,12 +6,15 @@ import { RegisterDTO, LoginDTO, UpdateChildDTO } from '../../models';
 
 const Validation: Middleware = () => async (req, res, next) => {
     try {
+        //Validates and transforms register request objects prior to routing
         if (req.path === '/auth/register')
             req.register = (await transformAndValidate(RegisterDTO, req.body)) as RegisterDTO;
 
+        //Validates and transforms login request objects prior to routing
         if (req.path === '/auth/login')
             req.login = (await transformAndValidate(LoginDTO, req.body)) as LoginDTO;
 
+        //Validates and transforms childUpdate request objects prior to routing
         if (
             req.path.includes('/children') &&
             !req.path.includes('/login') &&
@@ -24,7 +27,10 @@ const Validation: Middleware = () => async (req, res, next) => {
 
         next();
     } catch (err) {
+        //Asserts any errors will be ValidationErrors
         const validationErrors = err as ValidationError[];
+
+        //Simplifies Errors into smaller objects prior to sending to the client
         const errors = validationErrors.reduce(
             (errors, { constraints }) => [...errors, ...Object.values(constraints)],
             []
