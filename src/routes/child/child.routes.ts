@@ -141,7 +141,7 @@ childRoutes.delete('/:id', Only(Parent), async (req, res) => {
         const { affected } = await getRepository(Child, connection()).delete(childToDelete);
         if (!affected) throw new Error();
 
-        res.sendStatus(204);
+        res.json({ message: `Successfully deleted ${req.params.id}` });
     } catch (err) {
         switch (err.toString()) {
             case 'Error: 404':
