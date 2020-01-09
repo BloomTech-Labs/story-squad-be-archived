@@ -1,8 +1,3 @@
-🚫 Note: All lines that start with 🚫 are instructions and should be deleted before this is posted to your portfolio. This is intended to be a guideline. Feel free to add your own flare to it.
-
-🚫 The numbers 1️⃣ through 3️⃣ next to each item represent the week that part of the docs needs to be comepleted by. Make sure to delete the numbers by the end of Labs.
-
-🚫 Each student has a required minimum number of meaningful PRs each week per the rubric. Contributing to docs does NOT count as a PR to meet your weekly requirements.
 
 # API Documentation
 
@@ -21,49 +16,54 @@ To get the server running locally:
 
 #### Express
 
--   We're familiar with it.
--   It has lots of add-ons such as helmet and CORS.
--   It is well documented.
+-   Familiar
+-   Useful add-ons such as helmet and CORS.
+-   Well documented.
 
 #### TypeORM
 
--   It simplifies database creation, connections, queries, etc.
--   It is designed to use a lot of features of typescript.
--   It has add-ons for seeding.
+-   Simplifies database creation, connections, queries, etc
+-   Plays well with Typescript
+-   Add-ons simplify seeding.
 
 #### Jest
 
--   It simplifies all testing.
--   It allows mocking dependencies.
--   Used for unit testing.
+-   Maintains consistency with front-end testing
 
 #### SuperTest
 
--   It simplifies testing endpoints.
--   Used for integration testing.
+-   Simplifies endpoint testing
+-   Intigration testing
 
 ## 2️⃣ Endpoints
 
-🚫This is a placeholder, replace the endpoints, access controll, and descriptioin to match your project
 
-#### Organization Routes
+#### Authorization Routes
 
 | Method | Endpoint                | Access Control | Description                                  |
 | ------ | ----------------------- | -------------- | -------------------------------------------- |
-| GET    | `/organizations/:orgId` | all users      | Returns the information for an organization. |
-| PUT    | `/organizatoins/:orgId` | owners         | Modify an existing organization.             |
-| DELETE | `/organizations/:orgId` | owners         | Delete an organization.                      |
+| POST    | `/auth/register` | all users      | Creates parent account and Stripe customer. |
+| USE    | `/auth/login` | adult users         | Returns parent token.             |
 
-#### User Routes
+#### Parent Routes
 
 | Method | Endpoint                | Access Control      | Description                                        |
 | ------ | ----------------------- | ------------------- | -------------------------------------------------- |
-| GET    | `/users/current`        | all users           | Returns info for the logged in user.               |
-| GET    | `/users/org/:userId`    | owners, supervisors | Returns all users for an organization.             |
-| GET    | `/users/:userId`        | owners, supervisors | Returns info for a single user.                    |
-| POST   | `/users/register/owner` | none                | Creates a new user as owner of a new organization. |
-| PUT    | `/users/:userId`        | owners, supervisors |                                                    |
-| DELETE | `/users/:userId`        | owners, supervisors |                                                    |
+| GET    | `/parents/me`        | adult users           | Returns logged in parent.               |
+
+#### Child Routes
+
+| Method | Endpoint                | Access Control      | Description                                        |
+| ------ | ----------------------- | ------------------- | -------------------------------------------------- |
+| GET    | `/children/`        | adult users | Returns a list of child accounts associated with logged in parent.                    |
+| GET    | `/children/:id`        | adult users | Returns specified child account.                    |
+| GET    | `/children/me`        | child users           | Returns logged in child.               |
+| GET    | `/children/preferences`    | child users | Returns child's preferences.             |
+| GET    | `/children/parent`        | child users | Returns the child's parent.                    |
+| POST   | `/children/` | adult users                | Adds a new child account. |
+| POST   | `/children/:id/login` | adult users                | Switches from parent to designated child account. |
+| PUT    | `/children/:id`        | adult users | Updates specified child account.                                                   |
+| DELETE | `/users/:userId`        | owners, supervisors |                                                    
 
 # Data Model
 
