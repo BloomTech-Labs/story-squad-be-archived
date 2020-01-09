@@ -63,7 +63,7 @@ To get the server running locally:
 | POST   | `/children/` | adult users                | Adds a new child account. |
 | POST   | `/children/:id/login` | adult users                | Switches from parent to designated child account. |
 | PUT    | `/children/:id`        | adult users | Updates specified child account.                                                   |
-| DELETE | `/users/:userId`        | owners, supervisors |                                                    
+| DELETE | `/children/:id`        | adult users | Deletes specified child account.                                                   
 
 # Data Model
 
