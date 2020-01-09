@@ -26,10 +26,10 @@ const ValidateHash: Middleware = () => async (req, res, next) => {
         if (!req.login) throw new Error('No login object on body...');
 
         const { email: username } = req.login;
-        const [{ password, ...user }] = await getRepository(Parent, connection()).find({
+        const [user] = await getRepository(Parent, connection()).find({
             email: username,
         });
-        if (!(await compare(req.login.password, password))) throw new Error();
+        if (!(await compare(req.login.password, user.password))) throw new Error();
         req.user = user;
         next();
     } catch (err) {

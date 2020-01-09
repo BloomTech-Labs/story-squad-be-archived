@@ -26,7 +26,7 @@ authRoutes.post('/register', async (req, res) => {
         };
 
         const { id } = await getRepository(Parent, connection()).save(newUser);
-        const token = sign({ id }, process.env.SECRET_SIGNATURE || 'secret');
+        const token = sign({ parentID: id }, process.env.SECRET_SIGNATURE || 'secret');
 
         res.status(201).json({ token });
     } catch (err) {
@@ -38,7 +38,7 @@ authRoutes.post('/register', async (req, res) => {
 authRoutes.use('/login', ValidateHash());
 authRoutes.use('/login', async (req, res) => {
     try {
-        const token = sign({ id: req.user.id }, process.env.SECRET_SIGNATURE || 'secret');
+        const token = sign({ parentID: req.user.id }, process.env.SECRET_SIGNATURE || 'secret');
         res.json({ token });
     } catch (err) {
         res.status(500).json(err.toString());

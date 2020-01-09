@@ -1,1 +1,1 @@
-export * from './JWT'
+export * from './JWT';
