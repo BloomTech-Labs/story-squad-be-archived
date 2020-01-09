@@ -36,11 +36,11 @@ app.use('/parents', ParentInjection(), parentRoutes);
 describe('GET /parents/me', () => {
     it('should include the username', async () => {
         const { body } = await request(app).get('/parents/me');
-        expect(body.parent.email).toBe(parent.email);
+        expect(body.me.email).toBe(parent.email);
     });
 
     it('should not include the password', async () => {
         const { body } = await request(app).get('/parents/me');
-        expect(body.parent.password).toBeUndefined();
+        expect(body.me.password).toBeUndefined();
     });
 });
