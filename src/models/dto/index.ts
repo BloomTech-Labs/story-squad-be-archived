@@ -1,2 +1,4 @@
 export * from './login.dto';
 export * from './register.dto';
+export * from './canon.dto';
+export * from './update-child.dto';
