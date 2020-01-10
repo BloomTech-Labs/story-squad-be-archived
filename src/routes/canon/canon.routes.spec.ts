@@ -1,13 +1,8 @@
 import * as request from 'supertest';
 import * as express from 'express';
-import * as dotenv from 'dotenv';
 
 import { globalMiddleware } from '../../middleware';
 import { canonRoutes } from './canon.routes';
-// import * as A from '../../database/entity/Canon'
-// import * as B from '../../util/typeorm-connection'
-
-dotenv.config();
 
 import typeorm = require('typeorm');
 
