@@ -4,7 +4,7 @@ import * as dotenv from 'dotenv';
 import { createConnection } from 'typeorm';
 
 import { globalMiddleware, CheckJwt } from './middleware';
-import { authRoutes, stripeRoutes, childRoutes, parentRoutes } from './routes';
+import { authRoutes, childRoutes, parentRoutes, stripeRoutes, canonRoutes } from './routes';
 import { connection } from './util/typeorm-connection';
 
 dotenv.config();
@@ -15,6 +15,7 @@ createConnection(connection()).then(async () => {
     globalMiddleware(app);
 
     app.use('/auth', authRoutes);
+    app.use('/canon', CheckJwt(), canonRoutes);
     app.use('/children', CheckJwt(), childRoutes);
     app.use('/parents', CheckJwt(), parentRoutes);
     app.use('/payment', CheckJwt(), stripeRoutes);
