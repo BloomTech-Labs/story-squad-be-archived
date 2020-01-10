@@ -25,7 +25,7 @@ declare global {
 }
 
 const globalMiddleware = (app: Express) => {
-    app.use(json());
+    app.use(json({ limit: '10mb' }));
     app.use(cors({ origin: '*' }));
     app.use(Validation());
 };
