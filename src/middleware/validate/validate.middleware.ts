@@ -2,7 +2,7 @@ import { ValidationError } from 'class-validator';
 import { transformAndValidate } from 'class-transformer-validator';
 
 import { Middleware } from '../../models/common/Middleware';
-import { RegisterDTO, LoginDTO, UpdateChildDTO } from '../../models';
+import { RegisterDTO, LoginDTO, UpdateChildDTO, CanonDTO } from '../../models';
 
 const Validation: Middleware = () => async (req, res, next) => {
     try {
@@ -13,6 +13,10 @@ const Validation: Middleware = () => async (req, res, next) => {
         //Validates and transforms login request objects prior to routing
         if (req.path === '/auth/login')
             req.login = (await transformAndValidate(LoginDTO, req.body)) as LoginDTO;
+
+        //Validates and transforms canon request objects prior to routing
+        if (req.path === '/canon' && req.method === 'POST')
+            req.canon = (await transformAndValidate(CanonDTO, req.body)) as CanonDTO;
 
         //Validates and transforms childUpdate request objects prior to routing
         if (

@@ -46,6 +46,13 @@ To get the server running locally:
 
 🚫This is a placeholder, replace the endpoints, access controll, and descriptioin to match your project
 
+#### Canon Routes
+
+| Method | Endpoint       | Access Control | Description                    |
+| ------ | -------------- | -------------- | ------------------------------ |
+| GET    | `/canon/:week` | none           | Returns a json of a base64 pdf |
+| POST   | `/canon`       | none           | Creates a new pdf              |
+
 #### Organization Routes
 
 | Method | Endpoint                | Access Control | Description                                  |
@@ -68,6 +75,17 @@ To get the server running locally:
 # Data Model
 
 🚫This is just an example. Replace this with your data model
+
+#### Canon
+
+---
+
+```
+{
+  week: NUMBER
+  base64: STRING
+}
+```
 
 #### 2️⃣ ORGANIZATIONS
 

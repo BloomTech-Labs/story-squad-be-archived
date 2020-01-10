@@ -2,7 +2,7 @@ import { Express, json } from 'express';
 import * as cors from 'cors';
 
 import { Parent, Child } from '../database/entity';
-import { RegisterDTO, LoginDTO, UpdateChildDTO } from '../models';
+import { RegisterDTO, LoginDTO, UpdateChildDTO, CanonDTO } from '../models';
 import { Validation } from './validate/validate.middleware';
 
 declare global {
@@ -19,12 +19,13 @@ declare global {
             register: RegisterDTO;
             login: LoginDTO;
             childUpdate: UpdateChildDTO;
+            canon: CanonDTO;
         }
     }
 }
 
 const globalMiddleware = (app: Express) => {
-    app.use(json());
+    app.use(json({ limit: '10mb' }));
     app.use(cors({ origin: '*' }));
     app.use(Validation());
 };
