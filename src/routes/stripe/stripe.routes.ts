@@ -11,14 +11,20 @@ stripeRoutes.get('/cards', Only(Parent), async (req, res) => {
     try {
         const user = req.user as Parent;
         const { data } = await stripe.customers.listSources(user.stripeID, { object: 'card' });
-        const cards = data.map((card) => ({ brand: card.brand, last4: card.last4 }));
+        const cards = data.map(({ id, name, brand, last4, exp_month, exp_year }) => ({
+            id,
+            name,
+            brand,
+            last4,
+            exp_month,
+            exp_year,
+        }));
         res.json({ cards });
     } catch (err) {
         res.status(500).json({ message: 'Could not fetch cards' });
     }
 });
 
-// ADD CARD
 stripeRoutes.post('/cards', Only(Parent), async (req, res) => {
     try {
         const user = req.user as Parent;
@@ -29,8 +35,17 @@ stripeRoutes.post('/cards', Only(Parent), async (req, res) => {
     }
 });
 
-// ADD SUBSCRIPTION
-//the plan id used here is for the 'test plan' in our Stripe account
+stripeRoutes.delete('/cards/:id', Only(Parent), async (req, res) => {
+    try {
+        const user = req.user as Parent;
+        await stripe.customers.deleteSource(user.stripeID, req.params.id);
+        res.status(201).json({ message: 'Successfully deleted payment information' });
+    } catch (err) {
+        res.status(500).json({ message: 'Could not delete payment information' });
+    }
+});
+
+// The plan id used here is for the 'test plan' in our Stripe account
 stripeRoutes.use('/subscribe', Only(Parent), async (req, res) => {
     try {
         const user = req.user as Parent;
