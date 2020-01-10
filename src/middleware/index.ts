@@ -2,7 +2,7 @@ import { Express, json } from 'express';
 import * as cors from 'cors';
 
 import { Parent, Child } from '../database/entity';
-import { RegisterDTO, LoginDTO, UpdateChildDTO, CardDTO } from '../models';
+import { RegisterDTO, LoginDTO, UpdateChildDTO, AddCardDTO } from '../models';
 import { Validation } from './validate/validate.middleware';
 
 declare global {
@@ -20,7 +20,7 @@ declare global {
             login: LoginDTO;
             childUpdate: UpdateChildDTO;
 
-            card: CardDTO;
+            addCard: AddCardDTO;
         }
     }
 }

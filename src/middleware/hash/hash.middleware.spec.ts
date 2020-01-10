@@ -2,13 +2,12 @@ import * as dotenv from 'dotenv';
 import { Hash, ValidateHash } from './hash.middleware';
 import typeorm = require('typeorm');
 
-dotenv.config();
-
+//Requires salt 3
 typeorm.getRepository = jest.fn().mockReturnValue({
     find: jest.fn().mockResolvedValue([
         {
             username: 'Test@mail.com',
-            password: '$2a$10$wOMxfPlKxunOi9ZqQ1ND9eJC4frWYmCaMRMaM.GESdvn8NR.c2FBq',
+            password: '$2a$10$wOMxfPlKxunOi9ZqQ1ND9eJC4frWYmCaMRMaM.GESdvn8NR.c2FBq', //Test1234
         },
     ]),
 });

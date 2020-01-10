@@ -10,8 +10,7 @@ import { connection } from '../../util/typeorm-connection';
 const authRoutes = Router();
 const stripe = new Stripe('sk_test_v666XmnGJcP1Oz3GBg2iFmvd004Q3qp4jZ');
 
-authRoutes.use('/register', Hash());
-authRoutes.post('/register', async (req, res) => {
+authRoutes.post('/register', Hash(), async (req, res) => {
     try {
         if (!req.register.termsOfService)
             throw new Error('401: Accepting Terms of Service is Required');
@@ -35,8 +34,7 @@ authRoutes.post('/register', async (req, res) => {
     }
 });
 
-authRoutes.use('/login', ValidateHash());
-authRoutes.use('/login', async (req, res) => {
+authRoutes.use('/login', ValidateHash(), async (req, res) => {
     try {
         const token = sign({ parentID: req.user.id }, process.env.SECRET_SIGNATURE || 'secret');
         res.json({ token });

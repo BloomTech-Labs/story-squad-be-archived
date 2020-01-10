@@ -6,10 +6,6 @@ import { Middleware, UpdateChildDTO } from '../../models';
 import { Child, Parent } from '../../database/entity';
 import { childRoutes } from './child.routes';
 
-import typeorm = require('typeorm');
-
-const app = express();
-
 const parent: Parent = plainToClass(Parent, {
     id: 1,
     email: 'test@mail.com',
@@ -54,6 +50,7 @@ const child: Child = plainToClass(Child, {
     },
 });
 
+import typeorm = require('typeorm');
 typeorm.getRepository = jest.fn().mockReturnValue({
     save: jest.fn().mockImplementation(async (child: Child) => ({ ...child, id: 3 })),
     update: jest.fn().mockImplementation(async () => ({ affected: 1 })),
@@ -71,6 +68,7 @@ const BodyInjection: Middleware = () => (req, res, next) => {
     next();
 };
 
+const app = express();
 app.use('/children', express.json(), BodyInjection(), UserInjection(), childRoutes);
 
 describe('GET /children', () => {

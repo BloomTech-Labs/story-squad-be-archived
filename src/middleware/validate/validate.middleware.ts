@@ -1,7 +1,7 @@
 import { ValidationError } from 'class-validator';
 import { transformAndValidate } from 'class-transformer-validator';
 
-import { Middleware, RegisterDTO, LoginDTO, UpdateChildDTO, CardDTO } from '../../models';
+import { Middleware, RegisterDTO, LoginDTO, UpdateChildDTO, AddCardDTO } from '../../models';
 
 const Validation: Middleware = () => async (req, res, next) => {
     try {
@@ -14,7 +14,7 @@ const Validation: Middleware = () => async (req, res, next) => {
             req.login = (await transformAndValidate(LoginDTO, req.body)) as LoginDTO;
 
         if (req.path.includes('/payment') && req.body.card)
-            req.card = (await transformAndValidate(CardDTO, req.body.card)) as CardDTO;
+            req.addCard = (await transformAndValidate(AddCardDTO, req.body.card)) as AddCardDTO;
 
         //Validates and transforms childUpdate request objects prior to routing
         if (

@@ -6,8 +6,6 @@ import { Middleware } from '../../models';
 import { Parent } from '../../database/entity';
 import { parentRoutes } from './parent.routes';
 
-const app = express();
-
 const parent: Parent = plainToClass(Parent, {
     id: 1,
     email: 'test@mail.com',
@@ -31,6 +29,7 @@ const ParentInjection: Middleware = () => (req, res, next) => {
     next();
 };
 
+const app = express();
 app.use('/parents', ParentInjection(), parentRoutes);
 
 describe('GET /parents/me', () => {

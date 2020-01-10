@@ -1,31 +1,29 @@
 import * as request from 'supertest';
 import * as express from 'express';
-import * as dotenv from 'dotenv';
+import { plainToClass } from 'class-transformer';
 
-import { globalMiddleware } from '../../middleware';
+import { Middleware, LoginDTO, RegisterDTO } from '../../models';
 import { authRoutes } from './auth.routes';
 
-dotenv.config();
-
-import typeorm = require('typeorm');
-
-const app = express();
-globalMiddleware(app);
-app.use('/auth', authRoutes);
-
-// Requires SALT to be 3 which is the default without a secret to pass
+const typeorm = require('typeorm');
 typeorm.getRepository = jest.fn().mockReturnValue({
+    save: jest.fn().mockImplementation(async (user) => ({ ...user, id: 1 })),
     find: jest.fn().mockResolvedValue([
         {
-            email: 'Test@mail.com',
-            password: '$2a$04$6f5LiaN/0BDE5O3m.plVjuaj3bSIE0X5BUr9rK57sgs.wj.f3BapO', //Test1234
+            username: 'Test@mail.com',
+            password: '$2a$10$wOMxfPlKxunOi9ZqQ1ND9eJC4frWYmCaMRMaM.GESdvn8NR.c2FBq', //Test1234
         },
     ]),
-    save: jest.fn().mockResolvedValue({
-        email: 'NewTest@gmail.com',
-        password: '$2a$04$6f5LiaN/0BDE5O3m.plVjuaj3bSIE0X5BUr9rK57sgs.wj.f3BapO', //Test1234
-    }),
 });
+
+const DTOInjector: Middleware = () => (req, res, next) => {
+    req.login = plainToClass(LoginDTO, req.body);
+    req.register = plainToClass(RegisterDTO, req.body);
+    next();
+};
+
+const app = express();
+app.use('/auth', express.json(), DTOInjector(), authRoutes);
 
 describe('POST /login', () => {
     it('should return 200 when logging in correctly', async () => {
