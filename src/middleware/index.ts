@@ -14,15 +14,15 @@ declare global {
              * @type {(Parent | Child)}
              * @memberof Request
              */
-            user: Parent | Child;
+            user?: Parent | Child;
 
-            register: RegisterDTO;
-            login: LoginDTO;
-            childUpdate: UpdateChildDTO;
+            register?: RegisterDTO;
+            login?: LoginDTO;
+            childUpdate?: UpdateChildDTO;
 
-            addCard: AddCardDTO;
+            addCard?: AddCardDTO;
 
-            addCanon: AddCanonDTO;
+            addCanon?: AddCanonDTO;
         }
     }
 }
@@ -36,5 +36,6 @@ const globalMiddleware = (app: Express) => {
 export * from './hash/hash.middleware';
 export * from './jwt/jwt.middleware';
 export * from './only/only.middleware';
+export * from './stripe/stripe.middleware';
 export * from './validate/validate.middleware';
 export { globalMiddleware };

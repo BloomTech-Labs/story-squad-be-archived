@@ -3,7 +3,7 @@ import * as express from 'express';
 import * as dotenv from 'dotenv';
 import { createConnection } from 'typeorm';
 
-import { globalMiddleware, CheckJwt } from './middleware';
+import { globalMiddleware, CheckJwt, UpdateStripeRecords } from './middleware';
 import { authRoutes, childRoutes, parentRoutes, stripeRoutes, canonRoutes } from './routes';
 import { connection } from './util/typeorm-connection';
 
@@ -18,7 +18,7 @@ createConnection(connection()).then(async () => {
     app.use('/canon', CheckJwt(), canonRoutes);
     app.use('/children', CheckJwt(), childRoutes);
     app.use('/parents', CheckJwt(), parentRoutes);
-    app.use('/payment', CheckJwt(), stripeRoutes);
+    app.use('/payment', CheckJwt(), UpdateStripeRecords(), stripeRoutes);
 
     const port = process.env.PORT || 4000;
     app.listen(port);

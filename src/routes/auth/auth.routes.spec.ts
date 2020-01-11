@@ -16,6 +16,12 @@ typeorm.getRepository = jest.fn().mockReturnValue({
     ]),
 });
 
+jest.mock('stripe');
+const Stripe = require('stripe');
+Stripe.prototype.customers = {
+    create: jest.fn().mockResolvedValue({ id: 1 }),
+};
+
 const DTOInjector: Middleware = () => (req, res, next) => {
     req.login = plainToClass(LoginDTO, req.body);
     req.register = plainToClass(RegisterDTO, req.body);
