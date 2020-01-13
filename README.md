@@ -69,9 +69,16 @@ To get the server running locally:
 | GET    | `/canon/:week` | none           | Returns a json of a base64 pdf |
 | POST   | `/canon`       | none           | Creates a new pdf              |
 
-# Data Model
+#### Payment Routes
 
-🚫This is just an example. Replace this with your data model
+| Method | Endpoint       | Access Control | Description                    |
+| ------ | -------------- | -------------- | ------------------------------ |
+| GET    | `/cards` | adult users           | json list of user's cards |
+| Post   | `/cards` | adult users           | adds card as payment source to Stripe |
+| Post   | `/subscribe` | adult users           | creates a subscription |
+| Delete   | `/cards/:id`       | adult users           | deletes a payment method              |
+
+# Data Model
 
 #### Canon
 
@@ -84,38 +91,42 @@ To get the server running locally:
 }
 ```
 
-#### 2️⃣ ORGANIZATIONS
+#### Parent
 
 ---
 
 ```
 {
-  id: UUID
-  name: STRING
-  industry: STRING
-  paid: BOOLEAN
-  customer_id: STRING
-  subscription_id: STRING
+  id: NUM
+  children: ARRAY
+  email: STRING
+  password: STRING
+  stripeID: STRING
 }
 ```
 
-#### USERS
+#### Child
 
 ---
 
 ```
 {
-  id: UUID
-  organization_id: UUID foreign key in ORGANIZATIONS table
-  first_name: STRING
-  last_name: STRING
-  role: STRING [ 'owner', 'supervisor', 'employee' ]
-  email: STRING
-  phone: STRING
-  cal_visit: BOOLEAN
-  emp_visit: BOOLEAN
-  emailpref: BOOLEAN
-  phonepref: BOOLEAN
+  id: NUM
+  parent: foreign key in PARENT table
+  username: STRING
+  week: NUM
+  grade: NUM
+  preferences: foreign key in PREFERENCES table
+}
+```
+#### Preferences
+
+---
+
+```
+{
+  id: NUM
+  dyslexia: BOOL  
 }
 ```
 
@@ -199,4 +210,4 @@ These contribution guidelines have been adapted from [this good-Contributing.md-
 ## Documentation
 
 See [Frontend Documentation](https://github.com/Lambda-School-Labs/story-squad-fe/blob/master/README.md) for details on the fronend of our project.
-🚫 Add DS iOS and/or Andriod links here if applicable.
+
