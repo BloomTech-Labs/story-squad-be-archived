@@ -33,7 +33,7 @@ To get the server running locally:
 -   Simplifies endpoint testing
 -   Intigration testing
 
-## 2️⃣ Endpoints
+## Endpoints
 
 #### Authorization Routes
 
@@ -116,33 +116,23 @@ To get the server running locally:
   username: STRING
   week: NUM
   grade: NUM
-  preferences: BOOL
-}
-```
-#### Preferences
-
----
-
-```
-{
-  dyslexia: BOOL  
+  preferencesDyslexia: BOOL
 }
 ```
 ## Actions
 
   Story Squad uses TypeORM; see their [docs](https://typeorm.io/#/) for available actions.
 
-## 3️⃣ Environment Variables
+## Environment Variables
 
 In order for the app to function correctly, the user must set up their own environment variables.
 
 create a .env file that includes the following:
 
-PORT=4000
-
-SALT=10
-
-SECRET_SIGNATURE=Its a secret (example - create your own)
+    * PORT=4000
+    * SALT=10
+    * SECRET_SIGNATURE=Its a secret (example - create your own)
+    * STRIPE_API=sk_test_v666XmnGJcP1Oz3GBg2iFmvd004Q3qp4jZ
 
 ## Contributing
 
