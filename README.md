@@ -1,4 +1,3 @@
-
 # API Documentation
 
 #### Backend delpoyed at [heroku](https://story-squad.herokuapp.com/) <br>
@@ -36,37 +35,54 @@ To get the server running locally:
 
 ## 2️⃣ Endpoints
 
-
 #### Authorization Routes
 
-| Method | Endpoint                | Access Control | Description                                  |
-| ------ | ----------------------- | -------------- | -------------------------------------------- |
-| POST    | `/auth/register` | all users      | Creates parent account and Stripe customer. |
-| USE    | `/auth/login` | adult users         | Returns parent token.             |
+| Method | Endpoint         | Access Control | Description                                 |
+| ------ | ---------------- | -------------- | ------------------------------------------- |
+| POST   | `/auth/register` | all users      | Creates parent account and Stripe customer. |
+| USE    | `/auth/login`    | adult users    | Returns parent token.                       |
 
 #### Parent Routes
 
-| Method | Endpoint                | Access Control      | Description                                        |
-| ------ | ----------------------- | ------------------- | -------------------------------------------------- |
-| GET    | `/parents/me`        | adult users           | Returns logged in parent.               |
+| Method | Endpoint      | Access Control | Description               |
+| ------ | ------------- | -------------- | ------------------------- |
+| GET    | `/parents/me` | adult users    | Returns logged in parent. |
 
 #### Child Routes
 
-| Method | Endpoint                | Access Control      | Description                                        |
-| ------ | ----------------------- | ------------------- | -------------------------------------------------- |
-| GET    | `/children/`        | adult users | Returns a list of child accounts associated with logged in parent.                    |
-| GET    | `/children/:id`        | adult users | Returns specified child account.                    |
-| GET    | `/children/me`        | child users           | Returns logged in child.               |
-| GET    | `/children/preferences`    | child users | Returns child's preferences.             |
-| GET    | `/children/parent`        | child users | Returns the child's parent.                    |
-| POST   | `/children/` | adult users                | Adds a new child account. |
-| POST   | `/children/:id/login` | adult users                | Switches from parent to designated child account. |
-| PUT    | `/children/:id`        | adult users | Updates specified child account.                                                   |
-| DELETE | `/children/:id`        | adult users | Deletes specified child account.                                                   
+| Method | Endpoint                | Access Control | Description                                                        |
+| ------ | ----------------------- | -------------- | ------------------------------------------------------------------ |
+| GET    | `/children/`            | adult users    | Returns a list of child accounts associated with logged in parent. |
+| GET    | `/children/:id`         | adult users    | Returns specified child account.                                   |
+| GET    | `/children/me`          | child users    | Returns logged in child.                                           |
+| GET    | `/children/preferences` | child users    | Returns child's preferences.                                       |
+| GET    | `/children/parent`      | child users    | Returns the child's parent.                                        |
+| POST   | `/children/`            | adult users    | Adds a new child account.                                          |
+| POST   | `/children/:id/login`   | adult users    | Switches from parent to designated child account.                  |
+| PUT    | `/children/:id`         | adult users    | Updates specified child account.                                   |
+| DELETE | `/children/:id`         | adult users    | Deletes specified child account.                                   |
+
+#### Canon Routes
+
+| Method | Endpoint       | Access Control | Description                    |
+| ------ | -------------- | -------------- | ------------------------------ |
+| GET    | `/canon/:week` | none           | Returns a json of a base64 pdf |
+| POST   | `/canon`       | none           | Creates a new pdf              |
 
 # Data Model
 
 🚫This is just an example. Replace this with your data model
+
+#### Canon
+
+---
+
+```
+{
+  week: NUMBER
+  base64: STRING
+}
+```
 
 #### 2️⃣ ORGANIZATIONS
 

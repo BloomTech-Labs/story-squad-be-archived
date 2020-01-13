@@ -4,16 +4,21 @@ import * as dotenv from 'dotenv';
 import { createConnection } from 'typeorm';
 
 import { globalMiddleware } from './middleware';
-import { authRoutes } from './routes';
+import { authRoutes, childRoutes, parentRoutes, canonRoutes } from './routes';
 import { connection } from './util/typeorm-connection';
+import { CheckJwt } from './middleware/jwt/jwt.middleware';
 
 dotenv.config();
 
 createConnection(connection()).then(async () => {
     const app = express();
+
     globalMiddleware(app);
 
     app.use('/auth', authRoutes);
+    app.use('/canon', canonRoutes);
+    app.use('/children', CheckJwt(), childRoutes);
+    app.use('/parents', CheckJwt(), parentRoutes);
 
     const port = process.env.PORT || 4000;
     app.listen(port);
