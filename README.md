@@ -1,7 +1,7 @@
 
 # API Documentation
 
-#### 1️⃣ Backend delpoyed at [🚫name service here](🚫add URL here) <br>
+#### Backend delpoyed at [heroku](https://story-squad.herokuapp.com/) <br>
 
 ## Getting started
 
@@ -16,15 +16,14 @@ To get the server running locally:
 
 #### Express
 
--   Familiar
--   Useful add-ons such as helmet and CORS.
+-   Useful libraries such as helmet and CORS.
 -   Well documented.
 
 #### TypeORM
 
 -   Simplifies database creation, connections, queries, etc
 -   Plays well with Typescript
--   Add-ons simplify seeding.
+-   Simple seeding.
 
 #### Jest
 
