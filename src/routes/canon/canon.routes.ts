@@ -7,23 +7,22 @@ import { Canon } from '../../database/entity/Canon';
 const canonRoutes = Router();
 
 canonRoutes.get('/:id', async (req, res) => {
-    // TODO
-    // add token restriction
     try {
-        const chapter = await getRepository(Canon, connection()).findOne(req.params.id);
-        if (chapter) res.json(chapter);
-        else res.status(404).json(`chapter ${req.params.id} not found`);
+        const canon = await getRepository(Canon, connection()).findOne(req.params.id);
+        if (!canon) throw new Error('404');
+        res.json({ canon });
     } catch (err) {
-        res.status(500).json(err.toString());
+        if (err.toString() === 'Error: 404')
+            res.status(404).json(`chapter ${req.params.id} not found`);
+        else res.status(500).json(err.toString());
     }
 });
 
 canonRoutes.post('/', async (req, res) => {
-    // TODO
-    // add admin restriction
+    // TODO: Add admin restriction
     try {
-        const chapter = await getRepository(Canon, connection()).save(req.canon);
-        res.status(201).json(chapter);
+        const canon = await getRepository(Canon, connection()).save(req.addCanon);
+        res.status(201).json({ canon });
     } catch (err) {
         res.status(500).json(err.toString());
     }

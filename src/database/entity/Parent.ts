@@ -4,19 +4,22 @@ import { Child } from './Child';
 @Entity()
 class Parent {
     @PrimaryGeneratedColumn()
-    public id: number;
+    public id?: number;
 
     @OneToMany(
         (type) => Child,
         (child) => child.parent
     )
-    public children: Child[];
+    public children?: Child[];
 
     @Column({ nullable: false, unique: true })
     public email: string;
 
     @Column({ nullable: false })
     public password: string;
+
+    @Column({ nullable: true })
+    public stripeID: string;
 }
 
 type SecureParent = Omit<Parent, 'password'>;

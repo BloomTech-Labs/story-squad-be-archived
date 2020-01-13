@@ -1,5 +1,5 @@
 import { IsInt, Min, Max, Length, IsEmpty, IsOptional } from 'class-validator';
-import { Child } from '../../database/entity';
+import { Child } from '../../../database/entity';
 
 class UpdateChildDTO implements Partial<Child> {
     @Length(4, 32, { message: "Your child's username must be between 4 to 32 characters" })

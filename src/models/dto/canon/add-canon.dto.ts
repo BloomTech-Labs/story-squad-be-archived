@@ -1,11 +1,9 @@
 import { IsNumber, IsString } from 'class-validator';
 
-class CanonDTO {
+export class AddCanonDTO {
     @IsString()
     base64: string;
 
     @IsNumber()
     week: number;
 }
-
-export { CanonDTO };

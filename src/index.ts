@@ -3,10 +3,9 @@ import * as express from 'express';
 import * as dotenv from 'dotenv';
 import { createConnection } from 'typeorm';
 
-import { globalMiddleware } from './middleware';
-import { authRoutes, childRoutes, parentRoutes, canonRoutes } from './routes';
+import { globalMiddleware, CheckJwt, UpdateStripeRecords } from './middleware';
+import { authRoutes, childRoutes, parentRoutes, stripeRoutes, canonRoutes } from './routes';
 import { connection } from './util/typeorm-connection';
-import { CheckJwt } from './middleware/jwt/jwt.middleware';
 
 dotenv.config();
 
@@ -16,9 +15,10 @@ createConnection(connection()).then(async () => {
     globalMiddleware(app);
 
     app.use('/auth', authRoutes);
-    app.use('/canon', canonRoutes);
+    app.use('/canon', CheckJwt(), canonRoutes);
     app.use('/children', CheckJwt(), childRoutes);
     app.use('/parents', CheckJwt(), parentRoutes);
+    app.use('/payment', CheckJwt(), UpdateStripeRecords(), stripeRoutes);
 
     const port = process.env.PORT || 4000;
     app.listen(port);

@@ -1,24 +1,21 @@
 import * as request from 'supertest';
 import * as express from 'express';
 
-import { globalMiddleware } from '../../middleware';
 import { canonRoutes } from './canon.routes';
 
 import typeorm = require('typeorm');
 
-const app = express();
-globalMiddleware(app);
-app.use('/canon', canonRoutes);
-
 typeorm.getRepository = jest.fn().mockReturnValue({
     findOne: jest
         .fn()
-        .mockImplementation((id: number) =>
-            Promise.resolve(id == 1 ? { base64: 'pdf', week: 1 } : undefined)
+        .mockImplementation(async (id: number) =>
+            id == 1 ? { base64: 'pdf', week: 1 } : undefined
         ),
-    save: jest.fn().mockImplementation((obj) => Promise.resolve(obj)),
+    save: jest.fn().mockImplementation(async (obj) => obj),
 });
 
+const app = express();
+app.use('/canon', express.json(), canonRoutes);
 describe('GET /canon/:id', () => {
     it('should return 200 with correct week', async () => {
         await request(app)
@@ -39,12 +36,5 @@ describe('POST /canon', () => {
             .post('/canon')
             .send({ week: 1, base64: 'pdf' })
             .expect(201);
-    });
-
-    it('should return 400 with incorrect body', async () => {
-        await request(app)
-            .post('/canon')
-            .send({ base64: 'pdf', week: undefined })
-            .expect(400);
     });
 });

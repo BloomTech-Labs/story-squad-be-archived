@@ -2,7 +2,7 @@ import { Express, json } from 'express';
 import * as cors from 'cors';
 
 import { Parent, Child } from '../database/entity';
-import { RegisterDTO, LoginDTO, UpdateChildDTO, CanonDTO } from '../models';
+import { RegisterDTO, LoginDTO, UpdateChildDTO, AddCardDTO, AddCanonDTO } from '../models';
 import { Validation } from './validate/validate.middleware';
 
 declare global {
@@ -14,12 +14,15 @@ declare global {
              * @type {(Parent | Child)}
              * @memberof Request
              */
-            user: Parent | Child;
+            user?: Parent | Child;
 
-            register: RegisterDTO;
-            login: LoginDTO;
-            childUpdate: UpdateChildDTO;
-            canon: CanonDTO;
+            register?: RegisterDTO;
+            login?: LoginDTO;
+            childUpdate?: UpdateChildDTO;
+
+            addCard?: AddCardDTO;
+
+            addCanon?: AddCanonDTO;
         }
     }
 }
@@ -31,6 +34,8 @@ const globalMiddleware = (app: Express) => {
 };
 
 export * from './hash/hash.middleware';
+export * from './jwt/jwt.middleware';
 export * from './only/only.middleware';
+export * from './stripe/stripe.middleware';
 export * from './validate/validate.middleware';
 export { globalMiddleware };
