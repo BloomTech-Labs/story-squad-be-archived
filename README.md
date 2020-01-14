@@ -1,6 +1,6 @@
 # API Documentation
 
-#### Backend delpoyed at [heroku](https://story-squad.herokuapp.com/) <br>
+#### Backend deployed at [heroku](https://story-squad.herokuapp.com/) <br>
 
 ## Getting started
 
@@ -71,12 +71,12 @@ To get the server running locally:
 
 #### Payment Routes
 
-| Method | Endpoint       | Access Control | Description                    |
-| ------ | -------------- | -------------- | ------------------------------ |
-| GET    | `/cards` | adult users           | json list of user's cards |
-| Post   | `/cards` | adult users           | adds card as payment source to Stripe |
-| Post   | `/subscribe` | adult users           | creates a subscription |
-| Delete   | `/cards/:id`       | adult users           | deletes a payment method              |
+| Method | Endpoint     | Access Control | Description                           |
+| ------ | ------------ | -------------- | ------------------------------------- |
+| GET    | `/cards`     | adult users    | json list of user's cards             |
+| Post   | `/cards`     | adult users    | adds card as payment source to Stripe |
+| Post   | `/subscribe` | adult users    | creates a subscription                |
+| Delete | `/cards/:id` | adult users    | deletes a payment method              |
 
 # Data Model
 
@@ -119,9 +119,10 @@ To get the server running locally:
   preferencesDyslexia: BOOL
 }
 ```
+
 ## Actions
 
-  Story Squad uses TypeORM; see their [docs](https://typeorm.io/#/) for available actions.
+Story Squad uses TypeORM; see their [docs](https://typeorm.io/#/) for available actions.
 
 ## Environment Variables
 
@@ -174,4 +175,3 @@ These contribution guidelines have been adapted from [this good-Contributing.md-
 ## Documentation
 
 See [Frontend Documentation](https://github.com/Lambda-School-Labs/story-squad-fe/blob/master/README.md) for details on the fronend of our project.
-
