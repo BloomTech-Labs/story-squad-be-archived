@@ -6,6 +6,7 @@ import { canonRoutes } from './canon.routes';
 import typeorm = require('typeorm');
 
 typeorm.getRepository = jest.fn().mockReturnValue({
+    find: jest.fn().mockResolvedValue([]),
     findOne: jest
         .fn()
         .mockImplementation(async (id: number) =>
@@ -16,6 +17,15 @@ typeorm.getRepository = jest.fn().mockReturnValue({
 
 const app = express();
 app.use('/canon', express.json(), canonRoutes);
+
+describe('GET /canon', () => {
+    it('should return 200', async () => {
+        await request(app)
+            .get('/canon')
+            .expect(200);
+    });
+});
+
 describe('GET /canon/:id', () => {
     it('should return 200 with correct week', async () => {
         await request(app)

@@ -6,6 +6,15 @@ import { Canon } from '../../database/entity/Canon';
 
 const canonRoutes = Router();
 
+canonRoutes.get('/', async (req, res) => {
+    try {
+        const canon = await getRepository(Canon, connection()).find();
+        res.json({ canon });
+    } catch (err) {
+        res.status(500).json(err.toString());
+    }
+});
+
 canonRoutes.get('/:id', async (req, res) => {
     try {
         const canon = await getRepository(Canon, connection()).findOne(req.params.id);
