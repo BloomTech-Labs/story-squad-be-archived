@@ -52,13 +52,12 @@ stripeRoutes.delete('/cards/:id', Only(Parent), async (req, res) => {
 stripeRoutes.post('/subscribe', Only(Parent), async (req, res) => {
     console.log('body', req.body);
     try {
-        const plans = {
-            monthly: 'plan_GVQ796LiwZugJ9',
-        };
-        const { child, subPlan } = req.body;
         const user = req.user as Parent;
-        await stripe.customers.createSubscription(user.stripeID, {
-            items: [{ plan: 'plan_GVQ796LiwZugJ9' }],
+        const childID = req.body.child as Child;
+        console.log('user', user);
+        await stripe.subscriptions.create({
+            customer: user.stripeID,
+            items: [{ plan: req.body.plan }],
             expand: ['latest_invoice.payment_intent'],
         });
         res.status(201).json({ message: 'Successfully subscribed' });
