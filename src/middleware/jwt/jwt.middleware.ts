@@ -16,7 +16,6 @@ const CheckJwt: Middleware = () => async (req, res, next) => {
             process.env.SECRET_SIGNATURE || 'secret'
         ) as JWT;
 
-        // To Do: fix error Type 'Parent | Child | Admin' not assignable to Type 'Parent | Child'
         req.user = adminID
             ? await adminRepo.findOne(adminID)
             : childID

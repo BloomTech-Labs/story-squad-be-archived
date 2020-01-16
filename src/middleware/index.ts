@@ -1,7 +1,7 @@
 import { Express, json } from 'express';
 import * as cors from 'cors';
 
-import { Parent, Child } from '../database/entity';
+import { Parent, Child, Admin } from '../database/entity';
 import { RegisterDTO, LoginDTO, UpdateChildDTO, AddCardDTO, AddCanonDTO } from '../models';
 import { Validation } from './validate/validate.middleware';
 
@@ -14,7 +14,7 @@ declare global {
              * @type {(Parent | Child)}
              * @memberof Request
              */
-            user?: Parent | Child;
+            user?: Parent | Child | Admin;
 
             register?: RegisterDTO;
             login?: LoginDTO;
