@@ -103,7 +103,9 @@ adminRoutes.post('/register', CheckJwt(), Only(Admin), async (req, res) => {
 
 adminRoutes.put('/me', CheckJwt(), Only(Admin), async (req, res) => {
     try {
-        const { password: pass } = req.body;
+        const { password: pass }: { password: string } = req.body;
+
+        if (!pass) throw Error('400');
 
         const { password: oldPass, ...me } = req.user as Admin;
 
@@ -118,6 +120,7 @@ adminRoutes.put('/me', CheckJwt(), Only(Admin), async (req, res) => {
 
         res.json({ me });
     } catch (err) {
+        if (err.toString().includes('400')) res.status(401).json({ error: 'Missing password' });
         res.status(500).json({ message: err.toString() });
     }
 });
