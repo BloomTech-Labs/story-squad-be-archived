@@ -24,6 +24,15 @@ adminRoutes.get('/', CheckJwt(), Only(Admin), async (req, res) => {
     }
 });
 
+adminRoutes.get('/me', CheckJwt(), Only(Admin), async (req, res) => {
+    try {
+        const { password, ...me } = req.user as Admin;
+        res.json({ me });
+    } catch (err) {
+        res.status(500).json(err.toString());
+    }
+});
+
 adminRoutes.get('/:id', CheckJwt(), Only(Admin), async (req, res) => {
     try {
         const { role } = req.user as Admin;
