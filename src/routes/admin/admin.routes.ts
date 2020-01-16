@@ -44,16 +44,16 @@ adminRoutes.get('/:id', CheckJwt(), Only(Admin), async (req, res) => {
 
 adminRoutes.post('/login', async (req, res) => {
     try {
-        const user: { email: string; password: string } = req.body;
+        const { email, password: pass } = req.body as Admin;
 
-        if (user.email === 'admin' && user.password) {
+        if (email === 'admin' && pass) {
             // create default admin if no admins
             const adminList = await getRepository(Admin, connection()).find({ role: 'admin' });
             if (!adminList.length) {
                 const salt: number = parseInt(process.env.SALT || '3', 10);
-                const password = await hash(user.password, salt);
+                const password = await hash(pass, salt);
                 const data = await getRepository(Admin, connection()).save({
-                    ...user,
+                    email,
                     password,
                     role: 'admin',
                     validpass: true,
@@ -63,10 +63,10 @@ adminRoutes.post('/login', async (req, res) => {
                 return;
             }
         }
-        const data = await getRepository(Admin, connection()).findOne({ email: user.email });
+        const data = await getRepository(Admin, connection()).findOne({ email });
         if (!data) throw Error('401');
 
-        if (!(await compare(user.password, data.password))) throw Error('401');
+        if (!(await compare(pass, data.password))) throw Error('401');
 
         const token = sign({ adminID: data.id }, process.env.SECRET_SIGNATURE || 'secret');
         res.status(200).json({ token });
@@ -82,10 +82,10 @@ adminRoutes.post('/register', CheckJwt(), Only(Admin), async (req, res) => {
         const { role } = req.user as Admin;
         if (role !== 'admin') throw Error('401');
 
-        const user: Pick<Admin, 'email' | 'role'> = req.body;
+        const user = res.locals.body as Admin;
 
         const chars = '!#%+23456789:=?@ABCDEFGHJKLMNPRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
-        const pass = passGen.randomPassword({ length: 16, characters: chars });
+        const pass = passGen.randomPassword({ length: 8, characters: chars });
         const salt: number = parseInt(process.env.SALT || '3', 10);
         const password = await hash(pass, salt);
 
