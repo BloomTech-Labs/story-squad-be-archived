@@ -17,7 +17,9 @@ const Hash: Middleware = () => async (req, res, next) => {
 
         next();
     } catch (err) {
-        res.status(400).send({ error: err.toString() });
+        res.status(400).send({
+            message: 'Failed to register, please check your email and password and try again.',
+        });
     }
 };
 
@@ -33,7 +35,7 @@ const ValidateHash: Middleware = () => async (req, res, next) => {
         req.user = user;
         next();
     } catch (err) {
-        res.status(401).send({ error: 'Failed to login, check your username and password...' });
+        res.status(401).send({ message: 'Failed to login, check your username and password...' });
     }
 };
 
