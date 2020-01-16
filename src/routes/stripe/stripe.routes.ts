@@ -4,6 +4,8 @@ import * as Stripe from 'stripe';
 import { CardDTO } from '../../models';
 import { Parent, Child } from '../../database/entity';
 import { Only } from '../../middleware';
+import { getRepository } from 'typeorm';
+import { connection } from '../../util/typeorm-connection';
 
 const stripe = new Stripe(process.env.STRIPE_API || 'sk_test_v666XmnGJcP1Oz3GBg2iFmvd004Q3qp4jZ');
 const stripeRoutes = Router();
@@ -53,13 +55,18 @@ stripeRoutes.post('/subscribe', Only(Parent), async (req, res) => {
     console.log('body', req.body);
     try {
         const user = req.user as Parent;
-        const childID = req.body.child as Child;
+        const childID = req.body.child;
+        const childToUpdate = user.children.find((child) => child.id === Number(childID));
+        const child = { ...childToUpdate, subscription: true };
+
+        console.log('child to update', childToUpdate);
         console.log('user', user);
         await stripe.subscriptions.create({
             customer: user.stripeID,
             items: [{ plan: req.body.plan }],
             expand: ['latest_invoice.payment_intent'],
         });
+        await getRepository(Child, connection()).update(childID, child);
         res.status(201).json({ message: 'Successfully subscribed' });
     } catch (err) {
         res.status(500).json({ message: 'Could not process subscription' });
