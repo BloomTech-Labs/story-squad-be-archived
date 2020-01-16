@@ -87,10 +87,30 @@ adminRoutes.post('/register', async (req, res) => {
     }
 });
 
-adminRoutes.put('/me', async (req, res) => {});
+adminRoutes.put('/me', async (req, res) => {
+    try {
+        const { pass } = req.body;
 
-adminRoutes.put('/:id', async (req, res) => {});
+        // To Do: get id from jwt
+        const id = 1;
 
-adminRoutes.delete('/:id', async (req, res) => {});
+        const salt: number = parseInt(process.env.SALT || '3', 10);
+        const password = await hash(pass, salt);
+
+        const { affected } = await getRepository(Admin, connection()).update(id, {
+            password,
+            validpass: true,
+        });
+        if (!affected) throw new Error();
+
+        res.sendStatus(204);
+    } catch (err) {
+        res.status(500).json({ message: err.toString() });
+    }
+});
+
+// adminRoutes.put('/:id', async (req, res) => {});
+
+// adminRoutes.delete('/:id', async (req, res) => {});
 
 export { adminRoutes };
