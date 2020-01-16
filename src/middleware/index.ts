@@ -11,7 +11,7 @@ declare global {
             /**
              * @description The current JWT verified user.
              * BE SURE TO REMOVE THE PASSWORD WHEN RETURNING!!
-             * @type {(Parent | Child)}
+             * @type {(Parent | Child | Admin)}
              * @memberof Request
              */
             user?: Parent | Child | Admin;

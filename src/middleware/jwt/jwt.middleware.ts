@@ -16,15 +16,19 @@ const CheckJwt: Middleware = () => async (req, res, next) => {
             process.env.SECRET_SIGNATURE || 'secret'
         ) as JWT;
 
-        req.user = adminID
-            ? await adminRepo.findOne(adminID)
-            : childID
-            ? await childRepo.findOne(childID, {
-                  relations: ['parent'],
-              })
-            : await parentRepo.findOne(parentID, {
-                  relations: ['children'],
-              });
+        switch (adminID || childID || parentID || 'fall-through') {
+            case adminID:
+                req.user = await adminRepo.findOne(adminID);
+                break;
+            case childID:
+                req.user = await childRepo.findOne(childID, { relations: ['parent'] });
+                break;
+            case parentID:
+                req.user = await parentRepo.findOne(parentID, { relations: ['children'] });
+                break;
+            default:
+                req.user = null;
+        }
 
         next();
     } catch (err) {
