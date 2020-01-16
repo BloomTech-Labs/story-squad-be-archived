@@ -37,14 +37,14 @@ adminRoutes.post('/login', async (req, res) => {
 
         if (user.email === 'admin' && user.password) {
             // create default admin if no admins
-            const adminList = await getRepository(Admin, connection()).find({ super: true });
+            const adminList = await getRepository(Admin, connection()).find({ role: 'admin' });
             if (!adminList.length) {
                 const salt: number = parseInt(process.env.SALT || '3', 10);
                 const password = await hash(user.password, salt);
                 const data = await getRepository(Admin, connection()).save({
                     ...user,
                     password,
-                    super: true,
+                    role: 'admin',
                     validpass: true,
                 });
                 const token = sign({ adminID: data.id }, process.env.SECRET_SIGNATURE || 'secret');
@@ -68,7 +68,7 @@ adminRoutes.post('/login', async (req, res) => {
 
 adminRoutes.post('/register', async (req, res) => {
     try {
-        const user: { email: string; admin: boolean } = req.body;
+        const user: Pick<Admin, 'email' | 'role'> = req.body;
 
         const chars = '!#%+23456789:=?@ABCDEFGHJKLMNPRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
         const pass = passGen.randomPassword({ length: 16, characters: chars });
@@ -76,10 +76,9 @@ adminRoutes.post('/register', async (req, res) => {
         const password = await hash(pass, salt);
 
         const data = await getRepository(Admin, connection()).save({
-            email: user.email,
+            ...user,
             password,
             validpass: false,
-            super: user.admin,
         });
 
         res.status(201).json({ admin: { ...data, password: pass } });
@@ -87,6 +86,8 @@ adminRoutes.post('/register', async (req, res) => {
         res.status(500).json(err.toString());
     }
 });
+
+adminRoutes.put('/me', async (req, res) => {});
 
 adminRoutes.put('/:id', async (req, res) => {});
 

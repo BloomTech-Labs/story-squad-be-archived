@@ -15,9 +15,9 @@ class Admin {
     @Column({ nullable: false })
     validpass: boolean;
 
-    // gives the admin ability to create/delete other admins
+    // gives the admin ability to create/delete other admin/moderator
     @Column({ nullable: false })
-    super: boolean;
+    role: 'admin' | 'moderator';
 }
 
 export { Admin };
