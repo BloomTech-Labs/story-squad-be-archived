@@ -20,7 +20,7 @@ adminRoutes.get('/', CheckJwt(), Only(Admin), async (req, res) => {
     } catch (err) {
         if (err.toString() === 'Error: 401')
             res.status(401).send({ error: 'You are not allowed to do that sorry!' });
-        res.status(500).json(err.toString());
+        else res.status(500).json(err.toString());
     }
 });
 
@@ -43,11 +43,16 @@ adminRoutes.get('/:id', CheckJwt(), Only(Admin), async (req, res) => {
         const { password, ...rest } = admin;
         res.json({ admin: rest });
     } catch (err) {
-        if (err.toString() === 'Error: 401')
-            res.status(401).send({ error: 'You are not allowed to do that sorry!' });
-        if (err.toString() === 'Error: 404')
-            res.status(404).json(`admin ${req.params.id} not found`);
-        else res.status(500).json(err.toString());
+        switch (err.toString()) {
+            case 'Error: 401':
+                res.status(401).send({ error: 'You are not allowed to do that sorry!' });
+                break;
+            case 'Error: 404':
+                res.status(404).json(`admin ${req.params.id} not found`);
+                break;
+            default:
+                res.status(500).json(err.toString());
+        }
     }
 });
 
@@ -106,7 +111,9 @@ adminRoutes.post('/register', CheckJwt(), Only(Admin), async (req, res) => {
 
         res.status(201).json({ admin: { ...data, password: pass } });
     } catch (err) {
-        res.status(500).json(err.toString());
+        if (err.toString() === 'Error: 401')
+            res.status(401).send({ error: 'You are not allowed to do that sorry!' });
+        else res.status(500).json(err.toString());
     }
 });
 
@@ -129,8 +136,8 @@ adminRoutes.put('/me', CheckJwt(), Only(Admin), async (req, res) => {
 
         res.json({ me });
     } catch (err) {
-        if (err.toString().includes('400')) res.status(401).json({ error: 'Missing password' });
-        res.status(500).json({ message: err.toString() });
+        if (err.toString().includes('400')) res.status(400).json({ error: 'Missing password' });
+        else res.status(500).json({ message: err.toString() });
     }
 });
 
