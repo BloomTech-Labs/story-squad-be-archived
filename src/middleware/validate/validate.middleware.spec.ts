@@ -16,7 +16,9 @@ describe('Validation()', () => {
 
         await Validation()(req, res, next);
         expect(res.json).toHaveBeenCalled();
-        expect(res.json).toHaveBeenCalledWith({ errors: ['email must be an email'] });
+        expect(res.json).toHaveBeenCalledWith({
+            errors: ['Your username must be an email address...'],
+        });
     });
 
     it('should return a error if termsOfService is not a boolean', async () => {
@@ -35,7 +37,7 @@ describe('Validation()', () => {
         await Validation()(req, res, next);
         expect(res.json).toHaveBeenCalled();
         expect(res.json).toHaveBeenCalledWith({
-            errors: ['termsOfService must be a boolean value'],
+            errors: ['Your must accept the terms of service before registering...'],
         });
     });
 
@@ -55,7 +57,7 @@ describe('Validation()', () => {
         await Validation()(req, res, next);
         expect(res.json).toHaveBeenCalled();
         expect(res.json).toHaveBeenCalledWith({
-            errors: ['password must be longer than or equal to 8 characters'],
+            errors: ['Your password must be between 8 and 32 characters long...'],
         });
     });
 });

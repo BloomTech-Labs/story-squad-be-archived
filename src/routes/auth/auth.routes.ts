@@ -12,8 +12,7 @@ const stripe = new Stripe('sk_test_v666XmnGJcP1Oz3GBg2iFmvd004Q3qp4jZ');
 
 authRoutes.post('/register', Hash(), async (req, res) => {
     try {
-        if (!req.register.termsOfService)
-            throw new Error('401: Accepting Terms of Service is Required');
+        if (!req.register.termsOfService) throw new Error('401');
 
         const { id: stripeID } = await stripe.customers.create({
             email: req.register.email,
@@ -29,8 +28,14 @@ authRoutes.post('/register', Hash(), async (req, res) => {
 
         res.status(201).json({ token });
     } catch (err) {
-        if (err.toString().includes('401')) res.status(401).json(err.toString());
-        else res.status(500).json(err.toString());
+        if (err.toString().includes('401'))
+            res.status(401).json({
+                message: 'Accepting Terms of Service is required...',
+            });
+        else
+            res.status(500).json({
+                message: 'Hmm... That did not work, please try again later.',
+            });
     }
 });
 
@@ -39,7 +44,9 @@ authRoutes.use('/login', ValidateHash(), async (req, res) => {
         const token = sign({ parentID: req.user.id }, process.env.SECRET_SIGNATURE || 'secret');
         res.json({ token });
     } catch (err) {
-        res.status(500).json(err.toString());
+        res.status(500).json({
+            message: 'Hmm... That did not work, please try again later.',
+        });
     }
 });
 

@@ -15,7 +15,9 @@ childRoutes.get('/me', Only(Child), async (req, res) => {
         const { parent, ...me } = req.user as Child;
         res.json({ me });
     } catch (err) {
-        res.status(500).json(err.toString());
+        res.status(500).json({
+            message: 'Hmm... That did not work, please try again later.',
+        });
     }
 });
 
@@ -24,7 +26,9 @@ childRoutes.get('/preferences', Only(Child), async (req, res) => {
         const { preferences } = req.user as Child;
         res.json({ preferences });
     } catch (err) {
-        res.status(500).json(err.toString());
+        res.status(500).json({
+            message: 'Hmm... That did not work, please try again later.',
+        });
     }
 });
 
@@ -36,7 +40,9 @@ childRoutes.get('/parent', Only(Child), async (req, res) => {
 
         res.json({ parent });
     } catch (err) {
-        res.status(500).json(err.toString());
+        res.status(500).json({
+            message: 'Hmm... That did not work, please try again later.',
+        });
     }
 });
 
@@ -58,7 +64,9 @@ childRoutes.post('/:id/login', Only(Parent), async (req, res) => {
                 res.status(404).json({ message: 'Child not found!' });
                 break;
             default:
-                res.status(500).json({ message: err.toString() });
+                res.status(500).json({
+                    message: 'Hmm... That did not work, please try again later.',
+                });
                 break;
         }
     }
@@ -69,7 +77,9 @@ childRoutes.get('/', Only(Parent), async (req, res) => {
         const children = (req.user as Parent).children;
         res.json({ children });
     } catch (err) {
-        res.status(500).json(err.toString());
+        res.status(500).json({
+            message: 'Hmm... That did not work, please try again later.',
+        });
     }
 });
 
@@ -86,7 +96,9 @@ childRoutes.post('/', Only(Parent), async (req, res) => {
 
         res.status(201).json({ child });
     } catch (err) {
-        res.status(500).json(err.toString());
+        res.status(500).json({
+            message: 'Hmm... That did not work, please try again later.',
+        });
     }
 });
 
@@ -103,7 +115,9 @@ childRoutes.get('/:id', Only(Parent), async (req, res) => {
                 res.status(404).json({ message: 'Child not found!' });
                 break;
             default:
-                res.status(500).json({ message: err.toString() });
+                res.status(500).json({
+                    message: 'Hmm... That did not work, please try again later.',
+                });
                 break;
         }
     }
@@ -126,7 +140,9 @@ childRoutes.put('/:id', Only(Parent), async (req, res) => {
                 res.status(404).json({ message: 'Could Not Update - Child not found!' });
                 break;
             default:
-                res.status(500).json({ message: err.toString() });
+                res.status(500).json({
+                    message: 'Hmm... That did not work, please try again later.',
+                });
                 break;
         }
     }
@@ -148,7 +164,9 @@ childRoutes.delete('/:id', Only(Parent), async (req, res) => {
                 res.status(404).json({ message: 'Could Not Delete - Child not found!' });
                 break;
             default:
-                res.status(500).json({ message: err.toString() });
+                res.status(500).json({
+                    message: 'Hmm... That did not work, please try again later.',
+                });
                 break;
         }
     }
