@@ -12,8 +12,7 @@ const stripe = new Stripe('sk_test_v666XmnGJcP1Oz3GBg2iFmvd004Q3qp4jZ');
 
 authRoutes.post('/register', Hash(), async (req, res) => {
     try {
-        if (!req.register.termsOfService)
-            throw new Error('401: Accepting Terms of Service is Required');
+        if (!req.register.termsOfService) throw new Error('401');
 
         const { id: stripeID } = await stripe.customers.create({
             email: req.register.email,
@@ -31,7 +30,7 @@ authRoutes.post('/register', Hash(), async (req, res) => {
     } catch (err) {
         if (err.toString().includes('401'))
             res.status(401).json({
-                message: 'Sorry, we could not authenticate you... Please try again.',
+                message: 'Accepting Terms of Service is required...',
             });
         else
             res.status(500).json({

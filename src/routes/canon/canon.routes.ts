@@ -13,7 +13,7 @@ canonRoutes.get('/:id', async (req, res) => {
         res.json({ canon });
     } catch (err) {
         if (err.toString() === 'Error: 404')
-            res.status(404).json(`chapter ${req.params.id} not found`);
+            res.status(404).json({ message: `Chapter ${req.params.id} not found` });
         else
             res.status(500).json({
                 message: 'Hmm... That did not work, please try again later.',
