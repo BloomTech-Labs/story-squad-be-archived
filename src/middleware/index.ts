@@ -1,8 +1,15 @@
 import { Express, json } from 'express';
 import * as cors from 'cors';
 
-import { Parent, Child } from '../database/entity';
-import { RegisterDTO, LoginDTO, UpdateChildDTO, AddCardDTO, AddCanonDTO } from '../models';
+import { Parent, Child, Admin } from '../database/entity';
+import {
+    RegisterDTO,
+    LoginDTO,
+    UpdateChildDTO,
+    AddCardDTO,
+    AddCanonDTO,
+    SubscribeDTO,
+} from '../models';
 import { Validation } from './validate/validate.middleware';
 
 declare global {
@@ -11,10 +18,10 @@ declare global {
             /**
              * @description The current JWT verified user.
              * BE SURE TO REMOVE THE PASSWORD WHEN RETURNING!!
-             * @type {(Parent | Child)}
+             * @type {(Parent | Child | Admin)}
              * @memberof Request
              */
-            user?: Parent | Child;
+            user?: Parent | Child | Admin;
 
             register?: RegisterDTO;
             login?: LoginDTO;
@@ -23,6 +30,8 @@ declare global {
             addCard?: AddCardDTO;
 
             addCanon?: AddCanonDTO;
+
+            subscribe?: SubscribeDTO;
         }
     }
 }

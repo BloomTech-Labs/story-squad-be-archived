@@ -42,6 +42,17 @@ To get the server running locally:
 | POST   | `/auth/register` | all users      | Creates parent account and Stripe customer. |
 | USE    | `/auth/login`    | adult users    | Returns parent token.                       |
 
+#### Admin Routes
+
+| Method | Endpoint          | Access Control | Description                                           |
+| ------ | ----------------- | -------------- | ----------------------------------------------------- |
+| GET    | `/admin/`         | admin users    | Returns list of admins/moderators                     |
+| GET    | `/admin/me`       | admin users    | Returns self information                              |
+| GET    | `/admin/:id`      | admin users    | Returns matching admins/moderator                     |
+| POST   | `/admin/login`    | admin users    | Returns admin token                                   |
+| POST   | `/admin/register` | admin users    | Returns added admin/moderator with temporary password |
+| PUT    | `/admin/me`       | admin users    | Returns the updated admins/moderator                  |
+
 #### Parent Routes
 
 | Method | Endpoint      | Access Control | Description               |
@@ -64,10 +75,11 @@ To get the server running locally:
 
 #### Canon Routes
 
-| Method | Endpoint       | Access Control | Description                    |
-| ------ | -------------- | -------------- | ------------------------------ |
-| GET    | `/canon/:week` | none           | Returns a json of a base64 pdf |
-| POST   | `/canon`       | none           | Creates a new pdf              |
+| Method | Endpoint       | Access Control | Description            |
+| ------ | -------------- | -------------- | ---------------------- |
+| GET    | `/canon/`      | admin users    | Returns a list of pdf  |
+| GET    | `/canon/:week` | all users      | Returns a matching pdf |
+| POST   | `/canon`       | admin users    | Creates a new pdf      |
 
 #### Payment Routes
 
@@ -117,6 +129,20 @@ To get the server running locally:
   week: NUM
   grade: NUM
   preferencesDyslexia: BOOL
+}
+```
+
+#### Admin
+
+---
+
+```
+{
+  id: NUM
+  email: STRING
+  password: STRING
+  validpass: BOOL
+  role: STRING
 }
 ```
 

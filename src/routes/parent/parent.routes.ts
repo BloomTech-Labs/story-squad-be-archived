@@ -10,7 +10,9 @@ parentRoutes.get('/me', Only(Parent), async (req, res) => {
         const { password, ...me } = req.user as Parent;
         res.json({ me });
     } catch (error) {
-        res.status(500).json(error.toString());
+        res.status(500).json({
+            message: 'Sorry, we could not identify you... Try to sign in again.',
+        });
     }
 });
 

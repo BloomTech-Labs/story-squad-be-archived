@@ -8,6 +8,8 @@ import {
     UpdateChildDTO,
     AddCardDTO,
     AddCanonDTO,
+    AdminRegisterDTO,
+    SubscribeDTO,
 } from '../../models';
 
 const Validation: Middleware = () => async (req, res, next) => {
@@ -20,9 +22,19 @@ const Validation: Middleware = () => async (req, res, next) => {
         if (req.path === '/auth/login')
             req.login = (await transformAndValidate(LoginDTO, req.body)) as LoginDTO;
 
+        //Validates and transforms admin register request objects prior to routing
+        if (req.path === '/admin/register')
+            res.locals.body = (await transformAndValidate(
+                AdminRegisterDTO,
+                req.body
+            )) as AdminRegisterDTO;
+
         //Validates and transforms card request objects prior to routing
         if (req.path.includes('/payment') && req.body.card)
             req.addCard = (await transformAndValidate(AddCardDTO, req.body.card)) as AddCardDTO;
+
+        if (req.path === '/payment/subscribe' && req.body)
+            req.subscribe = (await transformAndValidate(SubscribeDTO, req.body)) as SubscribeDTO;
 
         //Validates and transforms canon request objects prior to routing
         if (req.path === '/canon' && req.method === 'POST')

@@ -2,7 +2,7 @@ import * as request from 'supertest';
 import * as express from 'express';
 import { plainToClass } from 'class-transformer';
 
-import { Middleware, CardDTO, AddCardDTO } from '../../models';
+import { Middleware, CardDTO, AddCardDTO, SubscribeDTO } from '../../models';
 import { Parent } from '../../database/entity';
 import { stripeRoutes } from './stripe.routes';
 
@@ -23,8 +23,16 @@ Stripe.prototype.customers = {
     } as { data: CardDTO[] }),
     createSource: jest.fn().mockImplementation(() => {}),
     deleteSource: jest.fn(() => ({})),
-    createSubscription: jest.fn(() => ({})),
 };
+
+Stripe.prototype.subscriptions = {
+    create: jest.fn(),
+};
+
+import typeorm = require('typeorm');
+typeorm.getRepository = jest.fn().mockReturnValue({
+    update: jest.fn().mockImplementation(async () => ({ affected: 1 })),
+});
 
 const app = express();
 
@@ -43,6 +51,7 @@ const ParentInjection: Middleware = () => (req, res, next) => {
 
 const DTOInjection: Middleware = () => (req, res, next) => {
     req.addCard = req.body as AddCardDTO;
+    req.subscribe = req.body as SubscribeDTO;
     next();
 };
 
@@ -76,6 +85,7 @@ describe('POST /payment/subscribe', () => {
     it('should setup subscriptions', async () => {
         await request(app)
             .post('/payment/subscribe')
+            .send({ childID: 1, plan: '' })
             .expect(201);
     });
 });
