@@ -28,3 +28,15 @@ submissionRoutes.get('/:id', Only(Child), async (req, res) => {
         else res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
     }
 });
+
+submissionRoutes.post('/', Only(Child), async (req, res) => {
+    try {
+        // To Do: add DTO to validation and set res.locals.submission
+        const submissionDTO = req.body as Submissions;
+
+        const submission = await getRepository(Submissions, connection()).save(submissionDTO);
+        res.status(201).json({ submission });
+    } catch (err) {
+        res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
+    }
+});
