@@ -1,14 +1,17 @@
 import { Router } from 'express';
 import { getRepository } from 'typeorm';
 import { sign } from 'jsonwebtoken';
-import * as Stripe from 'stripe';
+import Stripe from 'stripe';
 
 import { Parent } from '../../database/entity/Parent';
 import { Hash, ValidateHash } from '../../middleware';
 import { connection } from '../../util/typeorm-connection';
 
 const authRoutes = Router();
-const stripe = new Stripe('sk_test_v666XmnGJcP1Oz3GBg2iFmvd004Q3qp4jZ');
+const stripe = new Stripe('sk_test_v666XmnGJcP1Oz3GBg2iFmvd004Q3qp4jZ', {
+    apiVersion: '2019-12-03',
+    typescript: true,
+});
 
 authRoutes.post('/register', Hash(), async (req, res) => {
     try {

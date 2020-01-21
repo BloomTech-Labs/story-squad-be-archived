@@ -1,19 +1,37 @@
 import { Router } from 'express';
-import * as Stripe from 'stripe';
+import Stripe from 'stripe';
 
 import { CardDTO } from '../../models';
-import { Parent } from '../../database/entity';
+import { Parent, Child } from '../../database/entity';
 import { Only } from '../../middleware';
+import { getRepository } from 'typeorm';
+import { connection } from '../../util/typeorm-connection';
 
-const stripe = new Stripe(process.env.STRIPE_API || 'sk_test_v666XmnGJcP1Oz3GBg2iFmvd004Q3qp4jZ');
+interface CustomerSourceExtended {
+    id: string;
+    name: string;
+    brand: string;
+    last4: string;
+    exp_month: number;
+    exp_year: number;
+    [key: string]: any;
+}
+
+const stripe = new Stripe(process.env.STRIPE_API || 'sk_test_v666XmnGJcP1Oz3GBg2iFmvd004Q3qp4jZ', {
+    apiVersion: '2019-12-03',
+    typescript: true,
+});
 const stripeRoutes = Router();
 
 stripeRoutes.get('/cards', Only(Parent), async (req, res) => {
     try {
         const user = req.user as Parent;
 
-        const { data } = await stripe.customers.listSources(user.stripeID, { object: 'card' });
+        const response = await stripe.customers.listSources(user.stripeID, {
+            object: 'card',
+        });
 
+        const data = response.data as CustomerSourceExtended[];
         const cards: CardDTO[] = data.map(({ id, name, brand, last4, exp_month, exp_year }) => ({
             id,
             name,
@@ -52,12 +70,21 @@ stripeRoutes.delete('/cards/:id', Only(Parent), async (req, res) => {
 stripeRoutes.post('/subscribe', Only(Parent), async (req, res) => {
     try {
         const user = req.user as Parent;
-        await stripe.customers.createSubscription(user.stripeID, {
-            items: [{ plan: 'plan_GVQ796LiwZugJ9' }],
+        const { childID, plan } = req.subscribe;
+
+        const childToUpdate = user.children.find((child) => child.id === childID);
+        const child = { ...childToUpdate, subscription: true };
+
+        await stripe.subscriptions.create({
+            customer: user.stripeID,
+            items: [{ plan }],
             expand: ['latest_invoice.payment_intent'],
         });
+
+        await getRepository(Child, connection()).update(childID, child);
         res.status(201).json({ message: 'Successfully subscribed' });
     } catch (err) {
+        console.log(err);
         res.status(500).json({ message: 'Could not process subscription' });
     }
 });

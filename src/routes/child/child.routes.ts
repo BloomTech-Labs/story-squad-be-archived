@@ -53,7 +53,7 @@ childRoutes.post('/:id/login', Only(Parent), async (req, res) => {
         if (!child) throw new Error('404');
 
         const token = sign(
-            { parentID: req.user.id, childID: child.id },
+            { parentID: req.user.id, childID: child.id, subscription: child.subscription },
             process.env.SECRET_SIGNATURE || 'secret'
         );
 
