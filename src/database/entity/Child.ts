@@ -1,6 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'typeorm';
 
-import { Parent } from './Parent';
+import { Parent, CreativeContent } from '../entity';
 import { Preferences } from './Preferences';
 
 @Entity()
@@ -28,6 +28,12 @@ class Child {
 
     @Column({ default: false })
     subscription: boolean;
+
+    @OneToMany(
+        (type) => CreativeContent,
+        (creativeContent) => creativeContent.child
+    )
+    public creativeContent?: CreativeContent[];
 }
 
 export { Child };
