@@ -26,7 +26,7 @@ class Child {
     @Column((type) => Preferences)
     preferences: Preferences;
 
-    @Column()
+    @Column({ default: false })
     subscription: boolean;
 }
 
