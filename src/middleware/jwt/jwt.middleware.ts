@@ -25,7 +25,7 @@ const CheckJwt: Middleware = () => async (req, res, next) => {
 
         next();
     } catch (err) {
-        res.status(401).send({ error: 'Authentication failed... Please sign in again!' });
+        res.status(401).send({ message: 'Authentication failed... Please sign in again!' });
     }
 };
 export { CheckJwt };
