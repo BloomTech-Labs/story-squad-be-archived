@@ -17,6 +17,11 @@ typeorm.getRepository = jest.fn().mockReturnValue({
 const app = express();
 app.use('/cohort', express.json(), cohortRoutes);
 describe('GET /cohort', () => {
+    // it('should return 200 OK if there is a cohort', async () => {
+    //     await request(app)
+    //         .get('/cohort')
+    //         .expect(200);
+    // });
     it('should return 404 if there is no cohort', async () => {
         await request(app)
             .get('/cohort')

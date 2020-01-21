@@ -3,6 +3,7 @@ import * as cors from 'cors';
 
 import { Parent, Child } from '../database/entity';
 import { RegisterDTO, LoginDTO, UpdateChildDTO, AddCardDTO, AddCanonDTO } from '../models';
+import { AddCohortDTO } from '../models/dto/cohort/add-cohort.dto';
 import { Validation } from './validate/validate.middleware';
 
 declare global {
@@ -23,6 +24,8 @@ declare global {
             addCard?: AddCardDTO;
 
             addCanon?: AddCanonDTO;
+
+            addCohort?: AddCohortDTO;
         }
     }
 }

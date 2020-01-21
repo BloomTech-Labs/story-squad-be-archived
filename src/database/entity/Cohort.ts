@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Child } from './Child';
 
 @Entity()
 class Cohort {
@@ -10,6 +11,12 @@ class Cohort {
 
     @Column({ nullable: false })
     public activity: string;
+
+    @OneToMany(
+        (type) => Child,
+        (child) => child.cohort
+    )
+    children: Child[];
 }
 
 export { Cohort };

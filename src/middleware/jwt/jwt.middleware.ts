@@ -17,7 +17,7 @@ const CheckJwt: Middleware = () => async (req, res, next) => {
 
         req.user = childID
             ? await childRepo.findOne(childID, {
-                  relations: ['parent'],
+                  relations: ['parent', 'cohort'],
               })
             : await parentRepo.findOne(parentID, {
                   relations: ['children'],
