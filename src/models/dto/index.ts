@@ -8,3 +8,6 @@ export * from './stripe/subscribe.dto';
 export * from './child/update-child.dto';
 
 export * from './canon/add-canon.dto';
+
+export * from './admin/login.dto';
+export * from './admin/register.dto';
