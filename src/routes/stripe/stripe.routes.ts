@@ -24,6 +24,7 @@ const stripe = new Stripe(process.env.STRIPE_API || 'sk_test_v666XmnGJcP1Oz3GBg2
 const stripeRoutes = Router();
 
 stripeRoutes.get('/cards', Only(Parent), async (req, res) => {
+    //get which is default here?
     try {
         const user = req.user as Parent;
 
