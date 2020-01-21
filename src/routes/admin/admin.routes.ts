@@ -109,6 +109,7 @@ adminRoutes.post('/register', CheckJwt(), Only(Admin), async (req, res) => {
             validpass: false,
         });
 
+        // To Do: replace with email client (Twilio?) and query string identifier instead of temporary password
         res.status(201).json({ admin: { ...data, password: pass } });
     } catch (err) {
         if (err.toString() === 'Error: 401')
