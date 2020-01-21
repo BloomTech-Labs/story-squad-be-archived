@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { getRepository } from 'typeorm';
 
 import { connection } from '../../util/typeorm-connection';
-import { Cohort, } from '../../database/entity/Cohort';
+import { Cohort } from '../../database/entity/Cohort';
 import { Only } from '../../middleware';
 import { Child, Parent } from '../../database/entity';
 
@@ -23,7 +23,6 @@ cohortRoutes.get('/', Only(Child), async (req, res) => {
 
 //ADD COHORT
 
-
 cohortRoutes.post('/', async (req, res) => {
     try {
         const cohort = await getRepository(Cohort, connection()).save(req.addCohort);
@@ -31,10 +30,9 @@ cohortRoutes.post('/', async (req, res) => {
     } catch (err) {
         res.status(500).json(err.toString());
     }
-
+});
 
 //DELETE COHORT
-
 
 cohortRoutes.delete('/:id', Only(Parent), async (req, res) => {
     try {
@@ -58,9 +56,9 @@ cohortRoutes.delete('/:id', Only(Parent), async (req, res) => {
                 break;
         }
     }
+});
 
 //UPDATE COHORT ACTIVITY
-
 
 cohortRoutes.put('/:id', Only(Parent), async (req, res) => {
     try {
@@ -68,8 +66,11 @@ cohortRoutes.put('/:id', Only(Parent), async (req, res) => {
         const cohortToUpdate = children.find((cohort) => cohort.id === Number(req.params.id));
         if (!cohortToUpdate) throw new Error('404');
 
-        const cohort = { ...cohortToUpdate, ...req.cohortToUpdate };
-        const { affected } = await getRepository(Cohort, connection()).update(req.params.id, cohort);
+        const cohort = { ...cohortToUpdate };
+        const { affected } = await getRepository(Cohort, connection()).update(
+            req.params.id,
+            cohort
+        );
         if (!affected) throw new Error();
 
         res.json({ cohort });
@@ -86,9 +87,5 @@ cohortRoutes.put('/:id', Only(Parent), async (req, res) => {
         }
     }
 });
-
-
-});
-
 
 export { cohortRoutes };
