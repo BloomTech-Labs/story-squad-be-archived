@@ -78,3 +78,5 @@ submissionRoutes.delete('/:id', Only(Child), async (req, res) => {
         else res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
     }
 });
+
+export { submissionRoutes };
