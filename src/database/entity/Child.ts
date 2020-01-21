@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'typeorm';
 
-import { Parent, CreativeContent } from '../entity';
+import { Parent, Submissions } from '../entity';
 import { Preferences } from './Preferences';
 
 @Entity()
@@ -30,10 +30,10 @@ class Child {
     subscription: boolean;
 
     @OneToMany(
-        (type) => CreativeContent,
-        (creativeContent) => creativeContent.child
+        (type) => Submissions,
+        (submissions) => submissions.child
     )
-    public creativeContent?: CreativeContent[];
+    public submissions?: Submissions[];
 }
 
 export { Child };

@@ -3,13 +3,13 @@ import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { Child } from './Child';
 
 @Entity()
-class CreativeContent {
+class Submissions {
     @PrimaryGeneratedColumn()
     id: number;
 
     @ManyToOne(
         (type) => Child,
-        (child) => child.creativeContent
+        (child) => child.submissions
     )
     child: Child;
 
@@ -26,4 +26,4 @@ class CreativeContent {
     illustration: string;
 }
 
-export { CreativeContent };
+export { Submissions };
