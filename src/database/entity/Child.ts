@@ -25,9 +25,6 @@ class Child {
     username: string;
 
     @Column()
-    week: number;
-
-    @Column()
     grade: number;
 
     @Column((type) => Preferences)

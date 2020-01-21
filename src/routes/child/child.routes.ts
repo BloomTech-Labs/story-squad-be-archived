@@ -7,6 +7,7 @@ import { Only } from '../../middleware';
 import { connection } from '../../util/typeorm-connection';
 
 import * as moment from 'moment';
+import { Cohort } from '../../database/entity/Cohort';
 
 const childRoutes = Router();
 
@@ -85,12 +86,10 @@ childRoutes.get('/', Only(Parent), async (req, res) => {
 
 childRoutes.post('/', Only(Parent), async (req, res) => {
     try {
-        //Set week to next week upon creation
-        const week = Number(moment().format('W')) + 1;
-
+        const cohort = await getRepository(Cohort).findOne({ order: { id: 'DESC' } });
         const { parent, ...child } = await getRepository(Child, connection()).save({
             ...req.childUpdate,
-            week,
+            cohort,
             parent: req.user,
         });
 
