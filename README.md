@@ -75,11 +75,11 @@ To get the server running locally:
 
 #### Canon Routes
 
-| Method | Endpoint       | Access Control    | Description            |
-| ------ | -------------- | ----------------- | ---------------------- |
-| GET    | `/canon/`      | admin users       | Returns a list of pdf  |
-| GET    | `/canon/:week` | child/admin users | Returns a matching pdf |
-| POST   | `/canon`       | admin users       | Creates a new pdf      |
+| Method | Endpoint       | Access Control | Description            |
+| ------ | -------------- | -------------- | ---------------------- |
+| GET    | `/canon/`      | admin users    | Returns a list of pdf  |
+| GET    | `/canon/:week` | all users      | Returns a matching pdf |
+| POST   | `/canon`       | admin users    | Creates a new pdf      |
 
 #### Payment Routes
 
@@ -129,6 +129,20 @@ To get the server running locally:
   week: NUM
   grade: NUM
   preferencesDyslexia: BOOL
+}
+```
+
+#### Admin
+
+---
+
+```
+{
+  id: NUM
+  email: STRING
+  password: STRING
+  validpass: BOOL
+  role: STRING
 }
 ```
 
