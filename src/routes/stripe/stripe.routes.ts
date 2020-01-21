@@ -28,12 +28,12 @@ stripeRoutes.get('/cards', Only(Parent), async (req, res) => {
     try {
         const user = req.user as Parent;
 
-        const response = await stripe.customers.listSources(user.stripeID, {
+        const cardList = await stripe.customers.listSources(user.stripeID, {
             object: 'card',
         });
 
-        const data = response.data as CustomerSourceExtended[];
-        const cards: CardDTO[] = data.map(({ id, name, brand, last4, exp_month, exp_year }) => ({
+        const listData = cardList.data as CustomerSourceExtended[];
+        const cards: CardDTO[] = listData.map(({ id, name, brand, last4, exp_month, exp_year }) => ({
             id,
             name,
             brand,
@@ -41,7 +41,10 @@ stripeRoutes.get('/cards', Only(Parent), async (req, res) => {
             exp_month,
             exp_year,
         }));
-        res.json({ cards });
+
+        const customer = await stripe.customers.retrieve(user.stripeID);
+
+        res.json({ cards, customer });
     } catch (err) {
         res.status(500).json({ message: 'Could not fetch cards' });
     }
