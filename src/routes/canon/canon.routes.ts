@@ -2,20 +2,28 @@ import { Router } from 'express';
 import { getRepository } from 'typeorm';
 
 import { connection } from '../../util/typeorm-connection';
-import { Canon } from '../../database/entity/Canon';
+import { Only } from '../../middleware';
+import { Admin, Canon } from '../../database/entity';
 
 const canonRoutes = Router();
 
-canonRoutes.get('/', async (req, res) => {
+canonRoutes.get('/', Only(Admin), async (req, res) => {
     try {
+        const { role } = req.user as Admin;
+        if (role !== 'admin') throw Error('401');
+
         const canon = await getRepository(Canon, connection()).find();
         res.json({ canon });
     } catch (err) {
-        res.status(500).json(err.toString());
+        if (err.toString() === 'Error: 401')
+            res.status(401).send({ error: 'You are not allowed to do that sorry!' });
+        else res.status(500).json(err.toString());
     }
 });
 
 canonRoutes.get('/:id', async (req, res) => {
+    // To Do: add restriction on child accessing future week's prompts
+    // To Do: disallow parent access
     try {
         const canon = await getRepository(Canon, connection()).findOne(req.params.id);
         if (!canon) throw new Error('404');
@@ -27,13 +35,17 @@ canonRoutes.get('/:id', async (req, res) => {
     }
 });
 
-canonRoutes.post('/', async (req, res) => {
-    // TODO: Add admin restriction
+canonRoutes.post('/', Only(Admin), async (req, res) => {
     try {
+        const { role } = req.user as Admin;
+        if (role !== 'admin') throw Error('401');
+
         const canon = await getRepository(Canon, connection()).save(req.addCanon);
         res.status(201).json({ canon });
     } catch (err) {
-        res.status(500).json(err.toString());
+        if (err.toString() === 'Error: 401')
+            res.status(401).send({ error: 'You are not allowed to do that sorry!' });
+        else res.status(500).json(err.toString());
     }
 });
 
