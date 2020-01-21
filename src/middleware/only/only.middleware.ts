@@ -10,7 +10,7 @@ const Only: Middleware = (limitTo: typeof Parent | typeof Child | typeof Admin) 
         if (!(req.user instanceof limitTo)) throw new Error();
         next();
     } catch (err) {
-        res.status(401).send({ error: 'You are not allowed to do that sorry!' });
+        res.status(401).send({ message: 'You are not allowed to do that sorry!' });
     }
 };
 

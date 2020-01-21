@@ -16,6 +16,9 @@ class UpdateChildDTO implements Partial<Child> {
     @IsEmpty({ message: 'You cannot change your parent at this time' })
     parent?: null;
 
+    @IsEmpty({ message: 'Subscriptions must be updated through the dashboard' })
+    subscription?: null;
+
     @IsOptional()
     @IsInt()
     @Min(1)

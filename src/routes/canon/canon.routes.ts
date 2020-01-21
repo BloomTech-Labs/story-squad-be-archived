@@ -16,8 +16,8 @@ canonRoutes.get('/', Only(Admin), async (req, res) => {
         res.json({ canon });
     } catch (err) {
         if (err.toString() === 'Error: 401')
-            res.status(401).send({ error: 'You are not allowed to do that sorry!' });
-        else res.status(500).json(err.toString());
+            res.status(401).send({ message: 'You are not allowed to do that sorry!' });
+        else res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
     }
 });
 
@@ -30,8 +30,11 @@ canonRoutes.get('/:id', async (req, res) => {
         res.json({ canon });
     } catch (err) {
         if (err.toString() === 'Error: 404')
-            res.status(404).json(`chapter ${req.params.id} not found`);
-        else res.status(500).json(err.toString());
+            res.status(404).json({ message: `Chapter ${req.params.id} not found` });
+        else
+            res.status(500).json({
+                message: 'Hmm... That did not work, please try again later.',
+            });
     }
 });
 
@@ -44,8 +47,8 @@ canonRoutes.post('/', Only(Admin), async (req, res) => {
         res.status(201).json({ canon });
     } catch (err) {
         if (err.toString() === 'Error: 401')
-            res.status(401).send({ error: 'You are not allowed to do that sorry!' });
-        else res.status(500).json(err.toString());
+            res.status(401).send({ message: 'You are not allowed to do that sorry!' });
+        else res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
     }
 });
 

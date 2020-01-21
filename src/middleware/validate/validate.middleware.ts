@@ -9,6 +9,7 @@ import {
     AddCardDTO,
     AddCanonDTO,
     AdminRegisterDTO,
+    SubscribeDTO,
 } from '../../models';
 
 const Validation: Middleware = () => async (req, res, next) => {
@@ -31,6 +32,9 @@ const Validation: Middleware = () => async (req, res, next) => {
         //Validates and transforms card request objects prior to routing
         if (req.path.includes('/payment') && req.body.card)
             req.addCard = (await transformAndValidate(AddCardDTO, req.body.card)) as AddCardDTO;
+
+        if (req.path === '/payment/subscribe' && req.body)
+            req.subscribe = (await transformAndValidate(SubscribeDTO, req.body)) as SubscribeDTO;
 
         //Validates and transforms canon request objects prior to routing
         if (req.path === '/canon' && req.method === 'POST')

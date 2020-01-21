@@ -19,8 +19,8 @@ adminRoutes.get('/', CheckJwt(), Only(Admin), async (req, res) => {
         res.json({ admin: admin.map(({ password, ...rest }) => rest) });
     } catch (err) {
         if (err.toString() === 'Error: 401')
-            res.status(401).send({ error: 'You are not allowed to do that sorry!' });
-        else res.status(500).json(err.toString());
+            res.status(401).send({ message: 'You are not allowed to do that sorry!' });
+        else res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
     }
 });
 
@@ -29,7 +29,7 @@ adminRoutes.get('/me', CheckJwt(), Only(Admin), async (req, res) => {
         const { password, ...me } = req.user as Admin;
         res.json({ me });
     } catch (err) {
-        res.status(500).json(err.toString());
+        res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
     }
 });
 
@@ -45,13 +45,15 @@ adminRoutes.get('/:id', CheckJwt(), Only(Admin), async (req, res) => {
     } catch (err) {
         switch (err.toString()) {
             case 'Error: 401':
-                res.status(401).send({ error: 'You are not allowed to do that sorry!' });
+                res.status(401).send({ message: 'You are not allowed to do that sorry!' });
                 break;
             case 'Error: 404':
-                res.status(404).json(`admin ${req.params.id} not found`);
+                res.status(404).json({ message: `admin ${req.params.id} not found` });
                 break;
             default:
-                res.status(500).json(err.toString());
+                res.status(500).json({
+                    message: 'Hmm... That did not work, please try again later.',
+                });
         }
     }
 });
@@ -86,8 +88,10 @@ adminRoutes.post('/login', async (req, res) => {
         res.status(200).json({ token });
     } catch (err) {
         if (err.toString().includes('401'))
-            res.status(401).json({ error: 'Failed to login, check your username and password...' });
-        else res.status(500).json(err.toString());
+            res.status(401).json({
+                message: 'Failed to login, check your username and password...',
+            });
+        else res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
     }
 });
 
@@ -114,7 +118,7 @@ adminRoutes.post('/register', CheckJwt(), Only(Admin), async (req, res) => {
     } catch (err) {
         if (err.toString() === 'Error: 401')
             res.status(401).send({ error: 'You are not allowed to do that sorry!' });
-        else res.status(500).json(err.toString());
+        else res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
     }
 });
 
@@ -137,8 +141,8 @@ adminRoutes.put('/me', CheckJwt(), Only(Admin), async (req, res) => {
 
         res.json({ me });
     } catch (err) {
-        if (err.toString().includes('400')) res.status(400).json({ error: 'Missing password' });
-        else res.status(500).json({ message: err.toString() });
+        if (err.toString().includes('400')) res.status(400).json({ message: 'Missing password' });
+        else res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
     }
 });
 
