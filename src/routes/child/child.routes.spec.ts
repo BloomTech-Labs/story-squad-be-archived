@@ -2,9 +2,10 @@ import * as request from 'supertest';
 import * as express from 'express';
 import { plainToClass } from 'class-transformer';
 
-import { Middleware, UpdateChildDTO } from '../../models';
+import { Middleware, UpdateChildDTO, AddCohortDTO } from '../../models';
 import { Child, Parent } from '../../database/entity';
 import { childRoutes } from './child.routes';
+import { cohortRoutes } from '../cohort/cohort.routes';
 
 const parent: Parent = plainToClass(Parent, {
     id: 1,
@@ -131,96 +132,98 @@ describe('POST /children', () => {
 
         expect(body.child.username).toBe('Joe');
         expect(body.child.grade).toBe(5);
+        expect(body.child.cohort.id).toBe(1);
     });
 
     it('should return 401 for children', async () => {
-        await request(app)
+        const { body } = await request(app)
             .post('/children')
             .set({ Authorization: 'child' })
             .expect(401);
-    });
-});
-
-describe('PUT /children/:id', () => {
-    it('should return the updated child', async () => {
-        const DTO: { child: UpdateChildDTO } = { child: { username: 'Sam', grade: 5 } };
-        const { body } = await request(app)
-            .put('/children/1')
-            .send(DTO)
-            .set({ Authorization: 'parent' });
-
-        expect(body.child.username).toBe('Sam');
-        expect(body.child.grade).toBe(5);
+        expect(body.child.cohort.id).toBe(1);
     });
 
-    it('should return 401 for children', async () => {
-        await request(app)
-            .put('/children/1')
-            .set({ Authorization: 'child' })
-            .expect(401);
-    });
-});
+    describe('PUT /children/:id', () => {
+        it('should return the updated child', async () => {
+            const DTO: { child: UpdateChildDTO } = { child: { username: 'Sam', grade: 5 } };
+            const { body } = await request(app)
+                .put('/children/1')
+                .send(DTO)
+                .set({ Authorization: 'parent' });
 
-describe('DELETE /children/:id', () => {
-    it('should return 200 when deleted', async () => {
-        await request(app)
-            .delete('/children/1')
-            .set({ Authorization: 'parent' })
-            .expect(200);
-    });
+            expect(body.child.username).toBe('Sam');
+            expect(body.child.grade).toBe(5);
+        });
 
-    it('should return 401 for children', async () => {
-        await request(app)
-            .put('/children/1')
-            .set({ Authorization: 'child' })
-            .expect(401);
-    });
-});
-
-describe('GET /children/me', () => {
-    it('should return the user the signed in child', async () => {
-        const { body } = await request(app)
-            .get('/children/me')
-            .set({ Authorization: 'child' });
-        expect(body.me.username).toBe('Sarah Lang');
+        it('should return 401 for children', async () => {
+            await request(app)
+                .put('/children/1')
+                .set({ Authorization: 'child' })
+                .expect(401);
+        });
     });
 
-    it('should return 401 for parents', async () => {
-        await request(app)
-            .get('/children/me')
-            .set({ Authorization: 'parent' })
-            .expect(401);
-    });
-});
+    describe('DELETE /children/:id', () => {
+        it('should return 200 when deleted', async () => {
+            await request(app)
+                .delete('/children/1')
+                .set({ Authorization: 'parent' })
+                .expect(200);
+        });
 
-describe('GET /children/preferences', () => {
-    it('should return the preferences of the signed in child', async () => {
-        const { body } = await request(app)
-            .get('/children/preferences')
-            .set({ Authorization: 'child' });
-        expect(body.preferences.dyslexia).toBe(false);
-    });
-
-    it('should return 401 for parents', async () => {
-        await request(app)
-            .get('/children/preferences')
-            .set({ Authorization: 'parent' })
-            .expect(401);
-    });
-});
-
-describe('GET /children/me', () => {
-    it('should return the parent of the signed in child', async () => {
-        const { body } = await request(app)
-            .get('/children/parent')
-            .set({ Authorization: 'child' });
-        expect(body.parent.email).toBe('test@mail.com');
+        it('should return 401 for children', async () => {
+            await request(app)
+                .put('/children/1')
+                .set({ Authorization: 'child' })
+                .expect(401);
+        });
     });
 
-    it('should return 401 for parents', async () => {
-        await request(app)
-            .get('/children/parent')
-            .set({ Authorization: 'parent' })
-            .expect(401);
+    describe('GET /children/me', () => {
+        it('should return the user the signed in child', async () => {
+            const { body } = await request(app)
+                .get('/children/me')
+                .set({ Authorization: 'child' });
+            expect(body.me.username).toBe('Sarah Lang');
+        });
+
+        it('should return 401 for parents', async () => {
+            await request(app)
+                .get('/children/me')
+                .set({ Authorization: 'parent' })
+                .expect(401);
+        });
+    });
+
+    describe('GET /children/preferences', () => {
+        it('should return the preferences of the signed in child', async () => {
+            const { body } = await request(app)
+                .get('/children/preferences')
+                .set({ Authorization: 'child' });
+            expect(body.preferences.dyslexia).toBe(false);
+        });
+
+        it('should return 401 for parents', async () => {
+            await request(app)
+                .get('/children/preferences')
+                .set({ Authorization: 'parent' })
+                .expect(401);
+        });
+    });
+
+    describe('GET /children/me', () => {
+        it('should return the parent of the signed in child', async () => {
+            const { body } = await request(app)
+                .get('/children/parent')
+                .set({ Authorization: 'child' });
+            expect(body.parent.email).toBe('test@mail.com');
+        });
+
+        it('should return 401 for parents', async () => {
+            await request(app)
+                .get('/children/parent')
+                .set({ Authorization: 'parent' })
+                .expect(401);
+        });
     });
 });
