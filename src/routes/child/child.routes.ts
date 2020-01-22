@@ -12,7 +12,7 @@ const childRoutes = Router();
 
 childRoutes.get('/me', Only(Child), async (req, res) => {
     try {
-        const { parent, ...me } = req.user as Child;
+        const { parent, submissions, ...me } = req.user as Child;
         res.json({ me });
     } catch (err) {
         res.status(500).json({
@@ -88,7 +88,7 @@ childRoutes.post('/', Only(Parent), async (req, res) => {
         //Set week to next week upon creation
         const week = Number(moment().format('W')) + 1;
 
-        const { parent, ...child } = await getRepository(Child, connection()).save({
+        const { parent, submissions, ...child } = await getRepository(Child, connection()).save({
             ...req.childUpdate,
             week,
             parent: req.user,

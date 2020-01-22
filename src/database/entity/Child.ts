@@ -1,6 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'typeorm';
 
-import { Parent, Submissions } from '../entity';
+import { Parent } from './Parent';
+import { Submissions } from './Submissions';
 import { Preferences } from './Preferences';
 
 @Entity()
@@ -33,7 +34,7 @@ class Child {
         (type) => Submissions,
         (submissions) => submissions.child
     )
-    public submissions?: Submissions[];
+    submissions: Submissions[];
 }
 
 export { Child };

@@ -51,8 +51,13 @@ submissionRoutes.put('/:id', Only(Child), async (req, res) => {
         const oldSubmission = submissions.find(({ id }) => id === parseInt(req.params.id));
         if (!oldSubmission) throw Error('404');
 
-        const submission = await getRepository(Submissions, connection()).update(id, submissionDTO);
-        res.json({ submission });
+        const { affected } = await getRepository(Submissions, connection()).update(
+            id,
+            submissionDTO
+        );
+        if (!affected) throw Error();
+
+        res.json({ submission: { ...oldSubmission, submissionDTO } });
     } catch (err) {
         if (err.toString() === 'Error: 404')
             res.status(404).json({ message: `Submission not found` });
