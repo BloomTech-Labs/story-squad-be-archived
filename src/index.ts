@@ -25,7 +25,7 @@ createConnection(connection()).then(async () => {
     app.use('/admin', adminRoutes);
     app.use('/auth', authRoutes);
     app.use('/canon', CheckJwt(), canonRoutes);
-    app.use('/children/submissions', CheckJwt(), submissionRoutes);
+    app.use('/submissions', CheckJwt(), submissionRoutes);
     app.use('/children', CheckJwt(), childRoutes);
     app.use('/parents', CheckJwt(), parentRoutes);
     app.use('/payment', CheckJwt(), UpdateStripeRecords(), stripeRoutes);

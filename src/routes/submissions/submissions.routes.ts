@@ -16,10 +16,10 @@ submissionRoutes.get('/', Only(Child), async (req, res) => {
     }
 });
 
-submissionRoutes.get('/:id', Only(Child), async (req, res) => {
+submissionRoutes.get('/:week', Only(Child), async (req, res) => {
     try {
         const { submissions } = req.user as Child;
-        const submission = submissions.find(({ id }) => id === parseInt(req.params.id));
+        const submission = submissions.find(({ week }) => week === parseInt(req.params.week));
         if (!submission) throw Error('404');
         res.json({ submission });
     } catch (err) {
@@ -32,9 +32,19 @@ submissionRoutes.get('/:id', Only(Child), async (req, res) => {
 submissionRoutes.post('/', Only(Child), async (req, res) => {
     try {
         // To Do: add DTO to validation and set res.locals.submission
+        // To Do: disallow posting duplicate week
         const submissionDTO = req.body as Submissions;
+        const { story, storyText, illustration } = submissionDTO;
 
-        const submission = await getRepository(Submissions, connection()).save(submissionDTO);
+        const { week } = req.user as Child;
+
+        const { child, ...submission } = await getRepository(Submissions, connection()).save({
+            week,
+            story,
+            storyText,
+            illustration,
+            child: req.user,
+        });
         res.status(201).json({ submission });
     } catch (err) {
         res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
