@@ -1,6 +1,6 @@
 # API Documentation
 
-#### Backend delpoyed at [heroku](https://story-squad.herokuapp.com/) <br>
+#### Backend deployed at [heroku](https://story-squad.herokuapp.com/) <br>
 
 ## Getting started
 
