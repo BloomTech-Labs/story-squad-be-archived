@@ -76,6 +76,7 @@ childRoutes.post('/:id/login', Only(Parent), async (req, res) => {
 childRoutes.get('/', Only(Parent), async (req, res) => {
     try {
         const children = (req.user as Parent).children;
+        children.sort((a, b) => a.id - b.id);
         res.json({ children });
     } catch (err) {
         res.status(500).json({

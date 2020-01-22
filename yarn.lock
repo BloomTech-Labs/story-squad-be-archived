@@ -3954,6 +3954,18 @@ sax@>=0.6.0, sax@^1.2.4:
   resolved "https://registry.yarnpkg.com/sax/-/sax-1.2.4.tgz#2816234e2378bddc4e5354fab5caa895df7100d9"
   integrity sha512-NqVDv9TpANUjFm0N8uM5GxL36UgKi9/atZw+x7YFnQ8ckwFGKrl4xX4yWtrey3UJm5nP1kUbnYgLopqWNSRhWw==
 
+secure-random-password@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/secure-random-password/-/secure-random-password-0.2.1.tgz#21fc2da1a74fd564f327cd6ea4c627a0da6147bd"
+  integrity sha512-cYUIFsCpOHCbLWAPah9jJLomGEnXFqadb7Y3dzCL/UQwp7q6yGS3xQTaFHFf9i8ibh4DTwGYV6Uu8YY9SmMy4Q==
+  dependencies:
+    secure-random "^1.1.2"
+
+secure-random@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/secure-random/-/secure-random-1.1.2.tgz#ed103b460a851632d420d46448b2a900a41e7f7c"
+  integrity sha512-H2bdSKERKdBV1SwoqYm6C0y+9EA94v6SUBOWO8kDndc4NoUih7Dv6Tsgma7zO1lv27wIvjlD0ZpMQk7um5dheQ==
+
 segal-decorators@^0.3.1:
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/segal-decorators/-/segal-decorators-0.3.1.tgz#f5443b3725691cde3d07895ec2562209118cea3e"

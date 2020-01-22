@@ -4,8 +4,15 @@ import * as dotenv from 'dotenv';
 import { createConnection } from 'typeorm';
 
 import { globalMiddleware, CheckJwt, UpdateStripeRecords } from './middleware';
-import { authRoutes, childRoutes, parentRoutes, stripeRoutes, canonRoutes } from './routes';
-import { cohortRoutes } from './routes/cohort/cohort.routes';
+import {
+    authRoutes,
+    childRoutes,
+    parentRoutes,
+    stripeRoutes,
+    canonRoutes,
+    adminRoutes,
+    cohortRoutes,
+} from './routes';
 import { connection } from './util/typeorm-connection';
 
 dotenv.config();
@@ -15,6 +22,7 @@ createConnection(connection()).then(async () => {
 
     globalMiddleware(app);
 
+    app.use('/admin', adminRoutes);
     app.use('/auth', authRoutes);
     app.use('/canon', CheckJwt(), canonRoutes);
     app.use('/cohort', CheckJwt(), cohortRoutes);

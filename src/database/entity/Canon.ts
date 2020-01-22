@@ -7,6 +7,9 @@ class Canon {
 
     @Column({ nullable: false })
     public base64: string;
+
+    @Column({ nullable: true })
+    public altbase64: string;
 }
 
 export { Canon };

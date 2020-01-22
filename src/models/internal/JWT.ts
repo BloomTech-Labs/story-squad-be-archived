@@ -1,4 +1,5 @@
 export interface JWT {
-    parentID: string;
+    parentID?: string;
     childID?: string;
+    adminID?: string;
 }

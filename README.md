@@ -1,6 +1,6 @@
 # API Documentation
 
-#### Backend delpoyed at [heroku](https://story-squad.herokuapp.com/) <br>
+#### Backend deployed at [heroku](https://story-squad.herokuapp.com/) <br>
 
 ## Getting started
 
@@ -42,6 +42,17 @@ To get the server running locally:
 | POST   | `/auth/register` | all users      | Creates parent account and Stripe customer. |
 | USE    | `/auth/login`    | adult users    | Returns parent token.                       |
 
+#### Admin Routes
+
+| Method | Endpoint          | Access Control | Description                                           |
+| ------ | ----------------- | -------------- | ----------------------------------------------------- |
+| GET    | `/admin/`         | admin users    | Returns list of admins/moderators                     |
+| GET    | `/admin/me`       | admin users    | Returns self information                              |
+| GET    | `/admin/:id`      | admin users    | Returns matching admins/moderator                     |
+| POST   | `/admin/login`    | admin users    | Returns admin token                                   |
+| POST   | `/admin/register` | admin users    | Returns added admin/moderator with temporary password |
+| PUT    | `/admin/me`       | admin users    | Returns the updated admins/moderator                  |
+
 #### Parent Routes
 
 | Method | Endpoint      | Access Control | Description               |
@@ -64,19 +75,20 @@ To get the server running locally:
 
 #### Canon Routes
 
-| Method | Endpoint       | Access Control | Description                    |
-| ------ | -------------- | -------------- | ------------------------------ |
-| GET    | `/canon/:week` | none           | Returns a json of a base64 pdf |
-| POST   | `/canon`       | none           | Creates a new pdf              |
+| Method | Endpoint       | Access Control | Description            |
+| ------ | -------------- | -------------- | ---------------------- |
+| GET    | `/canon/`      | admin users    | Returns a list of pdf  |
+| GET    | `/canon/:week` | all users      | Returns a matching pdf |
+| POST   | `/canon`       | admin users    | Creates a new pdf      |
 
 #### Payment Routes
 
-| Method | Endpoint       | Access Control | Description                    |
-| ------ | -------------- | -------------- | ------------------------------ |
-| GET    | `/cards` | adult users           | json list of user's cards |
-| Post   | `/cards` | adult users           | adds card as payment source to Stripe |
-| Post   | `/subscribe` | adult users           | creates a subscription |
-| Delete   | `/cards/:id`       | adult users           | deletes a payment method              |
+| Method | Endpoint     | Access Control | Description                           |
+| ------ | ------------ | -------------- | ------------------------------------- |
+| GET    | `/cards`     | adult users    | json list of user's cards             |
+| Post   | `/cards`     | adult users    | adds card as payment source to Stripe |
+| Post   | `/subscribe` | adult users    | creates a subscription                |
+| Delete | `/cards/:id` | adult users    | deletes a payment method              |
 
 # Data Model
 
@@ -119,9 +131,24 @@ To get the server running locally:
   preferencesDyslexia: BOOL
 }
 ```
+
+#### Admin
+
+---
+
+```
+{
+  id: NUM
+  email: STRING
+  password: STRING
+  validpass: BOOL
+  role: STRING
+}
+```
+
 ## Actions
 
-  Story Squad uses TypeORM; see their [docs](https://typeorm.io/#/) for available actions.
+Story Squad uses TypeORM; see their [docs](https://typeorm.io/#/) for available actions.
 
 ## Environment Variables
 
@@ -174,4 +201,3 @@ These contribution guidelines have been adapted from [this good-Contributing.md-
 ## Documentation
 
 See [Frontend Documentation](https://github.com/Lambda-School-Labs/story-squad-fe/blob/master/README.md) for details on the fronend of our project.
-

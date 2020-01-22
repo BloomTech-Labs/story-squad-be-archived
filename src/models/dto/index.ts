@@ -10,3 +10,6 @@ export * from './child/update-child.dto';
 export * from './canon/add-canon.dto';
 
 export * from './cohort/add-cohort.dto';
+
+export * from './admin/login.dto';
+export * from './admin/register.dto';

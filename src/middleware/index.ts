@@ -1,8 +1,7 @@
 import { Express, json } from 'express';
 import * as cors from 'cors';
 
-import { Parent, Child } from '../database/entity';
-
+import { Parent, Child, Admin } from '../database/entity';
 import {
     RegisterDTO,
     LoginDTO,
@@ -20,10 +19,10 @@ declare global {
             /**
              * @description The current JWT verified user.
              * BE SURE TO REMOVE THE PASSWORD WHEN RETURNING!!
-             * @type {(Parent | Child)}
+             * @type {(Parent | Child | Admin)}
              * @memberof Request
              */
-            user?: Parent | Child;
+            user?: Parent | Child | Admin;
 
             register?: RegisterDTO;
             login?: LoginDTO;
