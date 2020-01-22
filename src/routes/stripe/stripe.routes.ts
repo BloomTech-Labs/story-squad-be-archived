@@ -103,7 +103,7 @@ stripeRoutes.put('/default/:id', Only(Parent), async (req, res) => {
         await stripe.customers.update(user.stripeID, {
             default_source: card,
         });
-        res.status(201).json({ message: 'Successfully updated default payment.' });
+        res.status(200).json({ message: 'Successfully updated default payment.' });
     } catch (err) {
         res.status(500).json({ message: 'Could not update default payment method' });
     }

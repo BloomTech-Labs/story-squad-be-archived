@@ -89,3 +89,12 @@ describe('POST /payment/subscribe', () => {
             .expect(201);
     });
 });
+
+describe('PUT /payment/default/:id', () => {
+    it('should update the default payment', async () => {
+        await request(app)
+            .put('/payment/cards')
+            .send({ id: 'card_exampleID' })
+            .expect(200);
+    });
+});
