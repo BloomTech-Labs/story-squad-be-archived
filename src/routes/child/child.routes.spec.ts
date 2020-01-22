@@ -2,10 +2,9 @@ import * as request from 'supertest';
 import * as express from 'express';
 import { plainToClass } from 'class-transformer';
 
-import { Middleware, UpdateChildDTO, AddCohortDTO } from '../../models';
+import { Middleware, UpdateChildDTO } from '../../models';
 import { Child, Parent } from '../../database/entity';
 import { childRoutes } from './child.routes';
-import { cohortRoutes } from '../cohort/cohort.routes';
 
 const parent: Parent = plainToClass(Parent, {
     id: 1,
@@ -56,6 +55,7 @@ typeorm.getRepository = jest.fn().mockReturnValue({
     save: jest.fn().mockImplementation(async (child: Child) => ({ ...child, id: 3 })),
     update: jest.fn().mockImplementation(async () => ({ affected: 1 })),
     delete: jest.fn().mockImplementation(async () => ({ affected: 1 })),
+    findOne: jest.fn().mockImplementation(async () => ({ id: 1 })),
 });
 
 const UserInjection: Middleware = () => (req, res, next) => {
@@ -136,11 +136,10 @@ describe('POST /children', () => {
     });
 
     it('should return 401 for children', async () => {
-        const { body } = await request(app)
+        await request(app)
             .post('/children')
             .set({ Authorization: 'child' })
             .expect(401);
-        expect(body.child.cohort.id).toBe(1);
     });
 
     describe('PUT /children/:id', () => {

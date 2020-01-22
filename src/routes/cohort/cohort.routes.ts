@@ -8,20 +8,14 @@ import { Child, Parent } from '../../database/entity';
 
 const cohortRoutes = Router();
 
-//GET COHORT
-
 cohortRoutes.get('/', Only(Child), async (req, res) => {
     try {
         const { cohort } = req.user as Child;
         res.status(200).json({ cohort });
     } catch (err) {
-        if (err.toString() === 'Error: 404')
-            res.status(404).json(`cohort ${req.params.id} not found`);
-        else res.status(500).json(err.toString());
+        res.status(500).json(err.toString());
     }
 });
-
-//ADD COHORT
 
 cohortRoutes.post('/', async (req, res) => {
     try {
@@ -31,8 +25,6 @@ cohortRoutes.post('/', async (req, res) => {
         res.status(500).json(err.toString());
     }
 });
-
-//DELETE COHORT
 
 cohortRoutes.delete('/:id', Only(Parent), async (req, res) => {
     try {
@@ -57,8 +49,6 @@ cohortRoutes.delete('/:id', Only(Parent), async (req, res) => {
         }
     }
 });
-
-//UPDATE COHORT ACTIVITY
 
 cohortRoutes.put('/:id', Only(Parent), async (req, res) => {
     try {
