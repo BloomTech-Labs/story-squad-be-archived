@@ -2,53 +2,39 @@ import * as request from 'supertest';
 import * as express from 'express';
 import { plainToClass } from 'class-transformer';
 
-import { AddCohortDTO, Middleware } from '../../models';
-import { Child, Parent } from '../../database/entity';
+import { UpdateCohortDTO, Middleware } from '../../models';
+import { Child, Parent, Admin } from '../../database/entity';
 
 import { cohortRoutes } from './cohort.routes';
 
+const cohorts = [{ id: 1, week: 1, activity: 'read' }];
+
 import typeorm = require('typeorm');
 typeorm.getRepository = jest.fn().mockReturnValue({
+    find: jest.fn().mockImplementation(() => cohorts),
     findOne: jest
         .fn()
-        .mockImplementation(async (id: number) =>
-            id == 1 ? { id: 1, week: 1, activity: 'read' } : undefined
-        ),
+        .mockImplementation(async (id: number) => cohorts.find((cohort) => cohort.id === id)),
     save: jest.fn().mockImplementation(async (obj) => ({ id: 1, ...obj })),
+    delete: jest.fn().mockReturnValue({ affected: 1 }),
+    update: jest.fn().mockReturnValue({ affected: 1 }),
 });
 
-const parent: Parent = plainToClass(Parent, {
-    id: 1,
-    email: 'test@mail.com',
-    password: 'I Am Password',
-    children: [
-        {
-            id: 1,
-            username: 'Sarah Lang',
-            grade: 3,
-            week: 1,
-            parent: undefined,
-            preferences: undefined,
-        },
-    ],
-});
 const child: Child = plainToClass(Child, {
-    id: 1,
-    username: 'Sarah Lang',
-    grade: 3,
-    week: 1,
-    parent: undefined,
-    preferences: undefined,
+    cohort: {
+        id: 10,
+    },
 });
 
 const UserInjection: Middleware = () => (req, res, next) => {
     if (req.headers.authorization === 'child') req.user = child;
-    if (req.headers.authorization === 'parent') req.user = parent;
+    if (req.headers.authorization === 'parent') req.user = new Parent();
+    if (req.headers.authorization === 'admin') req.user = new Admin();
     next();
 };
 
 const BodyInjection: Middleware = () => (req, res, next) => {
-    req.addCohort = req?.body?.cohort;
+    req.updateCohort = req?.body?.cohort;
     next();
 };
 
@@ -62,18 +48,52 @@ describe('GET /cohort', () => {
             .set({ Authorization: 'child' })
             .expect(200);
     });
+
+    it('should return the ID of the current child', async () => {
+        const { body } = await request(app)
+            .get('/cohort')
+            .set({ Authorization: 'child' });
+
+        expect(body.cohort.id).toBe(10);
+    });
 });
 
-describe('POST /cohort', () => {
-    it('should start a child from the latest cohort', async () => {
-        const DTO: { cohort: AddCohortDTO } = {
-            cohort: { id: 1, week: 1, activity: 'something' },
-        };
-
+describe('GET /cohort/list', () => {
+    it('should return all cohorts', async () => {
         const { body } = await request(app)
-            .post('/cohort')
-            .send(DTO)
-            .set({ Authorization: 'parent' });
+            .get('/cohort/list')
+            .set({ Authorization: 'admin' });
+        expect(body.cohorts.length).toBe(cohorts.length);
+    });
+});
+
+describe('POST /cohort/list', () => {
+    it('should return the added cohort', async () => {
+        const DTO: UpdateCohortDTO = { week: 1, activity: 'something' };
+        const { body } = await request(app)
+            .post('/cohort/list')
+            .send({ cohort: DTO })
+            .set({ Authorization: 'admin' });
         expect(body.cohort.activity).toBe('something');
+    });
+});
+
+describe('PUT /cohort/list/:id', () => {
+    it('should return the updated cohort', async () => {
+        const DTO: UpdateCohortDTO = { week: 1, activity: 'something new' };
+        const { body } = await request(app)
+            .put('/cohort/list/1')
+            .send({ cohort: DTO })
+            .set({ Authorization: 'admin' });
+        expect(body.cohort.activity).toBe('something new');
+    });
+});
+
+describe('DELETE /cohort/list/:id', () => {
+    it('should return 200 on valid deletions', async () => {
+        await request(app)
+            .delete('/cohort/list/1')
+            .set({ Authorization: 'admin' })
+            .expect(200);
     });
 });

@@ -9,7 +9,7 @@ import {
     AddCardDTO,
     AddCanonDTO,
     SubscribeDTO,
-    AddCohortDTO,
+    UpdateCohortDTO,
 } from '../models';
 import { Validation } from './validate/validate.middleware';
 
@@ -32,7 +32,7 @@ declare global {
 
             addCanon?: AddCanonDTO;
 
-            addCohort?: AddCohortDTO;
+            updateCohort?: UpdateCohortDTO;
 
             subscribe?: SubscribeDTO;
         }

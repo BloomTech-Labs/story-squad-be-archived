@@ -4,7 +4,7 @@ import { getRepository } from 'typeorm';
 import { connection } from '../../util/typeorm-connection';
 import { Cohort } from '../../database/entity/Cohort';
 import { Only } from '../../middleware';
-import { Child, Parent } from '../../database/entity';
+import { Child, Parent, Admin } from '../../database/entity';
 
 const cohortRoutes = Router();
 
@@ -17,50 +17,32 @@ cohortRoutes.get('/', Only(Child), async (req, res) => {
     }
 });
 
-cohortRoutes.post('/', async (req, res) => {
+cohortRoutes.get('/list', Only(Admin), async (req, res) => {
     try {
-        const cohort = await getRepository(Cohort, connection()).save(req.addCohort);
+        const cohorts = await getRepository(Cohort, connection()).find();
+        res.status(200).json({ cohorts });
+    } catch (err) {
+        res.status(500).json(err.toString());
+    }
+});
+
+cohortRoutes.post('/list', Only(Admin), async (req, res) => {
+    try {
+        const cohort = await getRepository(Cohort, connection()).save(req.updateCohort);
         res.status(201).json({ cohort });
     } catch (err) {
         res.status(500).json(err.toString());
     }
 });
 
-cohortRoutes.delete('/:id', Only(Parent), async (req, res) => {
+cohortRoutes.put('/list/:id', Only(Admin), async (req, res) => {
     try {
-        const children = (req.user as Parent).children;
-        const cohortToDelete = children.find((cohort) => cohort.id === Number(req.params.id));
-        if (!cohortToDelete) throw new Error('404');
-
-        const { affected } = await getRepository(Child, connection()).delete(cohortToDelete);
-        if (!affected) throw new Error();
-
-        res.json({ message: `Successfully deleted ${req.params.id}` });
-    } catch (err) {
-        switch (err.toString()) {
-            case 'Error: 404':
-                res.status(404).json({ message: 'Could Not Delete - Cohort not found!' });
-                break;
-            default:
-                res.status(500).json({
-                    message: 'Hmm... That did not work, please try again later.',
-                });
-                break;
-        }
-    }
-});
-
-cohortRoutes.put('/:id', Only(Parent), async (req, res) => {
-    try {
-        const children = (req.user as Parent).children;
-        const cohortToUpdate = children.find((cohort) => cohort.id === Number(req.params.id));
+        const cohortRepo = getRepository(Cohort, connection());
+        const cohortToUpdate = await cohortRepo.findOne(Number(req.params.id));
         if (!cohortToUpdate) throw new Error('404');
 
-        const cohort = { ...cohortToUpdate };
-        const { affected } = await getRepository(Cohort, connection()).update(
-            req.params.id,
-            cohort
-        );
+        const cohort = { ...cohortToUpdate, ...req.updateCohort };
+        const { affected } = await cohortRepo.update(req.params.id, cohort);
         if (!affected) throw new Error();
 
         res.json({ cohort });
@@ -75,6 +57,18 @@ cohortRoutes.put('/:id', Only(Parent), async (req, res) => {
                 });
                 break;
         }
+    }
+});
+
+cohortRoutes.delete('/list/:id', Only(Admin), async (req, res) => {
+    try {
+        const { affected } = await getRepository(Child, connection()).delete(req.params.id);
+        if (!affected) throw new Error();
+        res.json({ message: `Successfully deleted cohort ${req.params.id}` });
+    } catch (err) {
+        res.status(500).json({
+            message: 'Hmm... That did not work, please try again later.',
+        });
     }
 });
 
