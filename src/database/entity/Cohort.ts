@@ -1,16 +1,21 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+
 import { Child } from './Child';
+import { DueDates } from './DueDates';
 
 @Entity()
 class Cohort {
     @PrimaryGeneratedColumn()
-    public id: number;
+    id: number;
 
     @Column({ nullable: false })
-    public week: number;
+    week: number;
 
     @Column({ nullable: false })
-    public activity: string;
+    activity: string;
+
+    @Column((type) => DueDates)
+    dueDates: DueDates;
 
     @OneToMany(
         (type) => Child,

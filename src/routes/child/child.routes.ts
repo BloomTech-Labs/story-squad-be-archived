@@ -87,7 +87,7 @@ childRoutes.get('/', Only(Parent), async (req, res) => {
 
 childRoutes.post('/', Only(Parent), async (req, res) => {
     try {
-        const cohort = await getRepository(Cohort).findOne({ order: { id: 'DESC' } });
+        const cohort = await getRepository(Cohort, connection()).findOne({ order: { id: 'DESC' } });
         const { parent, ...child } = await getRepository(Child, connection()).save({
             ...req.childUpdate,
             cohort,
@@ -96,6 +96,7 @@ childRoutes.post('/', Only(Parent), async (req, res) => {
 
         res.status(201).json({ child });
     } catch (err) {
+        console.log(err);
         res.status(500).json({
             message: 'Hmm... That did not work, please try again later.',
         });

@@ -1,13 +1,29 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 
-import { Parent } from './Parent';
 import { Preferences } from './Preferences';
+import { Progress } from './Progress';
+import { Parent } from './Parent';
 import { Cohort } from './Cohort';
 
 @Entity()
 class Child {
     @PrimaryGeneratedColumn()
     id: number;
+
+    @Column()
+    username: string;
+
+    @Column()
+    grade: number;
+
+    @Column({ default: false })
+    subscription: boolean;
+
+    @Column((type) => Preferences)
+    preferences: Preferences;
+
+    @Column((type) => Progress)
+    progress: Progress;
 
     @ManyToOne(
         (type) => Parent,
@@ -20,18 +36,6 @@ class Child {
         (cohort) => cohort.children
     )
     cohort: Cohort;
-
-    @Column()
-    username: string;
-
-    @Column()
-    grade: number;
-
-    @Column((type) => Preferences)
-    preferences: Preferences;
-
-    @Column({ default: false })
-    subscription: boolean;
 }
 
 export { Child };
