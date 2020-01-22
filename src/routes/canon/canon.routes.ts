@@ -28,11 +28,12 @@ canonRoutes.get('/:id', async (req, res) => {
         const cannonIndex = await getRepository(Canon, connection()).findOne(req.params.id);
         if (!cannonIndex) throw new Error('404');
 
+        const { altbase64, base64 } = cannonIndex;
         if (req.user instanceof Child) {
             res.json({
                 canon: req.user?.preferences.dyslexia
-                    ? { base64: cannonIndex.altbase64 }
-                    : { base64: cannonIndex.base64 },
+                    ? { base64: altbase64 || base64 }
+                    : { base64 },
             });
         } else {
             res.json({ canon: cannonIndex });
