@@ -33,14 +33,16 @@ stripeRoutes.get('/cards', Only(Parent), async (req, res) => {
         });
 
         const listData = cardList.data as CustomerSourceExtended[];
-        const cards: CardDTO[] = listData.map(({ id, name, brand, last4, exp_month, exp_year }) => ({
-            id,
-            name,
-            brand,
-            last4,
-            exp_month,
-            exp_year,
-        }));
+        const cards: CardDTO[] = listData.map(
+            ({ id, name, brand, last4, exp_month, exp_year }) => ({
+                id,
+                name,
+                brand,
+                last4,
+                exp_month,
+                exp_year,
+            })
+        );
 
         const customer = await stripe.customers.retrieve(user.stripeID);
 
@@ -93,4 +95,17 @@ stripeRoutes.post('/subscribe', Only(Parent), async (req, res) => {
     }
 });
 
+stripeRoutes.put('/default', Only(Parent), async (req, res) => {
+    try {
+        const user = req.user as Parent;
+        const card = req.params.card;
+
+        await stripe.customers.update(user.stripeID, {
+            default_source: card,
+        });
+        res.status(201).json({ message: 'Successfully updated default payment.' });
+    } catch (err) {
+        res.status(500).json({ message: 'Could not update default payment method' });
+    }
+});
 export { stripeRoutes };
