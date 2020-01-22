@@ -55,14 +55,14 @@ submissionRoutes.put('/:id', Only(Child), async (req, res) => {
     try {
         // To Do: add DTO to validation and set res.locals.submission
         const submissionDTO = req.body as Submissions;
-        const id = parseInt(req.params.id);
+        const reqID = parseInt(req.params.id);
 
         const { submissions } = req.user as Child;
-        const oldSubmission = submissions.find(({ id }) => id === parseInt(req.params.id));
+        const oldSubmission = submissions.find(({ id }) => id === reqID);
         if (!oldSubmission) throw Error('404');
 
         const { affected } = await getRepository(Submissions, connection()).update(
-            id,
+            reqID,
             submissionDTO
         );
         if (!affected) throw Error();
@@ -75,15 +75,17 @@ submissionRoutes.put('/:id', Only(Child), async (req, res) => {
     }
 });
 
-submissionRoutes.delete('/:id', Only(Child), async (req, res) => {
+submissionRoutes.delete('/:week', Only(Child), async (req, res) => {
     try {
-        const id = parseInt(req.params.id);
+        const reqWeek = parseInt(req.params.week);
 
         const { submissions } = req.user as Child;
-        const submission = submissions.find(({ id }) => id === parseInt(req.params.id));
+        const submission = submissions.find(({ week }) => week === reqWeek);
         if (!submission) throw Error('404');
 
-        const { affected } = await getRepository(Submissions, connection()).delete(id);
+        const { affected } = await getRepository(Submissions, connection()).delete({
+            week: reqWeek,
+        });
         if (!affected) throw Error();
 
         res.json({ submission });
