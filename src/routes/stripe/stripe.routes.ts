@@ -95,10 +95,10 @@ stripeRoutes.post('/subscribe', Only(Parent), async (req, res) => {
     }
 });
 
-stripeRoutes.put('/default', Only(Parent), async (req, res) => {
+stripeRoutes.put('/default/:id', Only(Parent), async (req, res) => {
     try {
         const user = req.user as Parent;
-        const card = req.params.card;
+        const card = req.params.id;
 
         await stripe.customers.update(user.stripeID, {
             default_source: card,
