@@ -23,6 +23,7 @@ Stripe.prototype.customers = {
     } as { data: CardDTO[] }),
     createSource: jest.fn().mockImplementation(() => {}),
     deleteSource: jest.fn(() => ({})),
+    retrieve: jest.fn().mockImplementation(() => ({ name: 'Samuel L Jackson' })),
 };
 
 Stripe.prototype.subscriptions = {
