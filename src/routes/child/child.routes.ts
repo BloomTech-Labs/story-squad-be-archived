@@ -32,6 +32,46 @@ childRoutes.get('/preferences', Only(Child), async (req, res) => {
     }
 });
 
+childRoutes.get('/cohort', Only(Child), async (req, res) => {
+    try {
+        const { cohort } = req.user as Child;
+        res.json({ cohort });
+    } catch (err) {
+        res.status(500).json({
+            message: 'Hmm... That did not work, please try again later.',
+        });
+    }
+});
+
+childRoutes.get('/progress', Only(Child), async (req, res) => {
+    try {
+        const { progress } = req.user as Child;
+        res.json({ progress });
+    } catch (err) {
+        res.status(500).json({
+            message: 'Hmm... That did not work, please try again later.',
+        });
+    }
+});
+
+childRoutes.post('/progress', Only(Child), async (req, res) => {
+    try {
+        const child = req.user as Child;
+        const { progress } = await getRepository(Child, connection()).save({
+            ...child,
+            progress: {
+                ...child.progress,
+                ...req.progressUpdate,
+            },
+        });
+        res.json({ progress });
+    } catch (err) {
+        res.status(500).json({
+            message: 'Hmm... That did not work, please try again later.',
+        });
+    }
+});
+
 childRoutes.get('/parent', Only(Child), async (req, res) => {
     try {
         const {

@@ -10,6 +10,7 @@ import {
     AddCanonDTO,
     AdminRegisterDTO,
     SubscribeDTO,
+    UpdateProgressDTO,
 } from '../../models';
 
 const Validation: Middleware = () => async (req, res, next) => {
@@ -51,10 +52,10 @@ const Validation: Middleware = () => async (req, res, next) => {
 
         //Validates and transforms childUpdate request objects prior to routing
         if (req.path === '/children/progress')
-            req.childUpdate = (await transformAndValidate(
-                UpdateChildDTO,
+            req.progressUpdate = (await transformAndValidate(
+                UpdateProgressDTO,
                 req.body
-            )) as UpdateChildDTO;
+            )) as UpdateProgressDTO;
 
         next();
     } catch (err) {

@@ -72,26 +72,26 @@ const BodyInjection: Middleware = () => (req, res, next) => {
 const app = express();
 app.use('/children', express.json(), BodyInjection(), UserInjection(), childRoutes);
 
-describe('GET /children', () => {
+describe('GET /children/list', () => {
     it('should list all children', async () => {
         const { body } = await request(app)
-            .get('/children')
+            .get('/children/list')
             .set({ Authorization: 'parent' });
         expect(body.children).toHaveLength(2);
     });
 
     it('should return 401 for children', async () => {
         await request(app)
-            .get('/children')
+            .get('/children/list')
             .set({ Authorization: 'child' })
             .expect(401);
     });
 });
 
-describe('GET /children/:id', () => {
+describe('GET /children/list/:id', () => {
     it('should return the requested child', async () => {
         const { body } = await request(app)
-            .get('/children/1')
+            .get('/children/list/1')
             .set({ Authorization: 'parent' });
         expect(body.child.id).toBe(1);
         expect(body.child.username).toBe('Sarah Lang');
@@ -99,7 +99,7 @@ describe('GET /children/:id', () => {
 
     it('should return 401 for children', async () => {
         await request(app)
-            .get('/children/1')
+            .get('/children/list/1')
             .set({ Authorization: 'child' })
             .expect(401);
     });
@@ -122,11 +122,11 @@ describe('POST /children/:id/login', () => {
     });
 });
 
-describe('POST /children', () => {
+describe('POST /children/list', () => {
     it('should return the new child', async () => {
         const DTO: { child: UpdateChildDTO } = { child: { username: 'Joe', grade: 5 } };
         const { body } = await request(app)
-            .post('/children')
+            .post('/children/list')
             .send(DTO)
             .set({ Authorization: 'parent' });
 
@@ -137,16 +137,16 @@ describe('POST /children', () => {
 
     it('should return 401 for children', async () => {
         await request(app)
-            .post('/children')
+            .post('/children/list')
             .set({ Authorization: 'child' })
             .expect(401);
     });
 
-    describe('PUT /children/:id', () => {
+    describe('PUT /children/list/:id', () => {
         it('should return the updated child', async () => {
             const DTO: { child: UpdateChildDTO } = { child: { username: 'Sam', grade: 5 } };
             const { body } = await request(app)
-                .put('/children/1')
+                .put('/children/list/1')
                 .send(DTO)
                 .set({ Authorization: 'parent' });
 
@@ -156,23 +156,23 @@ describe('POST /children', () => {
 
         it('should return 401 for children', async () => {
             await request(app)
-                .put('/children/1')
+                .put('/children/list/1')
                 .set({ Authorization: 'child' })
                 .expect(401);
         });
     });
 
-    describe('DELETE /children/:id', () => {
+    describe('DELETE /children/list/:id', () => {
         it('should return 200 when deleted', async () => {
             await request(app)
-                .delete('/children/1')
+                .delete('/children/list/1')
                 .set({ Authorization: 'parent' })
                 .expect(200);
         });
 
         it('should return 401 for children', async () => {
             await request(app)
-                .put('/children/1')
+                .put('/children/list/1')
                 .set({ Authorization: 'child' })
                 .expect(401);
         });
