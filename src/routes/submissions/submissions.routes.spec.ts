@@ -54,3 +54,39 @@ describe('GET /submissions', () => {
         expect(body.submissions).toHaveLength(2);
     });
 });
+
+describe('GET /submissions/:week', () => {
+    it("should list child's submission for the week", async () => {
+        const { body } = await request(app).get('/submissions/1');
+        expect(body.submission.id).toBe(1);
+    });
+
+    it('should return 404 if it does not exist', async () => {
+        await request(app)
+            .get('/submissions/3')
+            .expect(404);
+    });
+});
+
+describe('POST /submissions', () => {
+    it('should return 201 on creation', async () => {
+        await request(app)
+            .post('/submissions')
+            .send({ id: 3, week: 3, story: '', storyText: 'Text3', illustration: '' })
+            .expect(201);
+    });
+});
+
+describe('DELETE /submissions/:week', () => {
+    it('should return 200 on deletion', async () => {
+        await request(app)
+            .delete('/submissions/2')
+            .expect(200);
+    });
+
+    it('should return 404 if it does not exist', async () => {
+        await request(app)
+            .delete('/submissions/3')
+            .expect(404);
+    });
+});
