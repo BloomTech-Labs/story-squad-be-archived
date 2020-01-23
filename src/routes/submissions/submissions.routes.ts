@@ -4,6 +4,7 @@ import { getRepository } from 'typeorm';
 import { connection } from '../../util/typeorm-connection';
 import { Only } from '../../middleware';
 import { Child, Submissions } from '../../database/entity';
+import { SubmissionDTO } from '../../models';
 
 const submissionRoutes = Router();
 
@@ -31,12 +32,11 @@ submissionRoutes.get('/:week', Only(Child), async (req, res) => {
 
 submissionRoutes.post('/', Only(Child), async (req, res) => {
     try {
-        // To Do: add DTO to validation and set res.locals.submission
-        // To Do: disallow posting duplicate week
-        const submissionDTO = req.body as Submissions;
-        const { story, storyText, illustration } = submissionDTO;
+        const { story, storyText, illustration } = res.locals.body as Submissions;
 
-        const { week } = req.user as Child;
+        const { week, submissions } = req.user as Child;
+
+        if (submissions.find((e) => e.week === week)) throw Error('400');
 
         const { child, ...submission } = await getRepository(Submissions, connection()).save({
             week,
@@ -45,9 +45,12 @@ submissionRoutes.post('/', Only(Child), async (req, res) => {
             illustration,
             child: req.user,
         });
+
         res.status(201).json({ submission });
     } catch (err) {
-        res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
+        if (err.toString() === 'Error: 400')
+            res.status(400).json({ message: `Submission already exists` });
+        else res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
     }
 });
 

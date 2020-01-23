@@ -9,7 +9,7 @@ const child: Child = plainToClass(Child, {
     id: 1,
     username: 'Sarah Lang',
     grade: 3,
-    week: 1,
+    week: 3,
     parent: {
         id: 1,
         email: 'test@mail.com',
@@ -45,8 +45,13 @@ const userInjection = (req, res, next) => {
     next();
 };
 
+const bodyInjection = (req, res, next) => {
+    if (req.body) res.locals.body = req.body;
+    next();
+};
+
 const app = express();
-app.use('/submissions', express.json(), userInjection, submissionRoutes);
+app.use('/submissions', express.json(), userInjection, bodyInjection, submissionRoutes);
 
 describe('GET /submissions', () => {
     it("should list child's submissions", async () => {
@@ -74,6 +79,15 @@ describe('POST /submissions', () => {
             .post('/submissions')
             .send({ id: 3, week: 3, story: '', storyText: 'Text3', illustration: '' })
             .expect(201);
+    });
+
+    it('should return 400 if already exists', async () => {
+        child.week = 1;
+        await request(app)
+            .post('/submissions')
+            .send({ id: 2, week: 2, story: '', storyText: 'Text2', illustration: '' })
+            .expect(400);
+        child.week = 3;
     });
 });
 
