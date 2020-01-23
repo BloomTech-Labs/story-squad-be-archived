@@ -9,6 +9,7 @@ import { stripeRoutes } from './stripe.routes';
 jest.mock('stripe');
 const Stripe = require('stripe');
 Stripe.prototype.customers = {
+    update: jest.fn().mockResolvedValue({}),
     listSources: jest.fn().mockResolvedValue({
         data: [
             {
@@ -44,6 +45,7 @@ const parent: Parent = plainToClass(Parent, {
     children: [],
     stripeID: '',
 });
+
 
 const ParentInjection: Middleware = () => (req, res, next) => {
     req.user = parent as Parent;
@@ -94,7 +96,7 @@ describe('POST /payment/subscribe', () => {
 describe('PUT /payment/default/:id', () => {
     it('should update the default payment', async () => {
         await request(app)
-            .put('/payment/cards')
+            .put('/payment/default/1')
             .send({ id: 'card_exampleID' })
             .expect(200);
     });

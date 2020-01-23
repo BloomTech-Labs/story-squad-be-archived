@@ -105,6 +105,7 @@ stripeRoutes.put('/default/:id', Only(Parent), async (req, res) => {
         });
         res.status(200).json({ message: 'Successfully updated default payment.' });
     } catch (err) {
+        console.log('err', err.toString());
         res.status(500).json({ message: 'Could not update default payment method' });
     }
 });
