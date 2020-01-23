@@ -6,7 +6,6 @@ import { Parent, Child } from '../../database/entity';
 import { Only } from '../../middleware';
 import { connection } from '../../util/typeorm-connection';
 
-import * as moment from 'moment';
 import { Cohort } from '../../database/entity/Cohort';
 
 const childRoutes = Router();
@@ -73,7 +72,7 @@ childRoutes.post('/:id/login', Only(Parent), async (req, res) => {
     }
 });
 
-childRoutes.get('/', Only(Parent), async (req, res) => {
+childRoutes.get('/list', Only(Parent), async (req, res) => {
     try {
         const children = (req.user as Parent).children;
         children.sort((a, b) => a.id - b.id);
@@ -85,7 +84,7 @@ childRoutes.get('/', Only(Parent), async (req, res) => {
     }
 });
 
-childRoutes.post('/', Only(Parent), async (req, res) => {
+childRoutes.post('/list', Only(Parent), async (req, res) => {
     try {
         const cohort = await getRepository(Cohort, connection()).findOne({ order: { id: 'DESC' } });
         const { parent, ...child } = await getRepository(Child, connection()).save({
@@ -103,7 +102,7 @@ childRoutes.post('/', Only(Parent), async (req, res) => {
     }
 });
 
-childRoutes.get('/:id', Only(Parent), async (req, res) => {
+childRoutes.get('/list/:id', Only(Parent), async (req, res) => {
     try {
         const children = (req.user as Parent).children;
         const child = children.find((child) => child.id === Number(req.params.id));
@@ -124,7 +123,7 @@ childRoutes.get('/:id', Only(Parent), async (req, res) => {
     }
 });
 
-childRoutes.put('/:id', Only(Parent), async (req, res) => {
+childRoutes.put('/list/:id', Only(Parent), async (req, res) => {
     try {
         const children = (req.user as Parent).children;
         const childToUpdate = children.find((child) => child.id === Number(req.params.id));
@@ -149,7 +148,7 @@ childRoutes.put('/:id', Only(Parent), async (req, res) => {
     }
 });
 
-childRoutes.delete('/:id', Only(Parent), async (req, res) => {
+childRoutes.delete('/list/:id', Only(Parent), async (req, res) => {
     try {
         const children = (req.user as Parent).children;
         const childToDelete = children.find((child) => child.id === Number(req.params.id));
