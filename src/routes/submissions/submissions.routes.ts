@@ -54,30 +54,6 @@ submissionRoutes.post('/', Only(Child), async (req, res) => {
     }
 });
 
-submissionRoutes.put('/:id', Only(Child), async (req, res) => {
-    try {
-        // To Do: add DTO to validation and set res.locals.submission
-        const submissionDTO = req.body as Submissions;
-        const reqID = parseInt(req.params.id);
-
-        const { submissions } = req.user as Child;
-        const oldSubmission = submissions.find(({ id }) => id === reqID);
-        if (!oldSubmission) throw Error('404');
-
-        const { affected } = await getRepository(Submissions, connection()).update(
-            reqID,
-            submissionDTO
-        );
-        if (!affected) throw Error();
-
-        res.json({ submission: { ...oldSubmission, submissionDTO } });
-    } catch (err) {
-        if (err.toString() === 'Error: 404')
-            res.status(404).json({ message: `Submission not found` });
-        else res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
-    }
-});
-
 submissionRoutes.delete('/:week', Only(Child), async (req, res) => {
     try {
         const reqWeek = parseInt(req.params.week);

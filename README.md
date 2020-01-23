@@ -86,9 +86,18 @@ To get the server running locally:
 | Method | Endpoint     | Access Control | Description                           |
 | ------ | ------------ | -------------- | ------------------------------------- |
 | GET    | `/cards`     | adult users    | json list of user's cards             |
-| Post   | `/cards`     | adult users    | adds card as payment source to Stripe |
-| Post   | `/subscribe` | adult users    | creates a subscription                |
-| Delete | `/cards/:id` | adult users    | deletes a payment method              |
+| POST   | `/cards`     | adult users    | adds card as payment source to Stripe |
+| POST   | `/subscribe` | adult users    | creates a subscription                |
+| DELETE | `/cards/:id` | adult users    | deletes a payment method              |
+
+#### Payment Routes
+
+| Method | Endpoint             | Access Control | Description                                                   |
+| ------ | -------------------- | -------------- | ------------------------------------------------------------- |
+| GET    | `/submissions`       | child users    | json list of user's submissions                               |
+| GET    | `/submissions/:week` | child users    | json object of a user's submission for a specific week        |
+| POST   | `/submissions`       | child users    | upload and receive json object of a user's new submission     |
+| DELETE | `/submissions/:week` | child users    | delete and receive json object of a user's removed submission |
 
 # Data Model
 
@@ -143,6 +152,21 @@ To get the server running locally:
   password: STRING
   validpass: BOOL
   role: STRING
+}
+```
+
+#### Submissions
+
+---
+
+```
+{
+  id: NUM
+  child: foreign key in CHILD table
+  week: NUM
+  story: STRING
+  storyText: STRING
+  illustration: STRING
 }
 ```
 
