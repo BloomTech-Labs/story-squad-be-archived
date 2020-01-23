@@ -6,7 +6,6 @@ import { Parent, Child } from '../../database/entity';
 import { Only } from '../../middleware';
 import { connection } from '../../util/typeorm-connection';
 
-import * as moment from 'moment';
 import { Cohort } from '../../database/entity/Cohort';
 
 const childRoutes = Router();
@@ -26,6 +25,46 @@ childRoutes.get('/preferences', Only(Child), async (req, res) => {
     try {
         const { preferences } = req.user as Child;
         res.json({ preferences });
+    } catch (err) {
+        res.status(500).json({
+            message: 'Hmm... That did not work, please try again later.',
+        });
+    }
+});
+
+childRoutes.get('/cohort', Only(Child), async (req, res) => {
+    try {
+        const { cohort } = req.user as Child;
+        res.json({ cohort });
+    } catch (err) {
+        res.status(500).json({
+            message: 'Hmm... That did not work, please try again later.',
+        });
+    }
+});
+
+childRoutes.get('/progress', Only(Child), async (req, res) => {
+    try {
+        const { progress } = req.user as Child;
+        res.json({ progress });
+    } catch (err) {
+        res.status(500).json({
+            message: 'Hmm... That did not work, please try again later.',
+        });
+    }
+});
+
+childRoutes.post('/progress', Only(Child), async (req, res) => {
+    try {
+        const child = req.user as Child;
+        const { progress } = await getRepository(Child, connection()).save({
+            ...child,
+            progress: {
+                ...child.progress,
+                ...req.progressUpdate,
+            },
+        });
+        res.json({ progress });
     } catch (err) {
         res.status(500).json({
             message: 'Hmm... That did not work, please try again later.',
@@ -73,7 +112,7 @@ childRoutes.post('/:id/login', Only(Parent), async (req, res) => {
     }
 });
 
-childRoutes.get('/', Only(Parent), async (req, res) => {
+childRoutes.get('/list', Only(Parent), async (req, res) => {
     try {
         const children = (req.user as Parent).children;
         children.sort((a, b) => a.id - b.id);
@@ -85,9 +124,9 @@ childRoutes.get('/', Only(Parent), async (req, res) => {
     }
 });
 
-childRoutes.post('/', Only(Parent), async (req, res) => {
+childRoutes.post('/list', Only(Parent), async (req, res) => {
     try {
-        const cohort = await getRepository(Cohort).findOne({ order: { id: 'DESC' } });
+        const cohort = await getRepository(Cohort, connection()).findOne({ order: { id: 'DESC' } });
         const { parent, ...child } = await getRepository(Child, connection()).save({
             ...req.childUpdate,
             cohort,
@@ -96,13 +135,14 @@ childRoutes.post('/', Only(Parent), async (req, res) => {
 
         res.status(201).json({ child });
     } catch (err) {
+        console.log(err);
         res.status(500).json({
             message: 'Hmm... That did not work, please try again later.',
         });
     }
 });
 
-childRoutes.get('/:id', Only(Parent), async (req, res) => {
+childRoutes.get('/list/:id', Only(Parent), async (req, res) => {
     try {
         const children = (req.user as Parent).children;
         const child = children.find((child) => child.id === Number(req.params.id));
@@ -123,7 +163,7 @@ childRoutes.get('/:id', Only(Parent), async (req, res) => {
     }
 });
 
-childRoutes.put('/:id', Only(Parent), async (req, res) => {
+childRoutes.put('/list/:id', Only(Parent), async (req, res) => {
     try {
         const children = (req.user as Parent).children;
         const childToUpdate = children.find((child) => child.id === Number(req.params.id));
@@ -148,7 +188,7 @@ childRoutes.put('/:id', Only(Parent), async (req, res) => {
     }
 });
 
-childRoutes.delete('/:id', Only(Parent), async (req, res) => {
+childRoutes.delete('/list/:id', Only(Parent), async (req, res) => {
     try {
         const children = (req.user as Parent).children;
         const childToDelete = children.find((child) => child.id === Number(req.params.id));

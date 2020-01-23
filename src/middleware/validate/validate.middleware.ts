@@ -11,10 +11,13 @@ import {
     AdminRegisterDTO,
     SubscribeDTO,
     UpdateCohortDTO,
+    UpdateProgressDTO,
 } from '../../models';
 
 const Validation: Middleware = () => async (req, res, next) => {
     try {
+        if (req.method !== 'POST' && req.method !== 'PUT') return next();
+
         //Validates and transforms register request objects prior to routing
         if (req.path === '/auth/register')
             req.register = (await transformAndValidate(RegisterDTO, req.body)) as RegisterDTO;
@@ -31,14 +34,14 @@ const Validation: Middleware = () => async (req, res, next) => {
             )) as AdminRegisterDTO;
 
         //Validates and transforms card request objects prior to routing
-        if (req.path.includes('/payment') && req.body.card)
-            req.addCard = (await transformAndValidate(AddCardDTO, req.body.card)) as AddCardDTO;
+        if (req.path === '/payment/cards')
+            req.addCard = (await transformAndValidate(AddCardDTO, req.body)) as AddCardDTO;
 
-        if (req.path === '/payment/subscribe' && req.body)
+        if (req.path === '/payment/subscribe')
             req.subscribe = (await transformAndValidate(SubscribeDTO, req.body)) as SubscribeDTO;
 
         //Validates and transforms canon request objects prior to routing
-        if (req.path === '/canon' && req.method === 'POST')
+        if (req.path === '/canon')
             req.addCanon = (await transformAndValidate(AddCanonDTO, req.body)) as AddCanonDTO;
 
         //Validates and transforms cohort request objects prior to routing
@@ -49,15 +52,18 @@ const Validation: Middleware = () => async (req, res, next) => {
             )) as UpdateCohortDTO;
 
         //Validates and transforms childUpdate request objects prior to routing
-        if (
-            req.path.includes('/children') &&
-            !req.path.includes('/login') &&
-            !(req.method === 'GET' || req.method === 'DELETE')
-        )
+        if (req.path.match(/\/children\/list(\/\d*)?/))
             req.childUpdate = (await transformAndValidate(
                 UpdateChildDTO,
                 req.body
             )) as UpdateChildDTO;
+
+        //Validates and transforms progressUpdate request objects prior to routing
+        if (req.path === '/children/progress')
+            req.progressUpdate = (await transformAndValidate(
+                UpdateProgressDTO,
+                req.body
+            )) as UpdateProgressDTO;
 
         next();
     } catch (err) {

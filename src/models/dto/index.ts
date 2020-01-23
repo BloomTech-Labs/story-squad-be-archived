@@ -6,6 +6,7 @@ export * from './stripe/card.dto';
 export * from './stripe/subscribe.dto';
 
 export * from './child/update-child.dto';
+export * from './child/update-progress.dto';
 
 export * from './canon/add-canon.dto';
 

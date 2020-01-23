@@ -63,15 +63,15 @@ To get the server running locally:
 
 | Method | Endpoint                | Access Control | Description                                                        |
 | ------ | ----------------------- | -------------- | ------------------------------------------------------------------ |
-| GET    | `/children/`            | adult users    | Returns a list of child accounts associated with logged in parent. |
-| GET    | `/children/:id`         | adult users    | Returns specified child account.                                   |
+| GET    | `/children/list`        | adult users    | Returns a list of child accounts associated with logged in parent. |
+| GET    | `/children/list/:id`    | adult users    | Returns specified child account.                                   |
+| PUT    | `/children/list/:id`    | adult users    | Updates specified child account.                                   |
+| DELETE | `/children/list/:id`    | adult users    | Deletes specified child account.                                   |
 | GET    | `/children/me`          | child users    | Returns logged in child.                                           |
 | GET    | `/children/preferences` | child users    | Returns child's preferences.                                       |
 | GET    | `/children/parent`      | child users    | Returns the child's parent.                                        |
 | POST   | `/children/`            | adult users    | Adds a new child account.                                          |
 | POST   | `/children/:id/login`   | adult users    | Switches from parent to designated child account.                  |
-| PUT    | `/children/:id`         | adult users    | Updates specified child account.                                   |
-| DELETE | `/children/:id`         | adult users    | Deletes specified child account.                                   |
 
 #### Canon Routes
 

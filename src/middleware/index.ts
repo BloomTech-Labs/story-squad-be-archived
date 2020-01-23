@@ -6,6 +6,7 @@ import {
     RegisterDTO,
     LoginDTO,
     UpdateChildDTO,
+    UpdateProgressDTO,
     AddCardDTO,
     AddCanonDTO,
     SubscribeDTO,
@@ -26,7 +27,9 @@ declare global {
 
             register?: RegisterDTO;
             login?: LoginDTO;
+
             childUpdate?: UpdateChildDTO;
+            progressUpdate?: UpdateProgressDTO;
 
             addCard?: AddCardDTO;
 
