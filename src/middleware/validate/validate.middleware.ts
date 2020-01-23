@@ -50,7 +50,7 @@ const Validation: Middleware = () => async (req, res, next) => {
                 req.body
             )) as UpdateChildDTO;
 
-        //Validates and transforms childUpdate request objects prior to routing
+        //Validates and transforms progressUpdate request objects prior to routing
         if (req.path === '/children/progress')
             req.progressUpdate = (await transformAndValidate(
                 UpdateProgressDTO,
