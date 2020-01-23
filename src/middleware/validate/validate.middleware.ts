@@ -10,6 +10,7 @@ import {
     AddCanonDTO,
     AdminRegisterDTO,
     SubscribeDTO,
+    UpdateCohortDTO,
 } from '../../models';
 
 const Validation: Middleware = () => async (req, res, next) => {
@@ -39,6 +40,13 @@ const Validation: Middleware = () => async (req, res, next) => {
         //Validates and transforms canon request objects prior to routing
         if (req.path === '/canon' && req.method === 'POST')
             req.addCanon = (await transformAndValidate(AddCanonDTO, req.body)) as AddCanonDTO;
+
+        //Validates and transforms cohort request objects prior to routing
+        if (req.path === '/cohort/list' && req.method === 'POST')
+            req.updateCohort = (await transformAndValidate(
+                UpdateCohortDTO,
+                req.body
+            )) as UpdateCohortDTO;
 
         //Validates and transforms childUpdate request objects prior to routing
         if (
