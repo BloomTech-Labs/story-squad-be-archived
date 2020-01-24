@@ -8,10 +8,13 @@ class Cohort {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ nullable: false })
+    @Column()
+    name: string;
+
+    @Column()
     week: number;
 
-    @Column({ nullable: false })
+    @Column()
     activity: string;
 
     @Column((type) => DueDates)
