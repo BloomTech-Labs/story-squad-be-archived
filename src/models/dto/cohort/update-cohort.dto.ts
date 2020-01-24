@@ -1,12 +1,15 @@
-import { IsEmpty, IsNumber, IsString } from 'class-validator';
+import { IsEmpty, IsString } from 'class-validator';
 
 export class UpdateCohortDTO {
     @IsEmpty()
     id?: number;
 
-    @IsNumber()
-    week: number;
+    @IsEmpty()
+    week?: number;
+
+    @IsEmpty()
+    activity?: string;
 
     @IsString()
-    activity: string;
+    name: string;
 }

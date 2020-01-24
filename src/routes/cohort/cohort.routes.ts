@@ -28,7 +28,17 @@ cohortRoutes.get('/list', Only(Admin), async (req, res) => {
 
 cohortRoutes.post('/list', Only(Admin), async (req, res) => {
     try {
-        const cohort = await getRepository(Cohort, connection()).save(req.updateCohort);
+        const cohort = await getRepository(Cohort, connection()).save({
+            ...req.updateCohort,
+            activity: 'reading',
+            week: 1,
+            dueDates: {
+                reading: new Date(),
+                writing: new Date(),
+                submission: new Date(),
+            },
+        });
+
         res.status(201).json({ cohort });
     } catch (err) {
         res.status(500).json(err.toString());

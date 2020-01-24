@@ -12,14 +12,14 @@ class DueDates implements Activities {
     @Column()
     submission: Date;
 
-    @Column()
-    teamReview: Date;
+    // @Column()
+    // teamReview: Date;
 
-    @Column()
-    randomReview: Date;
+    // @Column()
+    // randomReview: Date;
 
-    @Column()
-    results: Date;
+    // @Column()
+    // results: Date;
 }
 
 export { DueDates };
