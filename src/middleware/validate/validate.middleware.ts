@@ -45,6 +45,7 @@ const Validation: Middleware = () => async (req, res, next) => {
             req.addCanon = (await transformAndValidate(AddCanonDTO, req.body)) as AddCanonDTO;
 
         //Validates and transforms cohort request objects prior to routing
+        // Matches /cohort/list or `/cohort/list/<number>
         if (req.path.match(/\/cohort\/list(\/\d*)?/))
             req.updateCohort = (await transformAndValidate(
                 UpdateCohortDTO,
@@ -52,6 +53,7 @@ const Validation: Middleware = () => async (req, res, next) => {
             )) as UpdateCohortDTO;
 
         //Validates and transforms childUpdate request objects prior to routing
+        // Matches /children/list or `/children/list/<number>
         if (req.path.match(/\/children\/list(\/\d*)?/))
             req.childUpdate = (await transformAndValidate(
                 UpdateChildDTO,
