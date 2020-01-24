@@ -9,12 +9,14 @@ const child: Child = plainToClass(Child, {
     id: 1,
     username: 'Sarah Lang',
     grade: 3,
-    week: 3,
     parent: {
         id: 1,
         email: 'test@mail.com',
         password: 'I Am Password',
         children: undefined,
+    },
+    cohort: {
+        week: 3,
     },
     preferences: {
         dyslexia: false,
@@ -82,12 +84,12 @@ describe('POST /submissions', () => {
     });
 
     it('should return 400 if already exists', async () => {
-        child.week = 1;
+        child.cohort.week = 1;
         await request(app)
             .post('/submissions')
             .send({ id: 2, week: 2, story: '', storyText: 'Text2', illustration: '' })
             .expect(400);
-        child.week = 3;
+        child.cohort.week = 3;
     });
 });
 

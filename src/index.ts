@@ -12,6 +12,7 @@ import {
     canonRoutes,
     adminRoutes,
     submissionRoutes,
+    cohortRoutes,
 } from './routes';
 import { connection } from './util/typeorm-connection';
 
@@ -25,10 +26,11 @@ createConnection(connection()).then(async () => {
     app.use('/admin', adminRoutes);
     app.use('/auth', authRoutes);
     app.use('/canon', CheckJwt(), canonRoutes);
-    app.use('/submissions', CheckJwt(), submissionRoutes);
+    app.use('/cohort', CheckJwt(), cohortRoutes);
     app.use('/children', CheckJwt(), childRoutes);
     app.use('/parents', CheckJwt(), parentRoutes);
     app.use('/payment', CheckJwt(), UpdateStripeRecords(), stripeRoutes);
+    app.use('/submissions', CheckJwt(), submissionRoutes);
 
     const port = process.env.PORT || 4000;
     app.listen(port);

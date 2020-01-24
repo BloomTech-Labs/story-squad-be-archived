@@ -1,4 +1,4 @@
-import { IsInt, Min, Max, Length, IsEmpty, IsOptional } from 'class-validator';
+import { IsInt, Min, Max, Length, IsEmpty } from 'class-validator';
 import { Child } from '../../../database/entity';
 
 class UpdateChildDTO implements Partial<Child> {
@@ -18,12 +18,6 @@ class UpdateChildDTO implements Partial<Child> {
 
     @IsEmpty({ message: 'Subscriptions must be updated through the dashboard' })
     subscription?: null;
-
-    @IsOptional()
-    @IsInt()
-    @Min(1)
-    @Max(52)
-    week?: number;
 }
 
 export { UpdateChildDTO };

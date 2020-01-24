@@ -24,23 +24,29 @@ const stripe = new Stripe(process.env.STRIPE_API || 'sk_test_v666XmnGJcP1Oz3GBg2
 const stripeRoutes = Router();
 
 stripeRoutes.get('/cards', Only(Parent), async (req, res) => {
+    //get which is default here?
     try {
         const user = req.user as Parent;
 
-        const response = await stripe.customers.listSources(user.stripeID, {
+        const cardList = await stripe.customers.listSources(user.stripeID, {
             object: 'card',
         });
 
-        const data = response.data as CustomerSourceExtended[];
-        const cards: CardDTO[] = data.map(({ id, name, brand, last4, exp_month, exp_year }) => ({
-            id,
-            name,
-            brand,
-            last4,
-            exp_month,
-            exp_year,
-        }));
-        res.json({ cards });
+        const listData = cardList.data as CustomerSourceExtended[];
+        const cards: CardDTO[] = listData.map(
+            ({ id, name, brand, last4, exp_month, exp_year }) => ({
+                id,
+                name,
+                brand,
+                last4,
+                exp_month,
+                exp_year,
+            })
+        );
+
+        const customer = await stripe.customers.retrieve(user.stripeID);
+
+        res.json({ cards, customer });
     } catch (err) {
         res.status(500).json({ message: 'Could not fetch cards' });
     }
@@ -89,4 +95,18 @@ stripeRoutes.post('/subscribe', Only(Parent), async (req, res) => {
     }
 });
 
+stripeRoutes.put('/default/:id', Only(Parent), async (req, res) => {
+    try {
+        const user = req.user as Parent;
+        const card = req.params.id;
+
+        await stripe.customers.update(user.stripeID, {
+            default_source: card,
+        });
+        res.status(200).json({ message: 'Successfully updated default payment.' });
+    } catch (err) {
+        console.log('err', err.toString());
+        res.status(500).json({ message: 'Could not update default payment method' });
+    }
+});
 export { stripeRoutes };

@@ -34,7 +34,8 @@ submissionRoutes.post('/', Only(Child), async (req, res) => {
     try {
         const { story, storyText, illustration } = res.locals.body as Submissions;
 
-        const { week, submissions } = req.user as Child;
+        const { cohort, submissions } = req.user as Child;
+        const { week } = cohort;
 
         if (submissions.find((e) => e.week === week)) throw Error('400');
 
