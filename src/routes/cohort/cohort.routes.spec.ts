@@ -7,7 +7,7 @@ import { Child, Parent, Admin } from '../../database/entity';
 
 import { cohortRoutes } from './cohort.routes';
 
-const cohorts = [{ id: 1, week: 1, activity: 'read' }];
+const cohorts = [{ name: 'Ted', id: 1, week: 1, activity: 'read' }];
 
 import typeorm = require('typeorm');
 typeorm.getRepository = jest.fn().mockReturnValue({
@@ -69,23 +69,23 @@ describe('GET /cohort/list', () => {
 
 describe('POST /cohort/list', () => {
     it('should return the added cohort', async () => {
-        const DTO: UpdateCohortDTO = { week: 1, activity: 'something' };
+        const DTO: UpdateCohortDTO = { name: 'example' };
         const { body } = await request(app)
             .post('/cohort/list')
             .send({ cohort: DTO })
             .set({ Authorization: 'admin' });
-        expect(body.cohort.activity).toBe('something');
+        expect(body.cohort.name).toBe('example');
     });
 });
 
 describe('PUT /cohort/list/:id', () => {
     it('should return the updated cohort', async () => {
-        const DTO: UpdateCohortDTO = { week: 1, activity: 'something new' };
+        const DTO: UpdateCohortDTO = { name: 'example' };
         const { body } = await request(app)
             .put('/cohort/list/1')
             .send({ cohort: DTO })
             .set({ Authorization: 'admin' });
-        expect(body.cohort.activity).toBe('something new');
+        expect(body.cohort.name).toBe('example');
     });
 });
 
