@@ -103,7 +103,7 @@ To get the server running locally:
 | POST   | `/subscribe` | adult users    | creates a subscription                |
 | DELETE | `/cards/:id` | adult users    | deletes a payment method              |
 
-#### Payment Routes
+#### Submissions Routes
 
 | Method | Endpoint             | Access Control | Description                                                   |
 | ------ | -------------------- | -------------- | ------------------------------------------------------------- |
@@ -166,6 +166,7 @@ To get the server running locally:
   week: NUM
   grade: NUM
   preferencesDyslexia: BOOL
+  submissions: ARRAY (Relation)
 }
 ```
 
