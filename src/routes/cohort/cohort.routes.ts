@@ -2,9 +2,8 @@ import { Router } from 'express';
 import { getRepository } from 'typeorm';
 
 import { connection } from '../../util/typeorm-connection';
-import { Cohort } from '../../database/entity/Cohort';
+import { Child, Admin, Cohort } from '../../database/entity';
 import { Only } from '../../middleware';
-import { Child, Parent, Admin } from '../../database/entity';
 
 const cohortRoutes = Router();
 
@@ -82,9 +81,10 @@ cohortRoutes.put('/list/:id', Only(Admin), async (req, res) => {
 
 cohortRoutes.delete('/list/:id', Only(Admin), async (req, res) => {
     try {
-        const { affected } = await getRepository(Child, connection()).delete(req.params.id);
+        const { id } = req.params;
+        const { affected } = await getRepository(Cohort, connection()).delete(id);
         if (!affected) throw new Error();
-        res.json({ message: `Successfully deleted cohort ${req.params.id}` });
+        res.json({ message: `Successfully deleted cohort ${id}` });
     } catch (err) {
         res.status(500).json({
             message: 'Hmm... That did not work, please try again later.',

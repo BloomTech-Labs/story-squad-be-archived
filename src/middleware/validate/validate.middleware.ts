@@ -45,7 +45,7 @@ const Validation: Middleware = () => async (req, res, next) => {
             req.addCanon = (await transformAndValidate(AddCanonDTO, req.body)) as AddCanonDTO;
 
         //Validates and transforms cohort request objects prior to routing
-        if (req.path === '/cohort/list' && req.method === 'POST')
+        if (req.path.match(/\/cohort\/list(\/\d*)?/))
             req.updateCohort = (await transformAndValidate(
                 UpdateCohortDTO,
                 req.body
