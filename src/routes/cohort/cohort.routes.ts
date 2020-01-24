@@ -26,6 +26,16 @@ cohortRoutes.get('/list', Only(Admin), async (req, res) => {
     }
 });
 
+cohortRoutes.get('/list/:id', Only(Admin), async (req, res) => {
+    try {
+        const { id } = req.params;
+        const cohort = await getRepository(Cohort, connection()).findOne(id);
+        res.status(200).json({ cohort });
+    } catch (err) {
+        res.status(500).json(err.toString());
+    }
+});
+
 cohortRoutes.post('/list', Only(Admin), async (req, res) => {
     try {
         const cohort = await getRepository(Cohort, connection()).save({
