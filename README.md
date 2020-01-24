@@ -31,7 +31,7 @@ To get the server running locally:
 #### SuperTest
 
 -   Simplifies endpoint testing
--   Intigration testing
+-   Integration testing
 
 ## Endpoints
 
@@ -61,17 +61,20 @@ To get the server running locally:
 
 #### Child Routes
 
-| Method | Endpoint                | Access Control | Description                                                        |
-| ------ | ----------------------- | -------------- | ------------------------------------------------------------------ |
-| GET    | `/children/`            | adult users    | Returns a list of child accounts associated with logged in parent. |
-| GET    | `/children/:id`         | adult users    | Returns specified child account.                                   |
-| GET    | `/children/me`          | child users    | Returns logged in child.                                           |
-| GET    | `/children/preferences` | child users    | Returns child's preferences.                                       |
-| GET    | `/children/parent`      | child users    | Returns the child's parent.                                        |
-| POST   | `/children/`            | adult users    | Adds a new child account.                                          |
-| POST   | `/children/:id/login`   | adult users    | Switches from parent to designated child account.                  |
-| PUT    | `/children/:id`         | adult users    | Updates specified child account.                                   |
-| DELETE | `/children/:id`         | adult users    | Deletes specified child account.                                   |
+| Method | Endpoint                | Access Control | Description                                                       |
+| ------ | ----------------------- | -------------- | ----------------------------------------------------------------- |
+| GET    | `/children/list`        | adult users    | Returns a list of child accounts associated with logged in parent |
+| GET    | `/children/list/:id`    | adult users    | Returns specified child account                                   |
+| PUT    | `/children/list/:id`    | adult users    | Updates specified child account                                   |
+| DELETE | `/children/list/:id`    | adult users    | Deletes specified child account                                   |
+| GET    | `/children/me`          | child users    | Returns logged in child                                           |
+| GET    | `/children/preferences` | child users    | Returns child's preferences                                       |
+| GET    | `/children/progress`    | child users    | Returns Progress of current week                                  |
+| POST   | `/children/progress`    | child users    | Updates progress of current week                                  |
+| GET    | `/children/cohort`      | adult users    | Returns cohort the child is in                                    |
+| GET    | `/children/parent`      | child users    | Returns the child's parent                                        |
+| POST   | `/children/`            | adult users    | Adds a new child account                                          |
+| POST   | `/children/:id/login`   | adult users    | Returns JWT for Child                                             |
 
 #### Canon Routes
 
@@ -80,6 +83,16 @@ To get the server running locally:
 | GET    | `/canon/`      | admin users    | Returns a list of pdf  |
 | GET    | `/canon/:week` | all users      | Returns a matching pdf |
 | POST   | `/canon`       | admin users    | Creates a new pdf      |
+
+#### Cohort Routes
+
+| Method | Endpoint            | Access Control | Description                          |
+| ------ | ------------------- | -------------- | ------------------------------------ |
+| GET    | `/cohort/`          | all users      | Returns Cohort ID of logged in child |
+| GET    | `/cohort/list/`     | admin users    | Returns a list of all Cohorts        |
+| POST   | `/cohort/list/`     | admin users    | Creates a new Cohort                 |
+| PUT    | `/cohort/list/:id/` | admin users    | Updates specified Cohort             |
+| DELETE | `/cohort/list/:id/` | admin users    | Deletes specified Cohort             |
 
 #### Payment Routes
 
@@ -103,6 +116,20 @@ To get the server running locally:
 }
 ```
 
+#### Cohort
+
+---
+
+```
+{
+  id: NUMBER
+  name: STRING
+  week: NUMBER
+  activity: STRING
+  children: ARRAY (Relation)
+}
+```
+
 #### Parent
 
 ---
@@ -110,7 +137,7 @@ To get the server running locally:
 ```
 {
   id: NUM
-  children: ARRAY
+  children: ARRAY (Relation)
   email: STRING
   password: STRING
   stripeID: STRING
@@ -125,6 +152,7 @@ To get the server running locally:
 {
   id: NUM
   parent: foreign key in PARENT table
+  cohort: foreign key in COHORT table
   username: STRING
   week: NUM
   grade: NUM

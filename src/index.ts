@@ -11,6 +11,7 @@ import {
     stripeRoutes,
     canonRoutes,
     adminRoutes,
+    cohortRoutes,
 } from './routes';
 import { connection } from './util/typeorm-connection';
 
@@ -24,6 +25,7 @@ createConnection(connection()).then(async () => {
     app.use('/admin', adminRoutes);
     app.use('/auth', authRoutes);
     app.use('/canon', CheckJwt(), canonRoutes);
+    app.use('/cohort', CheckJwt(), cohortRoutes);
     app.use('/children', CheckJwt(), childRoutes);
     app.use('/parents', CheckJwt(), parentRoutes);
     app.use('/payment', CheckJwt(), UpdateStripeRecords(), stripeRoutes);

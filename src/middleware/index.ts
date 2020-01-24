@@ -6,9 +6,11 @@ import {
     RegisterDTO,
     LoginDTO,
     UpdateChildDTO,
+    UpdateProgressDTO,
     AddCardDTO,
     AddCanonDTO,
     SubscribeDTO,
+    UpdateCohortDTO,
 } from '../models';
 import { Validation } from './validate/validate.middleware';
 
@@ -25,11 +27,15 @@ declare global {
 
             register?: RegisterDTO;
             login?: LoginDTO;
+
             childUpdate?: UpdateChildDTO;
+            progressUpdate?: UpdateProgressDTO;
 
             addCard?: AddCardDTO;
 
             addCanon?: AddCanonDTO;
+
+            updateCohort?: UpdateCohortDTO;
 
             subscribe?: SubscribeDTO;
         }
