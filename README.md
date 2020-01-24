@@ -81,6 +81,16 @@ To get the server running locally:
 | GET    | `/canon/:week` | all users      | Returns a matching pdf |
 | POST   | `/canon`       | admin users    | Creates a new pdf      |
 
+#### Cohort Routes
+
+| Method | Endpoint            | Access Control | Description                          |
+| ------ | ------------------- | -------------- | ------------------------------------ |
+| GET    | `/cohort/`          | all users      | Returns Cohort ID of logged in child |
+| GET    | `/cohort/list/`     | admin users    | Returns a list of all Cohorts        |
+| POST   | `/cohort/list/`     | admin users    | Creates a new Cohort                 |
+| PUT    | `/cohort/list/:id/` | admin users    | Updates specified Cohort             |
+| DELETE | `/cohort/list/:id/` | admin users    | Deletes specified Cohort             |
+
 #### Payment Routes
 
 | Method | Endpoint     | Access Control | Description                           |
@@ -100,6 +110,20 @@ To get the server running locally:
 {
   week: NUMBER
   base64: STRING
+}
+```
+
+#### Cohort
+
+---
+
+```
+{
+  id: NUMBER
+  name: STRING
+  week: NUMBER
+  activity: STRING
+
 }
 ```
 
