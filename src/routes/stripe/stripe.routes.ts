@@ -90,7 +90,6 @@ stripeRoutes.post('/subscribe', Only(Parent), async (req, res) => {
         await getRepository(Child, connection()).update(childID, child);
         res.status(201).json({ message: 'Successfully subscribed' });
     } catch (err) {
-        console.log(err);
         res.status(500).json({ message: 'Could not process subscription' });
     }
 });
@@ -105,7 +104,6 @@ stripeRoutes.put('/default/:id', Only(Parent), async (req, res) => {
         });
         res.status(200).json({ message: 'Successfully updated default payment.' });
     } catch (err) {
-        console.log('err', err.toString());
         res.status(500).json({ message: 'Could not update default payment method' });
     }
 });

@@ -9,7 +9,8 @@ class Submissions {
 
     @ManyToOne(
         (type) => Child,
-        (child) => child.submissions
+        (child) => child.submissions,
+        { onDelete: 'CASCADE' }
     )
     child: Child;
 
