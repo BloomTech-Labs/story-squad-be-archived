@@ -1,9 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'typeorm';
 
 import { Preferences } from './Preferences';
 import { Progress } from './Progress';
 import { Parent } from './Parent';
 import { Cohort } from './Cohort';
+import { Submissions } from './Submissions';
 
 @Entity()
 class Child {
@@ -36,6 +37,12 @@ class Child {
         (cohort) => cohort.children
     )
     cohort: Cohort;
+
+    @OneToMany(
+        (type) => Submissions,
+        (submissions) => submissions.child
+    )
+    submissions: Submissions[];
 }
 
 export { Child };
