@@ -127,6 +127,8 @@ childRoutes.get('/list', Only(Parent), async (req, res) => {
 childRoutes.post('/list', Only(Parent), async (req, res) => {
     try {
         const cohort = await getRepository(Cohort, connection()).findOne({ order: { id: 'DESC' } });
+        if (!cohort) throw new Error('No Cohort');
+
         const { parent, submissions, ...child } = await getRepository(Child, connection()).save({
             ...req.childUpdate,
             cohort,
@@ -135,6 +137,10 @@ childRoutes.post('/list', Only(Parent), async (req, res) => {
 
         res.status(201).json({ child });
     } catch (err) {
+        if (err.toString() === 'Error: No Cohort')
+            res.status(500).json({
+                message: 'Please contact an Admin to setup a Cohort for your Child.',
+            });
         res.status(500).json({
             message: 'Hmm... That did not work, please try again later.',
         });
