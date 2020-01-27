@@ -55,8 +55,8 @@ export const ormconfig: PostgresConnectionOptions[] = [
         database: 'story-squad-testing',
         synchronize: true,
         logging: false,
-        entities: ['src/database/entity/**/*.ts'],
-        migrations: ['src/database/migration/**/*.ts'],
-        subscribers: ['src/database/subscriber/**/*.ts'],
+        entities: [path.resolve(__dirname, './database/entity/**/*.ts')],
+        migrations: [path.resolve(__dirname, './database/migration/**/*.ts')],
+        subscribers: [path.resolve(__dirname, './database/subscriber/**/*.ts')],
     },
 ];
