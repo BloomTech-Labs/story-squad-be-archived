@@ -64,6 +64,7 @@ To get the server running locally:
 | Method | Endpoint                | Access Control | Description                                                       |
 | ------ | ----------------------- | -------------- | ----------------------------------------------------------------- |
 | GET    | `/children/list`        | adult users    | Returns a list of child accounts associated with logged in parent |
+| POST   | `/children/list`        | adult users    | Adds a new child account                                          |
 | GET    | `/children/list/:id`    | adult users    | Returns specified child account                                   |
 | PUT    | `/children/list/:id`    | adult users    | Updates specified child account                                   |
 | DELETE | `/children/list/:id`    | adult users    | Deletes specified child account                                   |
@@ -73,7 +74,6 @@ To get the server running locally:
 | POST   | `/children/progress`    | child users    | Updates progress of current week                                  |
 | GET    | `/children/cohort`      | adult users    | Returns cohort the child is in                                    |
 | GET    | `/children/parent`      | child users    | Returns the child's parent                                        |
-| POST   | `/children/`            | adult users    | Adds a new child account                                          |
 | POST   | `/children/:id/login`   | adult users    | Returns JWT for Child                                             |
 
 #### Canon Routes
@@ -99,9 +99,18 @@ To get the server running locally:
 | Method | Endpoint     | Access Control | Description                           |
 | ------ | ------------ | -------------- | ------------------------------------- |
 | GET    | `/cards`     | adult users    | json list of user's cards             |
-| Post   | `/cards`     | adult users    | adds card as payment source to Stripe |
-| Post   | `/subscribe` | adult users    | creates a subscription                |
-| Delete | `/cards/:id` | adult users    | deletes a payment method              |
+| POST   | `/cards`     | adult users    | adds card as payment source to Stripe |
+| POST   | `/subscribe` | adult users    | creates a subscription                |
+| DELETE | `/cards/:id` | adult users    | deletes a payment method              |
+
+#### Submissions Routes
+
+| Method | Endpoint             | Access Control | Description                                                   |
+| ------ | -------------------- | -------------- | ------------------------------------------------------------- |
+| GET    | `/submissions`       | child users    | json list of user's submissions                               |
+| GET    | `/submissions/:week` | child users    | json object of a user's submission for a specific week        |
+| POST   | `/submissions`       | child users    | upload and receive json object of a user's new submission     |
+| DELETE | `/submissions/:week` | child users    | delete and receive json object of a user's removed submission |
 
 # Data Model
 
@@ -157,6 +166,7 @@ To get the server running locally:
   week: NUM
   grade: NUM
   preferencesDyslexia: BOOL
+  submissions: ARRAY (Relation)
 }
 ```
 
@@ -171,6 +181,21 @@ To get the server running locally:
   password: STRING
   validpass: BOOL
   role: STRING
+}
+```
+
+#### Submissions
+
+---
+
+```
+{
+  id: NUM
+  child: foreign key in CHILD table
+  week: NUM
+  story: STRING
+  storyText: STRING
+  illustration: STRING
 }
 ```
 
