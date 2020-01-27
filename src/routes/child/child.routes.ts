@@ -135,7 +135,6 @@ childRoutes.post('/list', Only(Parent), async (req, res) => {
 
         res.status(201).json({ child });
     } catch (err) {
-        console.log(err);
         res.status(500).json({
             message: 'Hmm... That did not work, please try again later.',
         });
