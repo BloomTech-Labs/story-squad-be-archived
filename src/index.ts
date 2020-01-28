@@ -15,10 +15,12 @@ import {
     cohortRoutes,
 } from './routes';
 import { connection } from './util/typeorm-connection';
+import { ormconfig } from './ormconfig';
 
 dotenv.config();
 
-createConnection(connection()).then(async () => {
+const config = ormconfig.find((config) => config.name === connection());
+createConnection(config).then(async () => {
     const app = express();
 
     globalMiddleware(app);
