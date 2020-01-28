@@ -15,6 +15,7 @@
         "class-transformer-validator": "^0.8.0",
         "class-validator": "^0.10.1",
         "cors": "^2.8.5",
+        "dotenv": "^8.2.0",
         "express": "^4.17.1",
         "helmet": "^3.21.2",
         "jsonwebtoken": "^8.5.1",
