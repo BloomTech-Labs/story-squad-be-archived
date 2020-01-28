@@ -2,7 +2,7 @@ import * as request from 'supertest';
 import * as express from 'express';
 import { plainToClass } from 'class-transformer';
 
-import { Child, Submissions } from '../../database/entity';
+import { Child, Submission } from '../../database/entity';
 import { submissionRoutes } from './submissions.routes';
 
 const child: Child = plainToClass(Child, {
@@ -31,7 +31,7 @@ import typeorm = require('typeorm');
 typeorm.getRepository = jest.fn().mockReturnValue({
     save: jest
         .fn()
-        .mockImplementation(async (submission: Submissions) => ({ ...submission, id: 3 })),
+        .mockImplementation(async (submission: Submission) => ({ ...submission, id: 3 })),
     update: jest.fn().mockImplementation(async () => ({ affected: 1 })),
     delete: jest.fn().mockImplementation(async () => ({ affected: 1 })),
 });

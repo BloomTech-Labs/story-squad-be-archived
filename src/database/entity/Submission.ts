@@ -3,7 +3,7 @@ import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { Child } from './Child';
 
 @Entity()
-class Submissions {
+class Submission {
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -27,4 +27,4 @@ class Submissions {
     illustration: string;
 }
 
-export { Submissions };
+export { Submission };

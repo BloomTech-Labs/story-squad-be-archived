@@ -4,7 +4,7 @@ import { Preferences } from './Preferences';
 import { Progress } from './Progress';
 import { Parent } from './Parent';
 import { Cohort } from './Cohort';
-import { Submissions } from './Submissions';
+import { Submission } from './Submission';
 
 @Entity()
 class Child {
@@ -39,10 +39,10 @@ class Child {
     cohort: Cohort;
 
     @OneToMany(
-        (type) => Submissions,
+        (type) => Submission,
         (submissions) => submissions.child
     )
-    submissions: Submissions[];
+    submissions: Submission[];
 }
 
 export { Child };
