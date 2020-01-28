@@ -32,7 +32,7 @@ module.exports = [
         username: 'postgres',
         password: 'password',
         database: 'story-squad',
-        synchronize: true,
+        synchronize: false,
         logging: false,
         entities: ['src/database/entity/**/*.ts'],
         migrations: ['src/database/migration/**/*.ts'],
