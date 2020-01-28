@@ -8,7 +8,9 @@ To get the server running locally:
 
 -   Clone this repo
 -   **yarn install** to install all required dependencies
--   **yarn start** to start the local server
+-   **yarn dev** to start the local server
+-   **yarn build** to build production version
+-   **yarn start** to start built production version
 -   **yarn test** to start server using testing environment
 
 ### Backend framework
@@ -253,4 +255,4 @@ These contribution guidelines have been adapted from [this good-Contributing.md-
 
 ## Documentation
 
-See [Frontend Documentation](https://github.com/Lambda-School-Labs/story-squad-fe/blob/master/README.md) for details on the fronend of our project.
+See [Frontend Documentation](https://github.com/Lambda-School-Labs/story-squad-fe/blob/master/README.md) for details on the frontend of our project.
