@@ -9,7 +9,8 @@
         "dev": "ts-node-dev src/index.ts",
         "test": "jest --watch",
         "typeorm": "ts-node ./node_modules/typeorm/cli.js -f src/ormconfig.ts",
-        "typeorm-dev": "ts-node ./node_modules/typeorm/cli.js -c development -f src/ormconfig.ts"
+        "typeorm-dev": "ts-node ./node_modules/typeorm/cli.js -c development -f src/ormconfig.ts",
+        "connection": "ts-node src/util/get-connection.ts"
     },
     "dependencies": {
         "bcryptjs": "^2.4.3",

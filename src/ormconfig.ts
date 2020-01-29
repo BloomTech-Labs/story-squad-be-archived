@@ -14,7 +14,7 @@ module.exports = [
         username: connectionOptions.user,
         password: connectionOptions.password,
         database: connectionOptions.database,
-        synchronize: true,
+        synchronize: false,
         logging: false,
         entities: [path.resolve(__dirname, 'database/entity/**/*.{ts,js}')],
         migrations: [path.resolve(__dirname, 'database/migration/**/*.{ts,js}')],
