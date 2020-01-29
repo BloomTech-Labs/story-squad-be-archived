@@ -29,6 +29,7 @@
         "secure-random-password": "^0.2.1",
         "segal-decorators": "^0.3.1",
         "stripe": "^8.7.0",
+        "ts-node": "^8.6.2",
         "typeorm": "^0.2.22"
     },
     "devDependencies": {
@@ -47,7 +48,6 @@
         "jest": "^25.1.0",
         "supertest": "^4.0.2",
         "ts-jest": "^25.0.0",
-        "ts-node": "^8.6.2",
         "ts-node-dev": "^1.0.0-pre.44",
         "typescript": "^3.7.5"
     }
