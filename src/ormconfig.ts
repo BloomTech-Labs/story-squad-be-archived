@@ -21,7 +21,7 @@ module.exports = [
         subscribers: [path.resolve(__dirname, './database/subscriber/**/*.{ts,js}')],
         cli: {
             entitiesDir: path.resolve(__dirname, './database/entity'),
-            migrationsDir: path.resolve(__dirname, './database/migration'),
+            migrationsDir: path.resolve(__dirname, '/database/migration'),
             subscribersDir: path.resolve(__dirname, './database/subscriber'),
         },
     },
@@ -40,7 +40,10 @@ module.exports = [
         subscribers: [path.resolve(__dirname, './database/subscriber/**/*.{ts,js}')],
         cli: {
             entitiesDir: path.resolve(__dirname, './database/entity'),
-            migrationsDir: path.resolve(__dirname, './database/migration'),
+            migrationsDir: path.relative(
+                __dirname,
+                path.resolve(__dirname, 'src/database/migration')
+            ),
             subscribersDir: path.resolve(__dirname, './database/subscriber'),
         },
     },
