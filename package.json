@@ -30,6 +30,7 @@
         "secure-random-password": "^0.2.1",
         "segal-decorators": "^0.3.1",
         "stripe": "^8.7.0",
+        "ts-node": "^8.6.2",
         "typeorm": "^0.2.22"
     },
     "devDependencies": {
