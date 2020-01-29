@@ -6,8 +6,7 @@
     "scripts": {
         "start": "ts-node src/index",
         "dev": "ts-node-dev src/index.ts",
-        "test": "jest --watch",
-        "typeorm": "ts-node ./node_modules/typeorm/cli.js"
+        "test": "jest --watch"
     },
     "dependencies": {
         "@types/bcryptjs": "^2.4.2",
