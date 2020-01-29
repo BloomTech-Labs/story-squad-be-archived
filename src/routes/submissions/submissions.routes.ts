@@ -4,7 +4,6 @@ import { getRepository } from 'typeorm';
 import { connection } from '../../util/typeorm-connection';
 import { Only } from '../../middleware';
 import { Child, Submissions } from '../../database/entity';
-import { SubmissionDTO } from '../../models';
 
 const submissionRoutes = Router();
 
