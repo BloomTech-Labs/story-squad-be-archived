@@ -3,7 +3,7 @@ import { getRepository } from 'typeorm';
 
 import { connection } from '../../util/typeorm-connection';
 import { Only } from '../../middleware';
-import { Child, Submission } from '../../database/entity';
+import { Child, Submissions } from '../../database/entity';
 import { SubmissionDTO } from '../../models';
 
 const submissionRoutes = Router();
@@ -32,14 +32,14 @@ submissionRoutes.get('/:week', Only(Child), async (req, res) => {
 
 submissionRoutes.post('/', Only(Child), async (req, res) => {
     try {
-        const { story, storyText, illustration } = res.locals.body as Submission;
+        const { story, storyText, illustration } = res.locals.body as Submissions;
 
         const { cohort, submissions } = req.user as Child;
         const { week } = cohort;
 
         if (submissions.find((e) => e.week === week)) throw Error('400');
 
-        const { child, ...submission } = await getRepository(Submission, connection()).save({
+        const { child, ...submission } = await getRepository(Submissions, connection()).save({
             week,
             story,
             storyText,
@@ -63,7 +63,7 @@ submissionRoutes.delete('/:week', Only(Child), async (req, res) => {
         const submission = submissions.find(({ week }) => week === reqWeek);
         if (!submission) throw Error('404');
 
-        const { affected } = await getRepository(Submission, connection()).delete({
+        const { affected } = await getRepository(Submissions, connection()).delete({
             week: reqWeek,
         });
         if (!affected) throw Error();
