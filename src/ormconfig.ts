@@ -1,12 +1,11 @@
 import * as dotenv from 'dotenv';
 import * as path from 'path';
 import * as PostgressConnectionStringParser from 'pg-connection-string';
-import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 
 dotenv.config();
 
 const connectionOptions = PostgressConnectionStringParser.parse(process.env.DATABASE_URL || '');
-export const ormconfig: PostgresConnectionOptions[] = [
+module.exports = [
     {
         name: 'default',
         type: 'postgres',

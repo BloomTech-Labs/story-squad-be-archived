@@ -7,7 +7,9 @@
         "build": "tsc",
         "start": "node build/index.js",
         "dev": "ts-node-dev src/index.ts",
-        "test": "jest --watch"
+        "test": "jest --watch",
+        "typeorm": "ts-node ./node_modules/typeorm/cli.js -f src/ormconfig.ts",
+        "typeorm-dev": "ts-node ./node_modules/typeorm/cli.js -c development -f src/ormconfig.ts"
     },
     "dependencies": {
         "bcryptjs": "^2.4.3",
@@ -44,6 +46,7 @@
         "jest": "^25.1.0",
         "supertest": "^4.0.2",
         "ts-jest": "^25.0.0",
+        "ts-node": "^8.6.2",
         "ts-node-dev": "^1.0.0-pre.44",
         "typescript": "^3.7.5"
     }
