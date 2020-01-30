@@ -12,6 +12,9 @@ To get the server running locally:
 -   **yarn build** to build production version
 -   **yarn start** to start built production version
 -   **yarn test** to start server using testing environment
+-   **yarn typorm** to use typeorm CLI commands on a staging or production environment
+-   **yarn typeorm-dev** to use typeorm CLI commands on the development environment
+-   **yarn connection** to output connection information for a staging or production database
 
 ### Backend framework
 
