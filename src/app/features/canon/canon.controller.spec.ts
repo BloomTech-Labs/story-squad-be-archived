@@ -80,6 +80,11 @@ describe('CanonController', () => {
       expect(await canonController.getCanon({}, 1, 'something-else')).toBe('base64');
       expect(await canonController.getCanon({}, 1, 'force')).toBe('altbase64');
     });
+
+    it('should fail if the cannon is not found', async () => {
+      findOne.mockResolvedValueOnce(false);
+      await expect(canonController.getCanon({}, 1, '')).rejects.toBeInstanceOf(Error);
+    });
   });
 
   describe('createCanon()', () => {
@@ -111,6 +116,12 @@ describe('CanonController', () => {
     it('should return the updated canon', async () => {
       const canon = { week: 1, base64: 'base64', altbase64: 'altbase64' };
       expect(await canonController.updateCanon(1, canon)).toBe(canon);
+    });
+
+    it('should fail if the cannon is not found', async () => {
+      findOne.mockResolvedValueOnce(false);
+      const canon = { week: 1, base64: 'base64', altbase64: 'altbase64' };
+      await expect(canonController.updateCanon(1, canon)).rejects.toBeInstanceOf(Error);
     });
   });
 
