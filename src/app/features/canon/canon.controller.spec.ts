@@ -9,15 +9,8 @@ import { CanonDelegate, Child } from '@prisma/client';
 describe('CanonController', () => {
   let canonController: CanonController;
   let prismaService: PrismaService;
-  const childDetails: Child = {
-    id: 1,
-    grade: 3,
-    username: 'Dragon45',
-    subscription: '',
-    dyslexia: false,
-  };
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
       controllers: [CanonController],
       providers: [CanonService, PrismaService],
@@ -34,7 +27,7 @@ describe('CanonController', () => {
     const findMany = jest.fn().mockResolvedValue(result);
     const mockCanonDelegate: Partial<CanonDelegate> = { findMany };
 
-    beforeAll(() => {
+    beforeEach(() => {
       jest.spyOn(prismaService, 'canon', 'get').mockReturnValue(mockCanonDelegate as CanonDelegate);
     });
 
@@ -47,11 +40,19 @@ describe('CanonController', () => {
   });
 
   describe('getCanon()', () => {
-    const result = { week: 1, base64: 'base64', altbase64: 'altbase64' };
-    const findOne = jest.fn().mockResolvedValue(result);
-    const mockCanonDelegate: Partial<CanonDelegate> = { findOne };
+    let findOne: jest.Mock;
+    const childDetails: Child = {
+      id: 1,
+      grade: 3,
+      username: 'Dragon45',
+      subscription: '',
+      dyslexia: false,
+    };
 
-    beforeAll(() => {
+    beforeEach(() => {
+      const result = { week: 1, base64: 'base64', altbase64: 'altbase64' };
+      findOne = jest.fn().mockResolvedValue(result);
+      const mockCanonDelegate: Partial<CanonDelegate> = { findOne };
       jest.spyOn(prismaService, 'canon', 'get').mockReturnValue(mockCanonDelegate as CanonDelegate);
     });
 
@@ -82,10 +83,11 @@ describe('CanonController', () => {
   });
 
   describe('createCanon()', () => {
-    const upsert = jest.fn().mockImplementation(async ({ create }) => create);
-    const mockCanonDelegate: Partial<CanonDelegate> = { upsert };
+    let upsert: jest.Mock;
 
-    beforeAll(() => {
+    beforeEach(() => {
+      upsert = jest.fn().mockImplementation(async ({ create }) => create);
+      const mockCanonDelegate: Partial<CanonDelegate> = { upsert };
       jest.spyOn(prismaService, 'canon', 'get').mockReturnValue(mockCanonDelegate as CanonDelegate);
     });
 
@@ -96,11 +98,13 @@ describe('CanonController', () => {
   });
 
   describe('updateCanon()', () => {
-    const findOne = jest.fn().mockResolvedValue(true);
-    const update = jest.fn().mockImplementation(async ({ data }) => data);
-    const mockCanonDelegate: Partial<CanonDelegate> = { findOne, update };
+    let findOne: jest.Mock;
+    let update: jest.Mock;
 
-    beforeAll(() => {
+    beforeEach(() => {
+      findOne = jest.fn().mockResolvedValue(true);
+      update = jest.fn().mockImplementation(async ({ data }) => data);
+      const mockCanonDelegate: Partial<CanonDelegate> = { findOne, update };
       jest.spyOn(prismaService, 'canon', 'get').mockReturnValue(mockCanonDelegate as CanonDelegate);
     });
 
@@ -111,16 +115,26 @@ describe('CanonController', () => {
   });
 
   describe('delete()', () => {
-    const findOne = jest.fn().mockResolvedValue(true);
-    const mockCanonDelegate: Partial<CanonDelegate> = { findOne, delete: jest.fn() };
+    let findOne: jest.Mock;
+    let remove: jest.Mock;
 
-    beforeAll(() => {
+    beforeEach(() => {
+      findOne = jest.fn().mockResolvedValue(true);
+      remove = jest.fn();
+      const mockCanonDelegate: Partial<CanonDelegate> = { findOne, delete: remove };
       jest.spyOn(prismaService, 'canon', 'get').mockReturnValue(mockCanonDelegate as CanonDelegate);
     });
 
-    it('should return the updated canon', async () => {
+    it('should attempt to delete the canon cannon of a given week', async () => {
       expect(await canonController.deleteCanon(1)).toBeTruthy();
-      expect(mockCanonDelegate.delete).toHaveBeenCalled();
+      expect(remove).toHaveBeenCalled();
+      expect(remove).toHaveBeenCalledWith({ where: { week: 1 } });
+    });
+
+    it('should fail if the cannon is not found', async () => {
+      findOne.mockResolvedValueOnce(false);
+      await expect(canonController.deleteCanon(1)).rejects.toBeInstanceOf(Error);
+      expect(remove).not.toHaveBeenCalled();
     });
   });
 });
