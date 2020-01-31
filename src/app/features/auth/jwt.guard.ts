@@ -3,7 +3,6 @@ import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 
 import { User, AdminRole } from '@models';
-import { Request } from 'express';
 
 @Injectable()
 export class JwtGuard extends AuthGuard('jwt') implements CanActivate {
@@ -17,10 +16,11 @@ export class JwtGuard extends AuthGuard('jwt') implements CanActivate {
 
     const jwtActivated = (await super.canActivate(context)) as boolean;
 
-    const req = context.switchToHttp().getRequest() as Request;
+    const user = context.switchToHttp().getRequest().user as User;
     const requiredRoles = this.reflector.get<AdminRole[]>('roles', context.getHandler());
-    const hasRole = requiredRoles?.some((role) => (req.user as User).admin?.role === role);
+    const hasRole = requiredRoles?.some((role) => user.admin?.role === role);
 
-    return (hasRole || !requiredRoles) && jwtActivated;
+    const notActiveSubscription = user.child?.subscription === '';
+    return (hasRole || !requiredRoles) && jwtActivated && !notActiveSubscription;
   }
 }

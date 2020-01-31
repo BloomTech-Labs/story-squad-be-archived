@@ -16,11 +16,11 @@ export class AdminController {
 
   @Put('/me')
   public async updatePassword(
-    @User('admin') admin: Admin,
+    @User('admin') { email }: Admin,
     @Body() update: AdminPasswordDTO
-  ): Promise<void> {
-    console.log(update);
-    return await this.adminService.updatePassword(admin.email, update);
+  ): Promise<string> {
+    await this.adminService.updatePassword(email, update);
+    return `Updated password for ${email}!`;
   }
 
   @Get('/')

@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ConflictException, BadRequestException } from '@nestjs/common';
 
-import { Cohort } from '@prisma/client';
 import { UpdateCohortDTO } from '@models';
 import { PrismaService } from '@shared/prisma';
+import { PrismaClientRequestError } from '@prisma/client';
 
 @Injectable()
 export class CohortService {
@@ -21,10 +21,18 @@ export class CohortService {
   }
 
   public async addCohort(cohort: UpdateCohortDTO) {
-    const defaults = { activity: 'reading', week: 1 };
-    const created = await this.prisma.cohorts.create({ data: { ...cohort, ...defaults } });
-    await this.addDueDates(created.id);
-    return created;
+    try {
+      const defaults = { activity: 'reading', week: 1 };
+      const created = await this.prisma.cohorts.create({ data: { ...cohort, ...defaults } });
+      await this.addDueDates(created.id);
+      return created;
+    } catch (err) {
+      if (err instanceof PrismaClientRequestError)
+        throw new BadRequestException(
+          'Could not create cohort, does another cohort with the same name exist?'
+        );
+      else throw err;
+    }
   }
 
   public async updateCohort(id: number, cohort: UpdateCohortDTO) {
@@ -32,14 +40,21 @@ export class CohortService {
   }
 
   public async deleteCohort(id: number) {
-    await this.prisma.cohorts.delete({ where: { id } });
+    try {
+      await this.prisma.dueDates.deleteMany({ where: { cohort: { id } } });
+      await this.prisma.cohorts.delete({ where: { id } });
+    } catch (err) {
+      throw new BadRequestException('Could not delete Cohort. Are there students in it?');
+    }
   }
 
   public async addDueDates(cohortID: number) {
-    const dueDates = { reading: new Date(), submission: new Date() };
-    const { id } = await this.prisma.dueDates.create({ data: dueDates });
-    const { week } = await this.prisma.cohorts.update({
-      data: { dueDates: { connect: { id } } },
+    const { week } = await this.prisma.cohorts.findOne({ where: { id: cohortID } });
+
+    const data = { week, reading: new Date(), submission: new Date() };
+    const dueDates = await this.prisma.dueDates.create({ data });
+    await this.prisma.cohorts.update({
+      data: { dueDates: { connect: { id: dueDates.id } } },
       where: { id: cohortID },
     });
 
@@ -50,5 +65,7 @@ export class CohortService {
         data: { week, child: { connect: { id } } },
       });
     }
+
+    return dueDates;
   }
 }

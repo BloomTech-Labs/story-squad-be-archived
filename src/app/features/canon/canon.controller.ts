@@ -46,7 +46,8 @@ export class CanonController {
   }
 
   @Delete('/:week')
-  public async deleteCanon(@Param('week', ParseIntPipe) week: number): Promise<void> {
+  public async deleteCanon(@Param('week', ParseIntPipe) week: number): Promise<string> {
     await this.canonService.deleteCanon(week);
+    return `Deleted canon for week ${week}!`;
   }
 }

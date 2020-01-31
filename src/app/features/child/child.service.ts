@@ -2,14 +2,28 @@ import { Injectable, NotFoundException, ServiceUnavailableException } from '@nes
 
 import { UpdateProgressDTO, UpdateChildDTO } from '@models';
 import { PrismaService } from '@shared/prisma';
+import { StripeService } from '@shared/stripe';
 import { AuthService } from '@features/auth/auth.service';
 
 @Injectable()
 export class ChildService {
-  constructor(private readonly prisma: PrismaService, private readonly auth: AuthService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly auth: AuthService,
+    private readonly stripe: StripeService
+  ) {}
 
   public getChildRepo(id: number) {
     return this.prisma.children.findOne({ where: { id } });
+  }
+
+  public async getMe(id: number) {
+    const child = await this.prisma.children.findOne({
+      where: { id },
+      include: { cohort: true },
+    });
+    const progress = [await this.getProgress(id)];
+    return { ...child, progress };
   }
 
   public async getParent(childID: number) {
@@ -18,7 +32,7 @@ export class ChildService {
   }
 
   public async getCohort(childID: number) {
-    return await this.getChildRepo(childID).cohort();
+    return await this.getChildRepo(childID).cohort({ include: { dueDates: true } });
   }
 
   public async getPreferences(childID: number) {
@@ -29,11 +43,19 @@ export class ChildService {
   public async getProgress(childID: number) {
     const { week } = await this.getChildRepo(childID).cohort();
     const progresses = await this.getChildRepo(childID).progress({ where: { week } });
-    return progresses.pop();
+    return progresses.pop() || (await this.createProgress(childID));
+  }
+
+  public async createProgress(childID: number) {
+    const { week } = await this.getChildRepo(childID).cohort();
+    return await this.prisma.progresses.create({
+      data: { week, child: { connect: { id: childID } } },
+    });
   }
 
   public async updateProgress(childID: number, update: UpdateProgressDTO) {
-    const { id } = await this.getProgress(childID);
+    const progress = await this.getProgress(childID);
+    const { id } = progress;
     return await this.prisma.progresses.update({ where: { id }, data: { ...update } });
   }
 
@@ -43,13 +65,15 @@ export class ChildService {
   }
 
   public async getChildren(id: number) {
-    return await this.prisma.parents.findOne({ where: { id } }).children();
+    return await this.prisma.parents
+      .findOne({ where: { id } })
+      .children({ include: { cohort: true } });
   }
 
   public async getChild(id: number, childID: number) {
     const [child] = await this.prisma.parents
       .findOne({ where: { id } })
-      .children({ where: { id: childID } });
+      .children({ where: { id: childID }, include: { cohort: true } });
     if (!child) throw new NotFoundException();
     return child;
   }
@@ -73,29 +97,24 @@ export class ChildService {
   }
 
   public async updateChild(parentID: number, childID: number, update: UpdateChildDTO) {
-    const child = await this.getChild(parentID, childID);
+    await this.getChild(parentID, childID);
     return await this.prisma.children.update({
       where: { id: childID },
-      data: { ...child, ...update },
+      data: { ...update },
     });
   }
 
   public async deleteChild(parentID: number, childID: number) {
-    await this.getChild(parentID, childID);
-    await this.deleteSubmissions(childID);
-    await this.deleteProgress(childID);
+    const { subscription } = await this.getChild(parentID, childID);
+    await this.prisma.submissions.deleteMany({ where: { child: { id: childID } } });
+    await this.prisma.progresses.deleteMany({ where: { id: childID } });
     await this.prisma.children.delete({ where: { id: childID } });
+    await this.stripe.subscriptions.del(subscription);
   }
 
   public async deleteProgress(childID: number) {
     const progresses = await this.getChildRepo(childID).progress();
     const progressIDs = progresses.map((progress) => progress.id);
     for (const id of progressIDs) this.prisma.progresses.delete({ where: { id } });
-  }
-
-  public async deleteSubmissions(childID: number) {
-    const submissions = await this.getChildRepo(childID).submissions();
-    const submissionIDs = submissions.map((submission) => submission.id);
-    for (const id of submissionIDs) this.prisma.submissions.delete({ where: { id } });
   }
 }

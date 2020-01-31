@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 
-async function main(): Promise<void> {
+async function main() {
   const prisma = new PrismaClient();
   //run prisma commands to seed
 }

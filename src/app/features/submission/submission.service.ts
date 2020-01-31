@@ -1,5 +1,4 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Submission } from '@prisma/client';
 
 import { UpdateSubmissionDTO } from '@models';
 import { PrismaService } from '@shared/prisma';
@@ -20,6 +19,14 @@ export class SubmissionService {
     return submission;
   }
 
+  public async getSubmissionByWeek(childID: number, week: number) {
+    const [submission] = await this.prisma.children
+      .findOne({ where: { id: childID } })
+      .submissions({ where: { week } });
+    if (!submission) throw new NotFoundException();
+    return submission;
+  }
+
   public async createSubmission(childID: number, week: number, submission: UpdateSubmissionDTO) {
     const metadata = { week, child: { connect: { id: childID } } };
     return await this.prisma.submissions.create({ data: { ...submission, ...metadata } });
@@ -33,6 +40,11 @@ export class SubmissionService {
   public async deleteSubmission(childID: number, id: number) {
     await this.getSubmission(childID, id);
     await this.prisma.submissions.delete({ where: { id } });
+  }
+
+  public async deleteSubmissionByWeek(childID: number, week: number) {
+    await this.getSubmissionByWeek(childID, week);
+    await this.prisma.submissions.deleteMany({ where: { week } });
   }
 
   public async getSubmissionWeek(childID: number) {

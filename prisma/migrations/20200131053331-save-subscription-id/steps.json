@@ -1,0 +1,25 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "UpdateField",
+      "model": "Child",
+      "field": "subscription",
+      "type": "String"
+    },
+    {
+      "tag": "UpdateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Child",
+          "field": "subscription"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "newValue": "\"\""
+    }
+  ]
+}

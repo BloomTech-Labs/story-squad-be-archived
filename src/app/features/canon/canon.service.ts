@@ -1,5 +1,4 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Canon } from '@prisma/client';
 
 import { UpdateCanonDTO } from '@models';
 import { PrismaService } from '@shared/prisma';
@@ -14,12 +13,16 @@ export class CanonService {
 
   public async getCanonByWeek(week: number) {
     const canon = await this.prisma.canons.findOne({ where: { week } });
-    if (!canon) throw new NotFoundException();
+    if (!canon) throw new NotFoundException('Could not locate canon!');
     return canon;
   }
 
   public async createCanon(canon: UpdateCanonDTO) {
-    return await this.prisma.canons.create({ data: canon });
+    return await this.prisma.canons.upsert({
+      create: canon,
+      update: canon,
+      where: { week: canon.week },
+    });
   }
 
   public async updateCanon(week: number, canon: UpdateCanonDTO) {

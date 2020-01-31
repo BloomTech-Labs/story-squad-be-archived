@@ -15,12 +15,12 @@ export class SubmissionController {
     return await this.submissionService.getSubmissions(id);
   }
 
-  @Get('/:id')
+  @Get('/:week')
   public async getSubmission(
     @User('child') { id }: Child,
-    @Param('id', ParseIntPipe) submissionID: number
+    @Param('week', ParseIntPipe) week: number
   ): Promise<Submission> {
-    return await this.submissionService.getSubmission(id, submissionID);
+    return await this.submissionService.getSubmissionByWeek(id, week);
   }
 
   @Post('/')
@@ -41,11 +41,12 @@ export class SubmissionController {
     return await this.submissionService.updateSubmission(id, submissionID, update);
   }
 
-  @Delete('/:id')
+  @Delete('/:week')
   public async deleteSubmission(
     @User('child') { id }: Child,
-    @Param('id', ParseIntPipe) submissionID: number
-  ): Promise<void> {
-    await this.submissionService.deleteSubmission(id, submissionID);
+    @Param('week', ParseIntPipe) week: number
+  ): Promise<string> {
+    await this.submissionService.deleteSubmissionByWeek(id, week);
+    return `Deleted submission ${id}!`;
   }
 }

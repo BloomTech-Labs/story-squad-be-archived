@@ -6,7 +6,7 @@ import { Roles } from '@shared/common';
 
 import { CohortService } from './cohort.service';
 
-@Controller('cohort')
+@Controller('cohorts')
 export class CohortController {
   constructor(private readonly cohortService: CohortService) {}
 
@@ -36,8 +36,8 @@ export class CohortController {
 
   @Post('/:id/dates')
   @Roles('ADMIN')
-  public async addDueDates(@Param('id', ParseIntPipe) id: number): Promise<void> {
-    await this.cohortService.addDueDates(id);
+  public async addDueDates(@Param('id', ParseIntPipe) id: number): Promise<DueDates> {
+    return await this.cohortService.addDueDates(id);
   }
 
   @Put('/:id')
@@ -51,7 +51,8 @@ export class CohortController {
 
   @Delete('/:id')
   @Roles('ADMIN')
-  public async deleteCohort(@Param('id', ParseIntPipe) id: number): Promise<void> {
+  public async deleteCohort(@Param('id', ParseIntPipe) id: number): Promise<string> {
     await this.cohortService.deleteCohort(id);
+    return `Deleted cohort ${id}!`;
   }
 }

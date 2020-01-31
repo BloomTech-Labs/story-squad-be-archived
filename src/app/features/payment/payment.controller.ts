@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, ParseIntPipe } from '@nestjs/common';
 import { Stripe } from 'stripe';
 
-import { Parent, CardList, AddCardDTO } from '@models';
+import { Parent, CardList, AddCardDTO, SubscribeDTO } from '@models';
 import { User } from '@shared/common';
 
 import { PaymentService } from './payment.service';
@@ -35,25 +35,27 @@ export class PaymentController {
   public async deleteCard(
     @User('parent') { stripeID }: Parent,
     @Param('id') id: string
-  ): Promise<void> {
+  ): Promise<string> {
     await this.paymentService.deleteSource(stripeID, id);
+    return `Deleted card ${id}!`;
   }
 
   @Put('/cards/:id/default')
   public async changeDefaultCard(
     @User('parent') { stripeID }: Parent,
     @Param('id') id: string
-  ): Promise<void> {
+  ): Promise<string> {
     await this.paymentService.updateDefaultSource(stripeID, id);
+    return `Change default card to ${id}!`;
   }
 
-  @Post('/subscribe/:child/:plan')
+  @Post('/subscribe')
   public async createSubscription(
     @User('parent') { id, stripeID }: Parent,
-    @Param('child', ParseIntPipe) childID: number,
-    @Param('plan') plan: string
-  ): Promise<void> {
+    @Body() { childID, plan }: SubscribeDTO
+  ): Promise<string> {
     await this.paymentService.verifyChild(id, childID);
     await this.paymentService.addSubscription(stripeID, plan, childID);
+    return `Setup subscription for child ${childID}!`;
   }
 }

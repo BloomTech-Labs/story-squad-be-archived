@@ -221,7 +221,7 @@ In order for the app to function correctly, the user must set up their own envir
 create a .env file that includes the following:
 
     DATABASE_URL=postgresql://postgres:password@localhost:5432/story-squad
-    PORT=3000
+    PORT=4000
     SALT=3
     SECRET_SIGNATURE=secret
     STRIPE_API=sk_test_etc

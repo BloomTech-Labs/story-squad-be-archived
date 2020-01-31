@@ -10,8 +10,8 @@ export class ChildController {
   constructor(private readonly childService: ChildService) {}
 
   @Get('/me')
-  public async whoAmI(@User('child') child: Child): Promise<Child> {
-    return child;
+  public async whoAmI(@User('child') { id }: Child): Promise<Child> {
+    return this.childService.getMe(id);
   }
 
   @Get('/parent')
@@ -84,7 +84,8 @@ export class ChildController {
   public async deleteChild(
     @User('parent') { id }: Parent,
     @Param('id', ParseIntPipe) childID: number
-  ): Promise<void> {
+  ): Promise<string> {
     await this.childService.deleteChild(id, childID);
+    return `Deleted child ${childID}!`;
   }
 }

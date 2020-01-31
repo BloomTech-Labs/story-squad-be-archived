@@ -107,7 +107,7 @@ export class AuthService {
     });
   }
 
-  public async updatePassword(email: string, password: string): Promise<void> {
+  public async updatePassword(email: string, password: string) {
     password = await hash(password, salt);
     await this.prisma.admins.update({ data: { password }, where: { email } });
   }
