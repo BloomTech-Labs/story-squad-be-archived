@@ -17,7 +17,7 @@ describe('CanonController', () => {
     dyslexia: false,
   };
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       controllers: [CanonController],
       providers: [CanonService, PrismaService],
@@ -27,11 +27,31 @@ describe('CanonController', () => {
     prismaService = moduleRef.get<PrismaService>(PrismaService);
   });
 
+  describe('getCanons()', () => {
+    const canon1 = { week: 1, base64: 'base64', altbase64: 'altbase64' };
+    const canon2 = { week: 2, base64: 'base64-2', altbase64: 'altbase64-2' };
+    const result = [canon1, canon2];
+    const findMany = jest.fn().mockResolvedValue(result);
+    const mockCanonDelegate: Partial<CanonDelegate> = { findMany };
+
+    beforeAll(() => {
+      jest.spyOn(prismaService, 'canon', 'get').mockReturnValue(mockCanonDelegate as CanonDelegate);
+    });
+
+    it('should return all items from the database', async () => {
+      const response = await canonController.getCanons();
+      expect(response).toHaveLength(2);
+      expect(response[0].week).toBe(1);
+      expect(response[1].week).toBe(2);
+    });
+  });
+
   describe('getCanon()', () => {
-    beforeEach(() => {
-      const result = { week: 1, base64: 'base64', altbase64: 'altbase64' };
-      const findOne = jest.fn().mockResolvedValue(result);
-      const mockCanonDelegate: Partial<CanonDelegate> = { findOne };
+    const result = { week: 1, base64: 'base64', altbase64: 'altbase64' };
+    const findOne = jest.fn().mockResolvedValue(result);
+    const mockCanonDelegate: Partial<CanonDelegate> = { findOne };
+
+    beforeAll(() => {
       jest.spyOn(prismaService, 'canon', 'get').mockReturnValue(mockCanonDelegate as CanonDelegate);
     });
 
@@ -58,6 +78,49 @@ describe('CanonController', () => {
     it('should only deliver the dyslexic version when the dyslexia query param is set to force', async () => {
       expect(await canonController.getCanon({}, 1, 'something-else')).toBe('base64');
       expect(await canonController.getCanon({}, 1, 'force')).toBe('altbase64');
+    });
+  });
+
+  describe('createCanon()', () => {
+    const upsert = jest.fn().mockImplementation(async ({ create }) => create);
+    const mockCanonDelegate: Partial<CanonDelegate> = { upsert };
+
+    beforeAll(() => {
+      jest.spyOn(prismaService, 'canon', 'get').mockReturnValue(mockCanonDelegate as CanonDelegate);
+    });
+
+    it('should return the created canon', async () => {
+      const canon = { week: 1, base64: 'base64', altbase64: 'altbase64' };
+      expect(await canonController.createCanon(canon)).toBe(canon);
+    });
+  });
+
+  describe('updateCanon()', () => {
+    const findOne = jest.fn().mockResolvedValue(true);
+    const update = jest.fn().mockImplementation(async ({ data }) => data);
+    const mockCanonDelegate: Partial<CanonDelegate> = { findOne, update };
+
+    beforeAll(() => {
+      jest.spyOn(prismaService, 'canon', 'get').mockReturnValue(mockCanonDelegate as CanonDelegate);
+    });
+
+    it('should return the updated canon', async () => {
+      const canon = { week: 1, base64: 'base64', altbase64: 'altbase64' };
+      expect(await canonController.updateCanon(1, canon)).toBe(canon);
+    });
+  });
+
+  describe('delete()', () => {
+    const findOne = jest.fn().mockResolvedValue(true);
+    const mockCanonDelegate: Partial<CanonDelegate> = { findOne, delete: jest.fn() };
+
+    beforeAll(() => {
+      jest.spyOn(prismaService, 'canon', 'get').mockReturnValue(mockCanonDelegate as CanonDelegate);
+    });
+
+    it('should return the updated canon', async () => {
+      expect(await canonController.deleteCanon(1)).toBeTruthy();
+      expect(mockCanonDelegate.delete).toHaveBeenCalled();
     });
   });
 });
