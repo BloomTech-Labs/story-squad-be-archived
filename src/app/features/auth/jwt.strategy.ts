@@ -19,15 +19,15 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   public async validate({ adminID, parentID, childID }: JWT): Promise<User> {
     const admin = adminID
-      ? await this.prisma.admins.findOne({ where: { id: Number(adminID) } })
+      ? await this.prisma.admin.findOne({ where: { id: Number(adminID) } })
       : undefined;
 
     const parent = parentID
-      ? await this.prisma.parents.findOne({ where: { id: Number(parentID) } })
+      ? await this.prisma.parent.findOne({ where: { id: Number(parentID) } })
       : undefined;
 
     const child = childID
-      ? await this.prisma.children.findOne({ where: { id: Number(childID) } })
+      ? await this.prisma.child.findOne({ where: { id: Number(childID) } })
       : undefined;
 
     return { admin, parent, child };

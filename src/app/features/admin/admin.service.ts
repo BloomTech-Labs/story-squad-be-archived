@@ -9,13 +9,13 @@ export class AdminService {
   constructor(private readonly prisma: PrismaService, private readonly auth: AuthService) {}
 
   public async getAdmins() {
-    const admins = await this.prisma.admins();
+    const admins = await this.prisma.admin.findMany();
     const withoutPassword = admins.map(({ password, ...details }) => details);
     return withoutPassword;
   }
 
   public async getAdmin(id: number) {
-    const { password, ...details } = await this.prisma.admins.findOne({ where: { id } });
+    const { password, ...details } = await this.prisma.admin.findOne({ where: { id } });
     return details;
   }
 

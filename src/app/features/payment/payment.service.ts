@@ -61,14 +61,14 @@ export class PaymentService {
         items: [{ plan }],
         expand: ['latest_invoice.payment_intent'],
       });
-      await this.prisma.children.update({ data: { subscription }, where: { id } });
+      await this.prisma.child.update({ data: { subscription }, where: { id } });
     } catch (err) {
       throw new BadRequestException(err.message);
     }
   }
 
   public async verifyChild(id: number, childID: number) {
-    const foundChild = await this.prisma.parents
+    const foundChild = await this.prisma.parent
       .findOne({ where: { id } })
       .children({ where: { id: childID } });
     if (!foundChild) throw new NotFoundException();

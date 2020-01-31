@@ -14,11 +14,11 @@ export class ChildService {
   ) {}
 
   public getChildRepo(id: number) {
-    return this.prisma.children.findOne({ where: { id } });
+    return this.prisma.child.findOne({ where: { id } });
   }
 
   public async getMe(id: number) {
-    const child = await this.prisma.children.findOne({
+    const child = await this.prisma.child.findOne({
       where: { id },
       include: { cohort: true },
     });
@@ -48,7 +48,7 @@ export class ChildService {
 
   public async createProgress(childID: number) {
     const { week } = await this.getChildRepo(childID).cohort();
-    return await this.prisma.progresses.create({
+    return await this.prisma.progress.create({
       data: { week, child: { connect: { id: childID } } },
     });
   }
@@ -56,7 +56,7 @@ export class ChildService {
   public async updateProgress(childID: number, update: UpdateProgressDTO) {
     const progress = await this.getProgress(childID);
     const { id } = progress;
-    return await this.prisma.progresses.update({ where: { id }, data: { ...update } });
+    return await this.prisma.progress.update({ where: { id }, data: { ...update } });
   }
 
   public async loginChild(parentID: number, childID: number) {
@@ -65,13 +65,13 @@ export class ChildService {
   }
 
   public async getChildren(id: number) {
-    return await this.prisma.parents
+    return await this.prisma.parent
       .findOne({ where: { id } })
       .children({ include: { cohort: true } });
   }
 
   public async getChild(id: number, childID: number) {
-    const [child] = await this.prisma.parents
+    const [child] = await this.prisma.parent
       .findOne({ where: { id } })
       .children({ where: { id: childID }, include: { cohort: true } });
     if (!child) throw new NotFoundException();
@@ -79,7 +79,7 @@ export class ChildService {
   }
 
   public async addChild(parentID: number, child: UpdateChildDTO) {
-    const { id } = (await this.prisma.cohorts({ where: { week: 1 } })).pop();
+    const { id } = (await this.prisma.cohort.findMany({ where: { week: 1 } })).pop();
 
     // TODO: Setup Automatic Cohort Generation
     if (!id)
@@ -87,7 +87,7 @@ export class ChildService {
         'No cohorts are available, please contact an admin to create a new cohort!'
       );
 
-    return await this.prisma.children.create({
+    return await this.prisma.child.create({
       data: {
         ...child,
         parent: { connect: { id: parentID } },
@@ -98,7 +98,7 @@ export class ChildService {
 
   public async updateChild(parentID: number, childID: number, update: UpdateChildDTO) {
     await this.getChild(parentID, childID);
-    return await this.prisma.children.update({
+    return await this.prisma.child.update({
       where: { id: childID },
       data: { ...update },
     });
@@ -106,15 +106,15 @@ export class ChildService {
 
   public async deleteChild(parentID: number, childID: number) {
     const { subscription } = await this.getChild(parentID, childID);
-    await this.prisma.submissions.deleteMany({ where: { child: { id: childID } } });
-    await this.prisma.progresses.deleteMany({ where: { id: childID } });
-    await this.prisma.children.delete({ where: { id: childID } });
+    await this.prisma.submission.deleteMany({ where: { child: { id: childID } } });
+    await this.prisma.progress.deleteMany({ where: { id: childID } });
+    await this.prisma.child.delete({ where: { id: childID } });
     await this.stripe.subscriptions.del(subscription);
   }
 
   public async deleteProgress(childID: number) {
     const progresses = await this.getChildRepo(childID).progress();
     const progressIDs = progresses.map((progress) => progress.id);
-    for (const id of progressIDs) this.prisma.progresses.delete({ where: { id } });
+    for (const id of progressIDs) this.prisma.progress.delete({ where: { id } });
   }
 }

@@ -8,17 +8,17 @@ export class CanonService {
   constructor(private readonly prisma: PrismaService) {}
 
   public async getCanons() {
-    return await this.prisma.canons();
+    return await this.prisma.canon.findMany();
   }
 
   public async getCanonByWeek(week: number) {
-    const canon = await this.prisma.canons.findOne({ where: { week } });
+    const canon = await this.prisma.canon.findOne({ where: { week } });
     if (!canon) throw new NotFoundException('Could not locate canon!');
     return canon;
   }
 
   public async createCanon(canon: UpdateCanonDTO) {
-    return await this.prisma.canons.upsert({
+    return await this.prisma.canon.upsert({
       create: canon,
       update: canon,
       where: { week: canon.week },
@@ -27,16 +27,16 @@ export class CanonService {
 
   public async updateCanon(week: number, canon: UpdateCanonDTO) {
     await this.getCanonByWeek(week);
-    return await this.prisma.canons.update({ data: canon, where: { week } });
+    return await this.prisma.canon.update({ data: canon, where: { week } });
   }
 
   public async deleteCanon(week: number) {
     await this.getCanonByWeek(week);
-    await this.prisma.canons.delete({ where: { week } });
+    await this.prisma.canon.delete({ where: { week } });
   }
 
   public async dyslexicPreference(id: number) {
-    const { dyslexia } = await this.prisma.children.findOne({ where: { id } });
+    const { dyslexia } = await this.prisma.child.findOne({ where: { id } });
     return dyslexia;
   }
 }

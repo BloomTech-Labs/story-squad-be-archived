@@ -11,7 +11,7 @@ import { hash, compare } from 'bcryptjs';
 import { randomPassword } from 'secure-random-password';
 
 import { salt } from '@environment';
-import { RegisterDTO, LoginDTO, Parent, Admin, JWT, AdminRegisterDTO } from '@models';
+import { RegisterDTO, LoginDTO, JWT, AdminRegisterDTO } from '@models';
 import { PrismaService } from '@shared/prisma/prisma.service';
 import { StripeService } from '@shared/stripe/stripe.service';
 
@@ -28,7 +28,7 @@ export class AuthService {
       password = await hash(password, salt);
       const { id: stripeID } = await this.stripe.customers.create({ email });
       const data = { email, password, stripeID };
-      const { id: parentID } = await this.prisma.parents.create({ data });
+      const { id: parentID } = await this.prisma.parent.create({ data });
       return this.jwt.sign({ parentID });
     } catch (err) {
       if (err instanceof PrismaClientRequestError) {
@@ -46,7 +46,7 @@ export class AuthService {
       const characters = '!#%+23456789:=?@ABCDEFGHJKLMNPRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
       const plainPassword = randomPassword({ length: 8, characters });
       const password = await hash(plainPassword, salt);
-      const admin = await this.prisma.admins.create({ data: { email, role, password } });
+      const admin = await this.prisma.admin.create({ data: { email, role, password } });
       return { ...admin, password: plainPassword };
     } catch (err) {
       if (err instanceof PrismaClientRequestError) {
@@ -79,7 +79,7 @@ export class AuthService {
 
   public async validateParent({ email, password }: LoginDTO) {
     try {
-      const parent = await this.prisma.parents.findOne({ where: { email } });
+      const parent = await this.prisma.parent.findOne({ where: { email } });
       if (!(await compare(password, parent?.password))) throw new Error();
       return parent;
     } catch {
@@ -90,7 +90,7 @@ export class AuthService {
   public async validateAdmin({ email, password }: LoginDTO) {
     try {
       const admin =
-        (await this.prisma.admins.findOne({ where: { email } })) ||
+        (await this.prisma.admin.findOne({ where: { email } })) ||
         (await this.setupDefaultAdmin({ email, password }));
 
       if (!(await compare(password, admin?.password))) throw new Error();
@@ -102,13 +102,13 @@ export class AuthService {
 
   public async setupDefaultAdmin({ email, password }: LoginDTO) {
     if (email !== 'admin') return;
-    return await this.prisma.admins.create({
+    return await this.prisma.admin.create({
       data: { email, password: await hash(password, salt), role: 'ADMIN' },
     });
   }
 
   public async updatePassword(email: string, password: string) {
     password = await hash(password, salt);
-    await this.prisma.admins.update({ data: { password }, where: { email } });
+    await this.prisma.admin.update({ data: { password }, where: { email } });
   }
 }
