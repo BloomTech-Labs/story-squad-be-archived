@@ -31,8 +31,8 @@ describe('CanonController', () => {
     beforeEach(() => {
       const result = { week: 1, base64: 'base64', altbase64: 'altbase64' };
       const findOne = jest.fn().mockResolvedValue(result);
-      const mockedPrisma: Partial<CanonDelegate> = { findOne };
-      jest.spyOn(prismaService, 'canon', 'get').mockReturnValue(mockedPrisma as CanonDelegate);
+      const mockCanonDelegate: Partial<CanonDelegate> = { findOne };
+      jest.spyOn(prismaService, 'canon', 'get').mockReturnValue(mockCanonDelegate as CanonDelegate);
     });
 
     it('should return the base64 cannon by default', async () => {
@@ -44,6 +44,20 @@ describe('CanonController', () => {
       const dyslexicChild: Child = { ...childDetails, dyslexia: true };
       expect(await canonController.getCanon({ child: regularChild }, 1, '')).toBe('base64');
       expect(await canonController.getCanon({ child: dyslexicChild }, 1, '')).toBe('altbase64');
+    });
+
+    it('should use the dyslexia query param above all else', async () => {
+      const regularChild: Child = { ...childDetails, dyslexia: false };
+      const dyslexicChild: Child = { ...childDetails, dyslexia: true };
+      expect(await canonController.getCanon({}, 1, 'force')).toBe('altbase64');
+      expect(await canonController.getCanon({}, 1, 'force')).toBe('altbase64');
+      expect(await canonController.getCanon({ child: regularChild }, 1, 'force')).toBe('altbase64');
+      expect(await canonController.getCanon({ child: dyslexicChild }, 1, 'force')).toBe('altbase64');
+    });
+
+    it('should only deliver the dyslexic version when the dyslexia query param is set to force', async () => {
+      expect(await canonController.getCanon({}, 1, 'something-else')).toBe('base64');
+      expect(await canonController.getCanon({}, 1, 'force')).toBe('altbase64');
     });
   });
 });
