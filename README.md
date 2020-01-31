@@ -8,7 +8,7 @@
 
 - **Clone this repo**
 - **Setup Postgress** locally
-- **Setup `.env`** (See: `Environment Variables`)
+- **Setup `.env`** (See: [Environment Variables](#environment-variables))
 - **yarn install** to install dependencies and setup prisma
 - **yarn dev** to start the local server
 
@@ -25,16 +25,17 @@
 
 ### Backend framework
 
-#### Express
+#### NestJS
 
-- Useful libraries such as helmet and CORS.
-- Well documented.
+- Abstracts Express/Fastify to simplicity
+- Dependency Injection gets data where it needs to be
+- Structured making locating needed data simply
 
-#### TypeORM
+#### Prisma
 
 - Simplifies database creation, connections, queries, etc
 - Plays well with Typescript
-- Simple seeding.
+- Modern
 
 #### Jest
 
@@ -58,7 +59,7 @@
 
 | Method | Endpoint          | Access Control | Description                                           |
 | ------ | ----------------- | -------------- | ----------------------------------------------------- |
-| GET    | `/admin/`         | admin users    | Returns list of admins/moderators                     |
+| GET    | `/admin`          | admin users    | Returns list of admins/moderators                     |
 | GET    | `/admin/me`       | admin users    | Returns self information                              |
 | GET    | `/admin/:id`      | admin users    | Returns matching admins/moderator                     |
 | POST   | `/admin/login`    | admin users    | Returns admin token                                   |
@@ -75,8 +76,8 @@
 
 | Method | Endpoint                | Access Control | Description                                                       |
 | ------ | ----------------------- | -------------- | ----------------------------------------------------------------- |
-| GET    | `/children/`            | adult users    | Returns a list of child accounts associated with logged in parent |
-| POST   | `/children/`            | adult users    | Adds a new child account                                          |
+| GET    | `/children`             | adult users    | Returns a list of child accounts associated with logged in parent |
+| POST   | `/children`             | adult users    | Adds a new child account                                          |
 | GET    | `/children/:id`         | adult users    | Returns specified child account                                   |
 | PUT    | `/children/:id`         | adult users    | Updates specified child account                                   |
 | DELETE | `/children/:id`         | adult users    | Deletes specified child account                                   |
@@ -92,18 +93,18 @@
 
 | Method | Endpoint       | Access Control | Description            |
 | ------ | -------------- | -------------- | ---------------------- |
-| GET    | `/canon/`      | admin users    | Returns a list of pdf  |
+| GET    | `/canon`       | admin users    | Returns a list of pdf  |
 | GET    | `/canon/:week` | all users      | Returns a matching pdf |
 | POST   | `/canon`       | admin users    | Creates a new pdf      |
 
 #### Cohort Routes
 
-| Method | Endpoint       | Access Control | Description                   |
-| ------ | -------------- | -------------- | ----------------------------- |
-| GET    | `/cohort/`     | admin users    | Returns a list of all Cohorts |
-| POST   | `/cohort/`     | admin users    | Creates a new Cohort          |
-| PUT    | `/cohort/:id/` | admin users    | Updates specified Cohort      |
-| DELETE | `/cohort/:id/` | admin users    | Deletes specified Cohort      |
+| Method | Endpoint      | Access Control | Description                   |
+| ------ | ------------- | -------------- | ----------------------------- |
+| GET    | `/cohort`     | admin users    | Returns a list of all Cohorts |
+| POST   | `/cohort`     | admin users    | Creates a new Cohort          |
+| PUT    | `/cohort/:id` | admin users    | Updates specified Cohort      |
+| DELETE | `/cohort/:id` | admin users    | Deletes specified Cohort      |
 
 #### Payment Routes
 
@@ -123,96 +124,13 @@
 | POST   | `/submissions`       | child users    | upload and receive json object of a user's new submission     |
 | DELETE | `/submissions/:week` | child users    | delete and receive json object of a user's removed submission |
 
-# Data Model
+## Data Model
 
-#### Canon
-
----
-
-```
-{
-  week: NUMBER
-  base64: STRING
-}
-```
-
-#### Cohort
-
----
-
-```
-{
-  id: NUMBER
-  name: STRING
-  week: NUMBER
-  activity: STRING
-  children: ARRAY (Relation)
-}
-```
-
-#### Parent
-
----
-
-```
-{
-  id: NUM
-  children: ARRAY (Relation)
-  email: STRING
-  password: STRING
-  stripeID: STRING
-}
-```
-
-#### Child
-
----
-
-```
-{
-  id: NUM
-  parent: foreign key in PARENT table
-  cohort: foreign key in COHORT table
-  username: STRING
-  week: NUM
-  grade: NUM
-  preferencesDyslexia: BOOL
-  submissions: ARRAY (Relation)
-}
-```
-
-#### Admin
-
----
-
-```
-{
-  id: NUM
-  email: STRING
-  password: STRING
-  validpass: BOOL
-  role: STRING
-}
-```
-
-#### Submissions
-
----
-
-```
-{
-  id: NUM
-  child: foreign key in CHILD table
-  week: NUM
-  story: STRING
-  storyText: STRING
-  illustration: STRING
-}
-```
+[Prisma Schema](./prisma/schema.prisma)
 
 ## Actions
 
-Story Squad uses TypeORM; see their [docs](https://typeorm.io/#/) for available actions.
+[Prisma Docs](https://github.com/prisma/prisma2/blob/master/README.md)
 
 ## Environment Variables
 
