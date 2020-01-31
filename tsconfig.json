@@ -1,10 +1,25 @@
 {
-    "compilerOptions": {
-        "emitDecoratorMetadata": true,
-        "experimentalDecorators": true,
-        "target": "es5",
-        "sourceMap": true,
-        "outDir": "./build/"
-    },
-    "exclude": ["**/*.spec.ts"]
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "target": "es2017",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "noImplicitAny": true,
+    "paths": {
+      "@app/*": ["./src/app/*"],
+      "@environment": ["./src/environment"],
+      "@middleware": ["src/app/middleware"],
+      "@models": ["./src/app/models"],
+      "@models/*": ["./src/app/models/*"],
+      "@features": ["./src/app/features"],
+      "@features/*": ["./src/app/features/*"],
+      "@shared/*": ["./src/app/shared/*"]
+    }
+  },
+  "exclude": ["node_modules", "dist"]
 }

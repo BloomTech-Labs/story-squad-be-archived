@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum AdminRole {
+  ADMIN
+  MODERATOR
+}
+
+model Admin {
+  id        Int        @id      @default(autoincrement())
+  email     String     @unique
+  password  String
+  role      AdminRole
+}
+
+model Parent {
+  id        Int      @id      @default(autoincrement())
+  email     String   @unique
+  password  String
+  stripeID  String   @unique
+  children  Child[]
+}
+
+model Cohort {
+  id        Int         @id      @default(autoincrement())
+  name      String      @unique
+  activity  String
+  dueDates  DueDates[]
+  week      Int
+  children  Child[]
+}
+
+model DueDates {
+  id          Int       @id  @default(autoincrement())
+  reading     DateTime       @default(now())
+  submission  DateTime       @default(now())
+}
+
+
+model Child {
+  id             Int           @id  @default(autoincrement())
+  subscription   Boolean            @default(false)
+  username       String
+  grade          Int
+  preferences    Preferences
+  cohort         Cohort
+  parent         Parent
+  submissions    Submission[]
+  progress       Progress[]
+}
+
+model  Preferences {
+  id        Int      @id  @default(autoincrement())
+  child     Child
+  dyslexia  Boolean       @default(false)
+}
+
+model Progress {
+  id          Int      @id  @default(autoincrement())
+  reading     Boolean       @default(false)
+  submission  Boolean       @default(false)
+}
+
+model Submission {
+  id            Int      @id  @default(autoincrement())
+  week          Int
+  child         Child
+  illustration  String?
+  story         String?
+  storyText     String?
+}
+
+model Canon {
+  week       Int      @id
+  base64     String
+  altbase64  String?
+}

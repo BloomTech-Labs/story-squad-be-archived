@@ -4,36 +4,46 @@
 
 ## Getting started
 
-To get the server running locally:
+### To get the server running locally:
 
--   Clone this repo
--   **yarn install** to install all required dependencies
--   **yarn dev** to start the local server
--   **yarn build** to build production version
--   **yarn start** to start built production version
--   **yarn test** to start server using testing environment
+- **Clone this repo**
+- **Setup Postgress** locally
+- **Setup `.env`** (See: `Environment Variables`)
+- **yarn install** to install dependencies and setup prisma
+- **yarn dev** to start the local server
+
+### Scripts
+
+- **yarn dev** to start the local server
+- **yarn build** to build production version
+- **yarn start** to start built production version
+- **yarn test** to start server using testing environment
+- **yarn lint** to see errors and warnings in all files
+- **yarn format** to format all files
+- **yarn migrate:save** to build a migration based on edits to schema.prisma
+- **yarn migrate:up** to apply migrations
 
 ### Backend framework
 
 #### Express
 
--   Useful libraries such as helmet and CORS.
--   Well documented.
+- Useful libraries such as helmet and CORS.
+- Well documented.
 
 #### TypeORM
 
--   Simplifies database creation, connections, queries, etc
--   Plays well with Typescript
--   Simple seeding.
+- Simplifies database creation, connections, queries, etc
+- Plays well with Typescript
+- Simple seeding.
 
 #### Jest
 
--   Maintains consistency with front-end testing
+- Maintains consistency with front-end testing
 
 #### SuperTest
 
--   Simplifies endpoint testing
--   Integration testing
+- Simplifies endpoint testing
+- Integration testing
 
 ## Endpoints
 
@@ -65,18 +75,18 @@ To get the server running locally:
 
 | Method | Endpoint                | Access Control | Description                                                       |
 | ------ | ----------------------- | -------------- | ----------------------------------------------------------------- |
-| GET    | `/children/list`        | adult users    | Returns a list of child accounts associated with logged in parent |
-| POST   | `/children/list`        | adult users    | Adds a new child account                                          |
-| GET    | `/children/list/:id`    | adult users    | Returns specified child account                                   |
-| PUT    | `/children/list/:id`    | adult users    | Updates specified child account                                   |
-| DELETE | `/children/list/:id`    | adult users    | Deletes specified child account                                   |
+| GET    | `/children/`            | adult users    | Returns a list of child accounts associated with logged in parent |
+| POST   | `/children/`            | adult users    | Adds a new child account                                          |
+| GET    | `/children/:id`         | adult users    | Returns specified child account                                   |
+| PUT    | `/children/:id`         | adult users    | Updates specified child account                                   |
+| DELETE | `/children/:id`         | adult users    | Deletes specified child account                                   |
 | GET    | `/children/me`          | child users    | Returns logged in child                                           |
+| GET    | `/children/parent`      | child users    | Returns the child's parent                                        |
+| GET    | `/children/cohort`      | child users    | Returns the child's cohort                                        |
 | GET    | `/children/preferences` | child users    | Returns child's preferences                                       |
 | GET    | `/children/progress`    | child users    | Returns Progress of current week                                  |
 | POST   | `/children/progress`    | child users    | Updates progress of current week                                  |
-| GET    | `/children/cohort`      | adult users    | Returns cohort the child is in                                    |
-| GET    | `/children/parent`      | child users    | Returns the child's parent                                        |
-| POST   | `/children/:id/login`   | adult users    | Returns JWT for Child                                             |
+| POST   | `/children/login/:id`   | adult users    | Returns JWT for Child                                             |
 
 #### Canon Routes
 
@@ -88,22 +98,21 @@ To get the server running locally:
 
 #### Cohort Routes
 
-| Method | Endpoint            | Access Control | Description                          |
-| ------ | ------------------- | -------------- | ------------------------------------ |
-| GET    | `/cohort/`          | all users      | Returns Cohort ID of logged in child |
-| GET    | `/cohort/list/`     | admin users    | Returns a list of all Cohorts        |
-| POST   | `/cohort/list/`     | admin users    | Creates a new Cohort                 |
-| PUT    | `/cohort/list/:id/` | admin users    | Updates specified Cohort             |
-| DELETE | `/cohort/list/:id/` | admin users    | Deletes specified Cohort             |
+| Method | Endpoint       | Access Control | Description                   |
+| ------ | -------------- | -------------- | ----------------------------- |
+| GET    | `/cohort/`     | admin users    | Returns a list of all Cohorts |
+| POST   | `/cohort/`     | admin users    | Creates a new Cohort          |
+| PUT    | `/cohort/:id/` | admin users    | Updates specified Cohort      |
+| DELETE | `/cohort/:id/` | admin users    | Deletes specified Cohort      |
 
 #### Payment Routes
 
-| Method | Endpoint     | Access Control | Description                           |
-| ------ | ------------ | -------------- | ------------------------------------- |
-| GET    | `/cards`     | adult users    | json list of user's cards             |
-| POST   | `/cards`     | adult users    | adds card as payment source to Stripe |
-| POST   | `/subscribe` | adult users    | creates a subscription                |
-| DELETE | `/cards/:id` | adult users    | deletes a payment method              |
+| Method | Endpoint             | Access Control | Description                           |
+| ------ | -------------------- | -------------- | ------------------------------------- |
+| GET    | `/payment/cards`     | adult users    | json list of user's cards             |
+| POST   | `/payment/cards`     | adult users    | adds card as payment source to Stripe |
+| POST   | `/payment/subscribe` | adult users    | creates a subscription                |
+| DELETE | `/payment/cards/:id` | adult users    | deletes a payment method              |
 
 #### Submissions Routes
 
@@ -211,10 +220,11 @@ In order for the app to function correctly, the user must set up their own envir
 
 create a .env file that includes the following:
 
-    * PORT=4000
-    * SALT=10
-    * SECRET_SIGNATURE=Its a secret (example - create your own)
-    * STRIPE_API=sk_test_v666XmnGJcP1Oz3GBg2iFmvd004Q3qp4jZ
+    DATABASE_URL=postgresql://postgres:password@localhost:5432/story-squad
+    PORT=3000
+    SALT=3
+    SECRET_SIGNATURE=secret
+    STRIPE_API=sk_test_etc
 
 ## Contributing
 
@@ -226,10 +236,10 @@ Please note we have a [code of conduct](./code_of_conduct.md). Please follow it 
 
 **If you are having an issue with the existing project code, please submit a bug report under the following guidelines:**
 
--   Check first to see if your issue has already been reported.
--   Check to see if the issue has recently been fixed by attempting to reproduce the issue using the latest master branch in the repository.
--   Create a live example of the problem.
--   Submit a detailed bug report including your environment & browser, steps to reproduce the issue, actual and expected outcomes, where you believe the issue is originating from, and any potential solutions you have considered.
+- Check first to see if your issue has already been reported.
+- Check to see if the issue has recently been fixed by attempting to reproduce the issue using the latest master branch in the repository.
+- Create a live example of the problem.
+- Submit a detailed bug report including your environment & browser, steps to reproduce the issue, actual and expected outcomes, where you believe the issue is originating from, and any potential solutions you have considered.
 
 ### Feature Requests
 
@@ -243,11 +253,11 @@ Remember that this project is licensed under the MIT license, and by submitting 
 
 #### Pull Request Guidelines
 
--   Ensure any install or build dependencies are removed before the end of the layer when doing a build.
--   Update the README.md with details of changes to the interface, including new plist variables, exposed ports, useful file locations and container parameters.
--   Ensure that your code conforms to our existing code conventions and test coverage.
--   Include the relevant issue number, if applicable.
--   You may merge the Pull Request in once you have the sign-off of two other developers, or if you do not have permission to do that, you may request the second reviewer to merge it for you.
+- Ensure any install or build dependencies are removed before the end of the layer when doing a build.
+- Update the README.md with details of changes to the interface, including new plist variables, exposed ports, useful file locations and container parameters.
+- Ensure that your code conforms to our existing code conventions and test coverage.
+- Include the relevant issue number, if applicable.
+- You may merge the Pull Request in once you have the sign-off of two other developers, or if you do not have permission to do that, you may request the second reviewer to merge it for you.
 
 ### Attribution
 
