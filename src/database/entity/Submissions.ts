@@ -1,6 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 
 import { Child } from './Child';
+import { Pages } from './Pages';
 
 @Entity()
 class Submissions {
@@ -17,8 +18,8 @@ class Submissions {
     @Column({ nullable: false })
     week: number;
 
-    @Column({ nullable: true })
-    story: string;
+    @Column((type) => Pages)
+    story: Pages;
 
     @Column({ nullable: true })
     storyText: string;

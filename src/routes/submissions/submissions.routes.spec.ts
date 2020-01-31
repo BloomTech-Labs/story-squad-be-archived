@@ -22,8 +22,20 @@ const child: Child = plainToClass(Child, {
         dyslexia: false,
     },
     submissions: [
-        { id: 1, week: 1, story: '', storyText: 'Text1', illustration: '' },
-        { id: 2, week: 2, story: '', storyText: 'Text2', illustration: '' },
+        {
+            id: 1,
+            week: 1,
+            story: { page1: '', page2: '', page3: '', page4: '', page5: '' },
+            storyText: 'Text1',
+            illustration: '',
+        },
+        {
+            id: 2,
+            week: 2,
+            story: { page1: '', page2: '', page3: '', page4: '', page5: '' },
+            storyText: 'Text2',
+            illustration: '',
+        },
     ],
 });
 
@@ -79,7 +91,15 @@ describe('POST /submissions', () => {
     it('should return 201 on creation', async () => {
         await request(app)
             .post('/submissions')
-            .send({ id: 3, week: 3, story: '', storyText: 'Text3', illustration: '' })
+            .send({
+                storyText: 'Text3',
+                illustration: '',
+                page1: '',
+                page2: '',
+                page3: '',
+                page4: '',
+                page5: '',
+            })
             .expect(201);
     });
 
@@ -87,7 +107,15 @@ describe('POST /submissions', () => {
         child.cohort.week = 1;
         await request(app)
             .post('/submissions')
-            .send({ id: 2, week: 2, story: '', storyText: 'Text2', illustration: '' })
+            .send({
+                storyText: 'Text2',
+                illustration: '',
+                page1: '',
+                page2: '',
+                page3: '',
+                page4: '',
+                page5: '',
+            })
             .expect(400);
         child.cohort.week = 3;
     });
