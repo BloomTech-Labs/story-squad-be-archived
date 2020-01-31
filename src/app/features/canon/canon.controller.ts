@@ -29,19 +29,19 @@ export class CanonController {
   }
 
   @Post('/')
+  @Roles('ADMIN')
   public async createCanon(@Body() canon: UpdateCanonDTO): Promise<Canon> {
     return await this.canonService.createCanon(canon);
   }
 
   @Put('/:week')
-  public async updateCanon(
-    @Param('week', ParseIntPipe) week: number,
-    @Body() canon: UpdateCanonDTO
-  ): Promise<Canon> {
+  @Roles('ADMIN')
+  public async updateCanon(@Param('week', ParseIntPipe) week: number, @Body() canon: UpdateCanonDTO): Promise<Canon> {
     return await this.canonService.updateCanon(week, canon);
   }
 
   @Delete('/:week')
+  @Roles('ADMIN')
   public async deleteCanon(@Param('week', ParseIntPipe) week: number): Promise<string> {
     await this.canonService.deleteCanon(week);
     return `Deleted canon for week ${week}!`;
