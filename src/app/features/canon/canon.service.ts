@@ -34,9 +34,4 @@ export class CanonService {
     await this.getCanonByWeek(week);
     await this.prisma.canon.delete({ where: { week } });
   }
-
-  public async dyslexicPreference(id: number) {
-    const { dyslexia } = await this.prisma.child.findOne({ where: { id } });
-    return dyslexia;
-  }
 }

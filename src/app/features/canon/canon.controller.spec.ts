@@ -4,11 +4,18 @@ import { PrismaService } from '@shared/prisma';
 
 import { CanonController } from './canon.controller';
 import { CanonService } from './canon.service';
-import { CanonDelegate } from '@prisma/client';
+import { CanonDelegate, Child } from '@prisma/client';
 
-describe('CatsController', () => {
+describe('CanonController', () => {
   let canonController: CanonController;
   let prismaService: PrismaService;
+  const childDetails: Child = {
+    id: 1,
+    grade: 3,
+    username: 'Dragon45',
+    subscription: '',
+    dyslexia: false,
+  };
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -21,13 +28,22 @@ describe('CatsController', () => {
   });
 
   describe('getCanon()', () => {
-    it('should return the cannon for the requested week', async () => {
+    beforeEach(() => {
       const result = { week: 1, base64: 'abc', altbase64: 'def' };
       const findOne = jest.fn().mockResolvedValue(result);
       const mockedPrisma: Partial<CanonDelegate> = { findOne };
-
       jest.spyOn(prismaService, 'canon', 'get').mockReturnValue(mockedPrisma as CanonDelegate);
-      expect(await canonController.getCanon({}, 1, '')).toBe(result.base64);
+    });
+
+    it('should return the base64 cannon by default', async () => {
+      expect(await canonController.getCanon({}, 1, '')).toBe('abc');
+    });
+
+    it('should use child preferences when available', async () => {
+      const regularChild: Child = { ...childDetails, dyslexia: false };
+      const dyslexicChild: Child = { ...childDetails, dyslexia: true };
+      expect(await canonController.getCanon({ child: regularChild }, 1, '')).toBe('abc');
+      expect(await canonController.getCanon({ child: dyslexicChild }, 1, '')).toBe('def');
     });
   });
 });

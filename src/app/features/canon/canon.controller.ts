@@ -23,11 +23,7 @@ export class CanonController {
     @Param('week', ParseIntPipe) week: number,
     @Query('dyslexia') forceDyslexia: string
   ): Promise<string> {
-    const childID = user.child?.id;
-    const dyslexia =
-      (!!childID && (await this.canonService.dyslexicPreference(childID))) ||
-      forceDyslexia === 'force';
-
+    const dyslexia = user.child?.dyslexia || forceDyslexia === 'force';
     const { base64, altbase64 } = await this.canonService.getCanonByWeek(week);
     return dyslexia ? altbase64 || base64 : base64;
   }
