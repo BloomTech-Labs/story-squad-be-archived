@@ -5,6 +5,7 @@ export * from './stripe/add-card.dto';
 export * from './stripe/card-list.dto';
 export * from './stripe/subscribe.dto';
 
+export * from './child/preferences.dto';
 export * from './child/update-child.dto';
 export * from './child/update-progress.dto';
 

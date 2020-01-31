@@ -1,0 +1,53 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "DeleteModel",
+      "model": "Preferences"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Child",
+      "field": "dyslexia",
+      "type": "Boolean",
+      "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "Child",
+          "field": "dyslexia"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "Child",
+          "field": "dyslexia"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "false"
+    },
+    {
+      "tag": "DeleteField",
+      "model": "Child",
+      "field": "preferences"
+    },
+    {
+      "tag": "CreateField",
+      "model": "Progress",
+      "field": "week",
+      "type": "Int",
+      "arity": "Required"
+    }
+  ]
+}

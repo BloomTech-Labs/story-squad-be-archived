@@ -1,7 +1,6 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ServiceUnavailableException } from '@nestjs/common';
 
-import { ChildClient, Cohort, Preferences, Progress } from '@prisma/client';
-import { Child, Parent, UpdateProgressDTO, UpdateChildDTO } from '@models';
+import { UpdateProgressDTO, UpdateChildDTO } from '@models';
 import { PrismaService } from '@shared/prisma';
 import { AuthService } from '@features/auth/auth.service';
 
@@ -23,11 +22,13 @@ export class ChildService {
   }
 
   public async getPreferences(childID: number) {
-    return await this.getChildRepo(childID).preferences();
+    const { dyslexia } = await this.getChildRepo(childID);
+    return { dyslexia };
   }
 
   public async getProgress(childID: number) {
-    const progresses = await this.getChildRepo(childID).progress();
+    const { week } = await this.getChildRepo(childID).cohort();
+    const progresses = await this.getChildRepo(childID).progress({ where: { week } });
     return progresses.pop();
   }
 
@@ -53,14 +54,20 @@ export class ChildService {
     return child;
   }
 
-  public async addChild(id: number, child: UpdateChildDTO) {
-    const cohort = (await this.prisma.cohorts({ where: { week: 1 } })).pop();
+  public async addChild(parentID: number, child: UpdateChildDTO) {
+    const { id } = (await this.prisma.cohorts({ where: { week: 1 } })).pop();
+
+    // TODO: Setup Automatic Cohort Generation
+    if (!id)
+      throw new ServiceUnavailableException(
+        'No cohorts are available, please contact an admin to create a new cohort!'
+      );
+
     return await this.prisma.children.create({
       data: {
         ...child,
-        parent: { connect: { id } },
-        cohort: { connect: cohort },
-        preferences: { create: {} },
+        parent: { connect: { id: parentID } },
+        cohort: { connect: { id } },
       },
     });
   }
@@ -75,6 +82,20 @@ export class ChildService {
 
   public async deleteChild(parentID: number, childID: number) {
     await this.getChild(parentID, childID);
+    await this.deleteSubmissions(childID);
+    await this.deleteProgress(childID);
     await this.prisma.children.delete({ where: { id: childID } });
+  }
+
+  public async deleteProgress(childID: number) {
+    const progresses = await this.getChildRepo(childID).progress();
+    const progressIDs = progresses.map((progress) => progress.id);
+    for (const id of progressIDs) this.prisma.progresses.delete({ where: { id } });
+  }
+
+  public async deleteSubmissions(childID: number) {
+    const submissions = await this.getChildRepo(childID).submissions();
+    const submissionIDs = submissions.map((submission) => submission.id);
+    for (const id of submissionIDs) this.prisma.submissions.delete({ where: { id } });
   }
 }

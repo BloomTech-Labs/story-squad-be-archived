@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 enum AdminRole {
@@ -31,14 +31,13 @@ model Cohort {
   id        Int         @id      @default(autoincrement())
   name      String      @unique
   activity  String
-  week      Int
   dueDates  DueDates[]
+  week      Int
   children  Child[]
 }
 
 model DueDates {
   id          Int       @id  @default(autoincrement())
-  week        Int
   reading     DateTime       @default(now())
   submission  DateTime       @default(now())
 }

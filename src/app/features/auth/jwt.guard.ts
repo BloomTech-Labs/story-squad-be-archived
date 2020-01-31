@@ -2,7 +2,7 @@ import { ExecutionContext, Injectable, CanActivate } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 
-import { Admin, AdminRole } from '@models';
+import { User, AdminRole } from '@models';
 import { Request } from 'express';
 
 @Injectable()
@@ -19,7 +19,7 @@ export class JwtGuard extends AuthGuard('jwt') implements CanActivate {
 
     const req = context.switchToHttp().getRequest() as Request;
     const requiredRoles = this.reflector.get<AdminRole[]>('roles', context.getHandler());
-    const hasRole = requiredRoles?.some((role) => (req.user as Admin).role === role);
+    const hasRole = requiredRoles?.some((role) => (req.user as User).admin?.role === role);
 
     return (hasRole || !requiredRoles) && jwtActivated;
   }

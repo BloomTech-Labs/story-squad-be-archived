@@ -1,8 +1,8 @@
 import { Controller, Get, Post, Put, Body, Param, ParseIntPipe, Delete } from '@nestjs/common';
 
-import { Cohort, Preferences, Progress } from '@prisma/client';
+import { Cohort, Progress } from '@prisma/client';
 import { User } from '@shared/common';
-import { Child, Parent, UpdateProgressDTO, UpdateChildDTO } from '@models';
+import { Child, Parent, UpdateProgressDTO, UpdateChildDTO, PreferencesDTO } from '@models';
 import { ChildService } from './child.service';
 
 @Controller('children')
@@ -25,7 +25,7 @@ export class ChildController {
   }
 
   @Get('/preferences')
-  public async getMyPreferences(@User('child') { id }: Child): Promise<Preferences> {
+  public async getMyPreferences(@User('child') { id }: Child): Promise<PreferencesDTO> {
     return await this.childService.getPreferences(id);
   }
 

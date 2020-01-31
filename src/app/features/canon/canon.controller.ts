@@ -2,16 +2,17 @@ import { Controller, Get, Post, Put, Delete } from '@nestjs/common';
 import { Param, ParseIntPipe, Body, Query } from '@nestjs/common';
 import { Canon } from '@prisma/client';
 
-import { User } from '@shared/common';
+import { User, Roles } from '@shared/common';
 import { UpdateCanonDTO, User as UserModel } from '@models';
 
 import { CanonService } from './canon.service';
 
-@Controller('submissions')
+@Controller('canon')
 export class CanonController {
   constructor(private readonly canonService: CanonService) {}
 
   @Get('/')
+  @Roles('ADMIN')
   public async getCanons(): Promise<Canon[]> {
     return await this.canonService.getCanons();
   }
@@ -22,7 +23,7 @@ export class CanonController {
     @Param('week', ParseIntPipe) week: number,
     @Query('dyslexia') forceDyslexia: string
   ): Promise<string> {
-    const childID = user?.child.id;
+    const childID = user.child?.id;
     const dyslexia =
       (!!childID && (await this.canonService.dyslexicPreference(childID))) ||
       forceDyslexia === 'force';

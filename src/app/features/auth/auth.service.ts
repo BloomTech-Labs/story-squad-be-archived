@@ -44,10 +44,10 @@ export class AuthService {
   public async registerAdmin({ email, role }: AdminRegisterDTO) {
     try {
       const characters = '!#%+23456789:=?@ABCDEFGHJKLMNPRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
-      const password = randomPassword({ length: 8, characters });
-      const { id } = await this.prisma.admins.create({ data: { email, role, password } });
-      const jwt: JWT = { adminID: id };
-      return this.jwt.sign(jwt);
+      const plainPassword = randomPassword({ length: 8, characters });
+      const password = await hash(plainPassword, salt);
+      const admin = await this.prisma.admins.create({ data: { email, role, password } });
+      return { ...admin, password: plainPassword };
     } catch (err) {
       if (err instanceof PrismaClientRequestError) {
         throw new BadRequestException(

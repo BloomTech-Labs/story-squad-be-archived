@@ -19,6 +19,7 @@ export class AdminController {
     @User('admin') admin: Admin,
     @Body() update: AdminPasswordDTO
   ): Promise<void> {
+    console.log(update);
     return await this.adminService.updatePassword(admin.email, update);
   }
 
@@ -36,7 +37,7 @@ export class AdminController {
 
   @Post('/create')
   @Roles('ADMIN')
-  public async createAdmin(@Body() register: AdminRegisterDTO): Promise<string> {
+  public async createAdmin(@Body() register: AdminRegisterDTO): Promise<Admin> {
     return await this.adminService.create(register);
   }
 }

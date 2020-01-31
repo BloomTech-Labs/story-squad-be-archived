@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@shared/prisma';
 
-import { Admin, AdminRegisterDTO, AdminPasswordDTO } from '@models';
+import { AdminRegisterDTO, AdminPasswordDTO } from '@models';
 import { AuthService } from '@features/auth/auth.service';
 
 @Injectable()

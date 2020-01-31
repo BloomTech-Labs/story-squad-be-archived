@@ -33,7 +33,7 @@ export class CanonService {
   }
 
   public async dyslexicPreference(id: number) {
-    const { dyslexia } = await this.prisma.children.findOne({ where: { id } }).preferences();
+    const { dyslexia } = await this.prisma.children.findOne({ where: { id } });
     return dyslexia;
   }
 }
