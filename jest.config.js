@@ -1,18 +1,8 @@
 // @ts-nocheck
-/* eslint-disable  */
+const { pathsToModuleNameMapper } = require('ts-jest/utils');
+const { compilerOptions } = require('./tsconfig');
 
 module.exports = {
-  moduleFileExtensions: ['js', 'json', 'ts'],
-  rootDir: 'src',
-  testRegex: '.spec.ts$',
-  transform: {
-    '^.+\\.(t|j)s$': 'ts-jest',
-  },
-  coverageDirectory: '../coverage',
-  testEnvironment: 'node',
-  moduleNameMapper: {
-    '^@models': '<rootDir>/app/models',
-    '^@models/(.*)$': '<rootDir>/app/models/$1',
-    '^@shared/(.*)$': '<rootDir>/app/shared/$1',
-  },
+  preset: 'ts-jest',
+  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, { prefix: '<rootDir>/' }),
 };

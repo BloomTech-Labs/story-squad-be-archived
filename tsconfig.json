@@ -11,14 +11,14 @@
     "baseUrl": "./",
     "noImplicitAny": true,
     "paths": {
-      "@app/*": ["./src/app/*"],
-      "@environment": ["./src/environment"],
+      "@app/*": ["src/app/*"],
+      "@environment": ["src/environment"],
       "@middleware": ["src/app/middleware"],
-      "@models": ["./src/app/models"],
-      "@models/*": ["./src/app/models/*"],
-      "@features": ["./src/app/features"],
-      "@features/*": ["./src/app/features/*"],
-      "@shared/*": ["./src/app/shared/*"]
+      "@models": ["src/app/models"],
+      "@models/*": ["src/app/models/*"],
+      "@features": ["src/app/features"],
+      "@features/*": ["src/app/features/*"],
+      "@shared/*": ["src/app/shared/*"]
     }
   },
   "exclude": ["node_modules", "dist"]
