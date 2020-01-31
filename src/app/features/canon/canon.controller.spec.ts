@@ -29,21 +29,21 @@ describe('CanonController', () => {
 
   describe('getCanon()', () => {
     beforeEach(() => {
-      const result = { week: 1, base64: 'abc', altbase64: 'def' };
+      const result = { week: 1, base64: 'base64', altbase64: 'altbase64' };
       const findOne = jest.fn().mockResolvedValue(result);
       const mockedPrisma: Partial<CanonDelegate> = { findOne };
       jest.spyOn(prismaService, 'canon', 'get').mockReturnValue(mockedPrisma as CanonDelegate);
     });
 
     it('should return the base64 cannon by default', async () => {
-      expect(await canonController.getCanon({}, 1, '')).toBe('abc');
+      expect(await canonController.getCanon({}, 1, '')).toBe('base64');
     });
 
     it('should use child preferences when available', async () => {
       const regularChild: Child = { ...childDetails, dyslexia: false };
       const dyslexicChild: Child = { ...childDetails, dyslexia: true };
-      expect(await canonController.getCanon({ child: regularChild }, 1, '')).toBe('abc');
-      expect(await canonController.getCanon({ child: dyslexicChild }, 1, '')).toBe('def');
+      expect(await canonController.getCanon({ child: regularChild }, 1, '')).toBe('base64');
+      expect(await canonController.getCanon({ child: dyslexicChild }, 1, '')).toBe('altbase64');
     });
   });
 });
