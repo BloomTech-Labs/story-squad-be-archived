@@ -81,6 +81,12 @@ describe('CanonController', () => {
       expect(await canonController.getCanon({}, 1, 'force')).toBe('altbase64');
     });
 
+    it('should return the default pdf if a dyslexic version is not available', async () => {
+      const result = { week: 1, base64: 'base64' };
+      findOne.mockResolvedValueOnce(result);
+      expect(await canonController.getCanon({}, 1, 'force')).toBe('base64');
+    });
+
     it('should fail if the cannon is not found', async () => {
       findOne.mockResolvedValueOnce(false);
       await expect(canonController.getCanon({}, 1, '')).rejects.toBeInstanceOf(Error);
