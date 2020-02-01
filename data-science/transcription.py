@@ -1,17 +1,21 @@
-from sys import argv
-from json import loads, dumps
+from sys import stdin
+from json import load, loads, dumps
 from decouple import config
+from datauri import DataURI
 
 from google.cloud import vision
 from google.cloud.vision import types
 from google.oauth2 import service_account
 
 import urllib.request
-import base64
 
 api_key = config('GOOGLE_CREDS')
 api_key = loads(api_key)
 api_key = service_account.Credentials.from_service_account_info(api_key)
+
+
+def extract_data(uri):
+    return DataURI(uri).data
 
 
 def transcribe(encoded_image):
@@ -31,13 +35,13 @@ def nothing(image):
 
 
 def process_images(raw_images):
-    images = map(base64.b64decode, raw_images)
-    transcripts = list(map(transcribe, images))
+    data = map(extract_data, raw_images)
+    transcripts = list(map(transcribe, data))
     metadata = list(map(nothing, transcripts))
     return {'images': transcripts, 'metadata': metadata}
 
 
-incoming = loads(argv[1])
+incoming = load(stdin)
 processed = process_images(incoming['images'])
 stringified = dumps(processed)
 print(stringified)
