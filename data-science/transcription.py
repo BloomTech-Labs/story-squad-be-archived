@@ -1,4 +1,4 @@
-from sys import stdin
+from sys import stdin, stdout
 from json import load, loads, dumps
 from decouple import config
 from datauri import DataURI
@@ -44,4 +44,4 @@ def process_images(raw_images):
 incoming = load(stdin)
 processed = process_images(incoming['images'])
 stringified = dumps(processed)
-print(stringified)
+stdout.write(stringified)

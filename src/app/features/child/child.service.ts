@@ -65,9 +65,7 @@ export class ChildService {
   }
 
   public async getChildren(id: number) {
-    return await this.prisma.parent
-      .findOne({ where: { id } })
-      .children({ include: { cohort: true } });
+    return await this.prisma.parent.findOne({ where: { id } }).children({ include: { cohort: true } });
   }
 
   public async getChild(id: number, childID: number) {
@@ -79,10 +77,10 @@ export class ChildService {
   }
 
   public async addChild(parentID: number, child: UpdateChildDTO) {
-    const { id } = (await this.prisma.cohort.findMany({ where: { week: 1 } })).pop();
+    const cohort = (await this.prisma.cohort.findMany({ where: { week: 1 } })).pop();
 
     // TODO: Setup Automatic Cohort Generation
-    if (!id)
+    if (!cohort)
       throw new ServiceUnavailableException(
         'No cohorts are available, please contact an admin to create a new cohort!'
       );
@@ -91,7 +89,7 @@ export class ChildService {
       data: {
         ...child,
         parent: { connect: { id: parentID } },
-        cohort: { connect: { id } },
+        cohort: { connect: { id: cohort.id } },
       },
     });
   }

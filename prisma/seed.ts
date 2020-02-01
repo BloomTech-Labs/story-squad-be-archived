@@ -1,8 +1,8 @@
 import { PrismaClient } from '@prisma/client';
 
-async function main() {
+const seed = async () => {
   const prisma = new PrismaClient();
   //run prisma commands to seed
-}
+};
 
-main().catch((e) => console.error(e));
+seed().catch((e) => console.error(e));
