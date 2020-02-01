@@ -18,7 +18,9 @@
       "@models/*": ["src/app/models/*"],
       "@features": ["src/app/features"],
       "@features/*": ["src/app/features/*"],
-      "@shared/*": ["src/app/shared/*"]
+      "@shared/*": ["src/app/shared/*"],
+      "@utils": ["src/app/utils"],
+      "@utils/*": ["src/app/utils/*"]
     }
   },
   "exclude": ["node_modules", "dist"]
