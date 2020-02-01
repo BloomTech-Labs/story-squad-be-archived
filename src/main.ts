@@ -23,7 +23,7 @@ const bootstrap = async (): Promise<void> => {
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalGuards(new JwtGuard(reflector));
 
-  await app.listen(port);
+  await app.listen(port, '0.0.0.0');
   console.log(`Listening on port ${port}`);
 };
 
