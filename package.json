@@ -6,11 +6,11 @@
   "description": "The service services for the Story Squad application",
   "license": "MIT",
   "scripts": {
-    "postinstall": "pipenv install && yarn prisma generate",
+    "postinstall": "yarn prisma generate",
     "prebuild": "rimraf dist",
     "build": "nest build",
     "prestart": "yarn migrate:up",
-    "start": "pipenv run node dist/main",
+    "start": "node dist/main",
     "dev": "pipenv run nest start --watch",
     "debug": "pipenv run nest start --debug --watch",
     "format": "prettier --write 'src/**/*.ts' 'test/**/*.ts'",
