@@ -4,11 +4,20 @@
 
 ## Getting started
 
+### Requirements
+
+- **python3**
+- **pip3**
+- **pipenv**
+- **node13**
+- **yarn**
+
 ### To get the server running locally:
 
 - **Clone this repo**
 - **Setup Postgress** locally
 - **Setup `.env`** (See: [Environment Variables](#environment-variables))
+- **pipenv install** to install the python dependencies (for DS integration)
 - **yarn install** to install dependencies and setup prisma
 - **yarn dev** to start the local server
 
@@ -143,6 +152,7 @@ create a .env file that includes the following:
     SALT=3
     SECRET_SIGNATURE=secret
     STRIPE_API=sk_test_etc
+    GOOGLE_CREDS={...creds_for_GCP}
 
 ## Contributing
 
