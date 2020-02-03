@@ -1,12 +1,11 @@
 import * as dotenv from 'dotenv';
 import * as path from 'path';
 import * as PostgressConnectionStringParser from 'pg-connection-string';
-import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 
 dotenv.config();
 
 const connectionOptions = PostgressConnectionStringParser.parse(process.env.DATABASE_URL || '');
-export const ormconfig: PostgresConnectionOptions[] = [
+module.exports = [
     {
         name: 'default',
         type: 'postgres',
@@ -17,13 +16,13 @@ export const ormconfig: PostgresConnectionOptions[] = [
         database: connectionOptions.database,
         synchronize: true,
         logging: false,
-        entities: [path.resolve(__dirname, './database/entity/**/*.{ts,js}')],
-        migrations: [path.resolve(__dirname, './database/migration/**/*.{ts,js}')],
-        subscribers: [path.resolve(__dirname, './database/subscriber/**/*.{ts,js}')],
+        entities: [path.resolve(__dirname, 'database/entity/**/*.{ts,js}')],
+        migrations: [path.resolve(__dirname, 'database/migration/**/*.{ts,js}')],
+        subscribers: [path.resolve(__dirname, 'database/subscriber/**/*.{ts,js}')],
         cli: {
-            entitiesDir: path.resolve(__dirname, './database/entity'),
-            migrationsDir: path.resolve(__dirname, './database/migration'),
-            subscribersDir: path.resolve(__dirname, './database/subscriber'),
+            entitiesDir: path.relative('', path.resolve(__dirname, 'database/entity')),
+            migrationsDir: path.relative('', path.resolve(__dirname, 'database/migration')),
+            subscribersDir: path.relative('', path.resolve(__dirname, 'database/subscriber')),
         },
     },
     {
@@ -36,13 +35,13 @@ export const ormconfig: PostgresConnectionOptions[] = [
         database: 'story-squad',
         synchronize: true,
         logging: false,
-        entities: [path.resolve(__dirname, './database/entity/**/*.{ts,js}')],
-        migrations: [path.resolve(__dirname, './database/migration/**/*.{ts,js}')],
-        subscribers: [path.resolve(__dirname, './database/subscriber/**/*.{ts,js}')],
+        entities: [path.resolve(__dirname, 'database/entity/**/*.{ts,js}')],
+        migrations: [path.resolve(__dirname, 'database/migration/**/*.{ts,js}')],
+        subscribers: [path.resolve(__dirname, 'database/subscriber/**/*.{ts,js}')],
         cli: {
-            entitiesDir: path.resolve(__dirname, './database/entity'),
-            migrationsDir: path.resolve(__dirname, './database/migration'),
-            subscribersDir: path.resolve(__dirname, './database/subscriber'),
+            entitiesDir: path.relative('', path.resolve(__dirname, 'database/entity')),
+            migrationsDir: path.relative('', path.resolve(__dirname, 'database/migration')),
+            subscribersDir: path.relative('', path.resolve(__dirname, 'database/subscriber')),
         },
     },
     {
@@ -55,8 +54,8 @@ export const ormconfig: PostgresConnectionOptions[] = [
         database: 'story-squad-testing',
         synchronize: true,
         logging: false,
-        entities: [path.resolve(__dirname, './database/entity/**/*.ts')],
-        migrations: [path.resolve(__dirname, './database/migration/**/*.ts')],
-        subscribers: [path.resolve(__dirname, './database/subscriber/**/*.ts')],
+        entities: [path.resolve(__dirname, 'database/entity/**/*.ts')],
+        migrations: [path.resolve(__dirname, 'database/migration/**/*.ts')],
+        subscribers: [path.resolve(__dirname, 'database/subscriber/**/*.ts')],
     },
 ];

@@ -15,26 +15,33 @@ import {
     cohortRoutes,
 } from './routes';
 import { connection } from './util/typeorm-connection';
-import { ormconfig } from './ormconfig';
+import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 
 dotenv.config();
 
-const config = ormconfig.find((config) => config.name === connection());
-createConnection(config).then(async () => {
-    const app = express();
+const main = async () => {
+    // required because module.exports is an array
+    const ormconfig = (await import('./ormconfig')) as PostgresConnectionOptions[];
 
-    globalMiddleware(app);
+    const config = ormconfig.find((config) => config.name === connection());
+    createConnection(config).then(async () => {
+        const app = express();
 
-    app.use('/admin', adminRoutes);
-    app.use('/auth', authRoutes);
-    app.use('/canon', CheckJwt(), canonRoutes);
-    app.use('/cohort', CheckJwt(), cohortRoutes);
-    app.use('/children', CheckJwt(), childRoutes);
-    app.use('/parents', CheckJwt(), parentRoutes);
-    app.use('/payment', CheckJwt(), UpdateStripeRecords(), stripeRoutes);
-    app.use('/submissions', CheckJwt(), submissionRoutes);
+        globalMiddleware(app);
 
-    const port = process.env.PORT || 4000;
-    app.listen(port);
-    console.log(`Listening on port ${port}`);
-});
+        app.use('/admin', adminRoutes);
+        app.use('/auth', authRoutes);
+        app.use('/canon', CheckJwt(), canonRoutes);
+        app.use('/cohort', CheckJwt(), cohortRoutes);
+        app.use('/children', CheckJwt(), childRoutes);
+        app.use('/parents', CheckJwt(), parentRoutes);
+        app.use('/payment', CheckJwt(), UpdateStripeRecords(), stripeRoutes);
+        app.use('/submissions', CheckJwt(), submissionRoutes);
+
+        const port = process.env.PORT || 4000;
+        app.listen(port);
+        console.log(`Listening on port ${port}`);
+    });
+};
+
+main();
