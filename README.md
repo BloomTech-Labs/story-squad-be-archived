@@ -195,7 +195,11 @@ To get the server running locally:
   id: NUM
   child: foreign key in CHILD table
   week: NUM
-  story: STRING
+  storyPage1: STRING
+  storyPage2: STRING
+  storyPage3: STRING
+  storyPage4: STRING
+  storyPage5: STRING
   storyText: STRING
   illustration: STRING
 }
