@@ -1,8 +1,24 @@
 import { IsString } from 'class-validator';
 
-export class SubmissionDTO {
+class Pages {
     @IsString()
-    story: string;
+    page1: string;
+
+    @IsString()
+    page2: string;
+
+    @IsString()
+    page3: string;
+
+    @IsString()
+    page4: string;
+
+    @IsString()
+    page5: string;
+}
+
+export class SubmissionDTO {
+    story: Pages;
 
     @IsString()
     storyText: string;

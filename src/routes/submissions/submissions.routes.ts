@@ -4,6 +4,7 @@ import { getRepository } from 'typeorm';
 import { connection } from '../../util/typeorm-connection';
 import { Only } from '../../middleware';
 import { Child, Submissions } from '../../database/entity';
+import { Pages } from '../../database/entity/Pages';
 
 const submissionRoutes = Router();
 
@@ -31,7 +32,7 @@ submissionRoutes.get('/:week', Only(Child), async (req, res) => {
 
 submissionRoutes.post('/', Only(Child), async (req, res) => {
     try {
-        const { story, storyText, illustration } = res.locals.body as Submissions;
+        const { storyText, illustration, story } = res.locals.body as Submissions;
 
         const { cohort, submissions } = req.user as Child;
         const { week } = cohort;
