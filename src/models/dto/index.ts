@@ -13,6 +13,7 @@ export * from './canon/add-canon.dto';
 export * from './cohort/update-cohort.dto';
 
 export * from './admin/login.dto';
+export * from './admin/add.dto';
 export * from './admin/register.dto';
 
 export * from './submissions/submission.dto';

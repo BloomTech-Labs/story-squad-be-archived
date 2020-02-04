@@ -11,9 +11,9 @@ class Admin {
     @Column({ nullable: false })
     password: string;
 
-    // must change password if false
-    @Column({ nullable: false })
-    validpass: boolean;
+    // temporary token used to change password
+    @Column({ nullable: true })
+    temptoken: string;
 
     // gives the admin ability to create/delete other admin/moderator
     @Column({ nullable: false })

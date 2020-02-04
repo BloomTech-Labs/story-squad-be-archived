@@ -2,7 +2,7 @@ import * as request from 'supertest';
 import * as express from 'express';
 import { plainToClass } from 'class-transformer';
 
-import { Middleware, UpdateChildDTO } from '../../models';
+import { Middleware } from '../../models';
 import { Admin } from '../../database/entity';
 import { adminRoutes } from './admin.routes';
 
@@ -15,16 +15,12 @@ jest.mock('jsonwebtoken', () => ({
     sign: () => 'token',
 }));
 
-jest.mock('secure-random-password', () => ({
-    randomPassword: () => 'password',
-}));
-
 const admin: Admin = plainToClass(Admin, {
     id: 1,
     email: 'test@mail.com',
     password: 'I Am Password',
     role: 'admin',
-    validpass: true,
+    temptoken: 'admin',
 });
 
 const moderator: Admin = plainToClass(Admin, {
@@ -32,7 +28,7 @@ const moderator: Admin = plainToClass(Admin, {
     email: 'test2@mail.com',
     password: 'I Am Password',
     role: 'moderator',
-    validpass: true,
+    temptoken: null,
 });
 
 import typeorm = require('typeorm');
@@ -47,7 +43,8 @@ typeorm.getRepository = jest.fn().mockReturnValue({
 });
 
 const BodyInjection: Middleware = () => (req, res, next) => {
-    if (req.path.includes('/register')) res.locals.body = req.body;
+    if (req.path.includes('register')) res.locals.body = req.body;
+    if (req.path === '/admin' && req.method === 'POST') res.locals.body = req.body;
     next();
 };
 
@@ -115,6 +112,28 @@ describe('GET /admin/:id', () => {
     });
 });
 
+describe('POST /admin', () => {
+    it('should return 201 for admin', async () => {
+        const email = 'test3@email.com';
+        const newAdmin = { email, role: 'admin' };
+        await request(app)
+            .post('/admin')
+            .send(newAdmin)
+            .set({ Authorization: 'admin' })
+            .expect(201);
+    });
+
+    it('should return 401 for moderator', async () => {
+        const email = 'test3@email.com';
+        const newAdmin = { email, role: 'admin' };
+        await request(app)
+            .post('/admin')
+            .send(newAdmin)
+            .set({ Authorization: 'moderator' })
+            .expect(401);
+    });
+});
+
 describe('POST /admin/login', () => {
     it('should return a jwt', async () => {
         const { email, password } = admin;
@@ -126,41 +145,20 @@ describe('POST /admin/login', () => {
     });
 });
 
-describe('POST /admin/register', () => {
-    it('should return the new admin', async () => {
-        const email = 'test3@email.com';
-        const newAdmin = { email, role: 'admin' };
+describe('PUT /admin/register', () => {
+    it('should return a jwt', async () => {
         const { body } = await request(app)
-            .post('/admin/register')
-            .send(newAdmin)
+            .put('/admin/register')
+            .send({ password: 'password' })
             .set({ Authorization: 'admin' });
-        expect(body.admin.email).toBe(email);
+        expect(body.token).toBeTruthy();
     });
 
-    it('should return 401 for moderator', async () => {
-        const email = 'test3@email.com';
-        const newAdmin = { email, role: 'admin' };
+    it('should return 401 without temptoken', async () => {
         await request(app)
-            .post('/admin/register')
-            .send(newAdmin)
+            .put('/admin/register')
+            .send({ password: 'password' })
             .set({ Authorization: 'moderator' })
             .expect(401);
-    });
-});
-
-describe('PUT /admin/me', () => {
-    it('should return 200', async () => {
-        await request(app)
-            .put('/admin/me')
-            .send({ password: 'password' })
-            .set({ Authorization: 'admin' })
-            .expect(200);
-    });
-
-    it('should return 400 without password', async () => {
-        await request(app)
-            .put('/admin/me')
-            .set({ Authorization: 'admin' })
-            .expect(400);
     });
 });

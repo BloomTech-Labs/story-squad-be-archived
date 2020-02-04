@@ -27,7 +27,6 @@
         "pg": "^7.17.1",
         "pg-connection-string": "^2.1.0",
         "reflect-metadata": "^0.1.13",
-        "secure-random-password": "^0.2.1",
         "segal-decorators": "^0.3.1",
         "stripe": "^8.7.0",
         "ts-node": "^8.6.2",
