@@ -1,6 +1,6 @@
 import { IsString, Matches } from 'class-validator';
 
-class AdminRegisterDTO {
+class AdminAddDTO {
     @IsString()
     @Matches(/admin|^.*@.*\..*/) // 'admin' or 'any-chars@any-chars.any-chars'
     email: string;
@@ -10,4 +10,4 @@ class AdminRegisterDTO {
     role: string;
 }
 
-export { AdminRegisterDTO };
+export { AdminAddDTO };
