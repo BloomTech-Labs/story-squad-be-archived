@@ -8,6 +8,7 @@ import {
     UpdateChildDTO,
     AddCardDTO,
     AddCanonDTO,
+    AdminAddDTO,
     AdminRegisterDTO,
     SubscribeDTO,
     SubmissionDTO,
@@ -26,6 +27,10 @@ const Validation: Middleware = () => async (req, res, next) => {
         //Validates and transforms login request objects prior to routing
         if (req.path === '/auth/login')
             req.login = (await transformAndValidate(LoginDTO, req.body)) as LoginDTO;
+
+        //Validates and transforms admin register res.locals objects prior to routing
+        if (req.path === '/admin' && req.method === 'POST')
+            res.locals.body = (await transformAndValidate(AdminAddDTO, req.body)) as AdminAddDTO;
 
         //Validates and transforms admin register res.locals objects prior to routing
         if (req.path === '/admin/register')

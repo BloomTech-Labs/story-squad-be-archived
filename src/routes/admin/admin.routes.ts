@@ -2,7 +2,6 @@ import { hash, compare } from 'bcryptjs';
 import { Router } from 'express';
 import { getRepository } from 'typeorm';
 import { sign } from 'jsonwebtoken';
-import * as passGen from 'secure-random-password';
 
 import { connection } from '../../util/typeorm-connection';
 import { Admin } from '../../database/entity';
@@ -58,6 +57,35 @@ adminRoutes.get('/:id', CheckJwt(), Only(Admin), async (req, res) => {
     }
 });
 
+adminRoutes.post('/', CheckJwt(), Only(Admin), async (req, res) => {
+    try {
+        const { role } = req.user as Admin;
+        if (role !== 'admin') throw Error('401');
+
+        const user = res.locals.body as Admin;
+
+        const { id } = await getRepository(Admin, connection()).save({
+            ...user,
+            password: 'null',
+        });
+
+        const { affected } = await getRepository(Admin, connection()).update(id, {
+            temptoken: sign({ adminID: id }, process.env.SECRET_SIGNATURE || 'secret', {
+                expiresIn: '1d',
+            }),
+        });
+        if (!affected) throw Error();
+
+        // To Do: add email client (Twilio?) to email register link + temptoken directly
+
+        res.status(201).json({ id });
+    } catch (err) {
+        if (err.toString() === 'Error: 401')
+            res.status(401).send({ message: 'You are not allowed to do that sorry!' });
+        else res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
+    }
+});
+
 adminRoutes.post('/login', async (req, res) => {
     try {
         const { email, password: pass } = req.body as Admin;
@@ -95,53 +123,28 @@ adminRoutes.post('/login', async (req, res) => {
     }
 });
 
-adminRoutes.post('/register', CheckJwt(), Only(Admin), async (req, res) => {
+adminRoutes.put('/register', CheckJwt(), Only(Admin), async (req, res) => {
     try {
-        const { role } = req.user as Admin;
-        if (role !== 'admin') throw Error('401');
+        const { id, temptoken } = req.user as Admin;
 
-        const user = res.locals.body as Admin;
+        if (!temptoken || temptoken != req.headers.authorization.replace('Bearer ', ''))
+            throw Error('401');
 
-        const chars = '!#%+23456789:=?@ABCDEFGHJKLMNPRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
-        const pass = passGen.randomPassword({ length: 8, characters: chars });
+        const { password: pass } = res.locals.body as Admin;
         const salt: number = parseInt(process.env.SALT || '3', 10);
         const password = await hash(pass, salt);
 
-        const data = await getRepository(Admin, connection()).save({
-            ...user,
+        const { affected } = await getRepository(Admin, connection()).update(id, {
             password,
-            validpass: false,
+            temptoken: null,
         });
+        if (!affected) throw Error();
 
-        // To Do: replace with email client (Twilio?) and query string identifier instead of temporary password
-        res.status(201).json({ admin: { ...data, password: pass } });
+        const token = sign({ adminID: id }, process.env.SECRET_SIGNATURE || 'secret');
+        res.status(200).json({ token });
     } catch (err) {
         if (err.toString() === 'Error: 401')
-            res.status(401).send({ error: 'You are not allowed to do that sorry!' });
-        else res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
-    }
-});
-
-adminRoutes.put('/me', CheckJwt(), Only(Admin), async (req, res) => {
-    try {
-        const { password: pass }: { password: string } = req.body;
-
-        if (!pass) throw Error('400');
-
-        const { password: oldPass, ...me } = req.user as Admin;
-
-        const salt: number = parseInt(process.env.SALT || '3', 10);
-        const password = await hash(pass, salt);
-
-        const { affected } = await getRepository(Admin, connection()).update(me.id, {
-            password,
-            validpass: true,
-        });
-        if (!affected) throw new Error();
-
-        res.json({ me });
-    } catch (err) {
-        if (err.toString().includes('400')) res.status(400).json({ message: 'Missing password' });
+            res.status(401).send({ message: 'You are not allowed to do that sorry!' });
         else res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
     }
 });
