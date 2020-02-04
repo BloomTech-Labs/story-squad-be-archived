@@ -94,11 +94,13 @@ describe('POST /submissions', () => {
             .send({
                 storyText: 'Text3',
                 illustration: '',
-                page1: '',
-                page2: '',
-                page3: '',
-                page4: '',
-                page5: '',
+                story: {
+                    page1: '',
+                    page2: '',
+                    page3: '',
+                    page4: '',
+                    page5: '',
+                },
             })
             .expect(201);
     });
@@ -110,11 +112,13 @@ describe('POST /submissions', () => {
             .send({
                 storyText: 'Text2',
                 illustration: '',
-                page1: '',
-                page2: '',
-                page3: '',
-                page4: '',
-                page5: '',
+                story: {
+                    page1: '',
+                    page2: '',
+                    page3: '',
+                    page4: '',
+                    page5: '',
+                },
             })
             .expect(400);
         child.cohort.week = 3;

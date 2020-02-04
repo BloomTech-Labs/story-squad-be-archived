@@ -1,6 +1,6 @@
 import { IsString } from 'class-validator';
 
-export class SubmissionDTO {
+class Pages {
     @IsString()
     page1: string;
 
@@ -15,6 +15,10 @@ export class SubmissionDTO {
 
     @IsString()
     page5: string;
+}
+
+export class SubmissionDTO {
+    story: Pages;
 
     @IsString()
     storyText: string;

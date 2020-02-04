@@ -32,10 +32,7 @@ submissionRoutes.get('/:week', Only(Child), async (req, res) => {
 
 submissionRoutes.post('/', Only(Child), async (req, res) => {
     try {
-        const { storyText, illustration, ...rest } = res.locals.body as Partial<
-            Submissions & Pages
-        >;
-        const story = { ...rest } as Pages;
+        const { storyText, illustration, story } = res.locals.body as Submissions;
 
         const { cohort, submissions } = req.user as Child;
         const { week } = cohort;
