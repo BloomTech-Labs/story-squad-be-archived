@@ -49,14 +49,14 @@ To get the server running locally:
 
 #### Admin Routes
 
-| Method | Endpoint          | Access Control | Description                                           |
-| ------ | ----------------- | -------------- | ----------------------------------------------------- |
-| GET    | `/admin/`         | admin users    | Returns list of admins/moderators                     |
-| GET    | `/admin/me`       | admin users    | Returns self information                              |
-| GET    | `/admin/:id`      | admin users    | Returns matching admins/moderator                     |
-| POST   | `/admin/login`    | admin users    | Returns admin token                                   |
-| POST   | `/admin/register` | admin users    | Returns added admin/moderator with temporary password |
-| PUT    | `/admin/me`       | admin users    | Returns the updated admins/moderator                  |
+| Method | Endpoint          | Access Control | Description                       |
+| ------ | ----------------- | -------------- | --------------------------------- |
+| GET    | `/admin/`         | admin users    | Returns list of admins/moderators |
+| GET    | `/admin/me`       | admin users    | Returns self information          |
+| GET    | `/admin/:id`      | admin users    | Returns matching admins/moderator |
+| POST   | `/admin`          | admin users    | Returns added admin/moderator id  |
+| POST   | `/admin/login`    | admin users    | Returns admin token               |
+| PUT    | `/admin/register` | admin users    | Returns admin token               |
 
 #### Parent Routes
 
@@ -184,8 +184,8 @@ To get the server running locally:
   id: NUM
   email: STRING
   password: STRING
-  validpass: BOOL
   role: STRING
+  temptoken: STRING
 }
 ```
 
