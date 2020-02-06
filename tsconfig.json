@@ -18,6 +18,7 @@
       "@models/*": ["src/app/models/*"],
       "@features": ["src/app/features"],
       "@features/*": ["src/app/features/*"],
+      "@seed/*": ["prisma/seed/*"],
       "@shared/*": ["src/app/shared/*"],
       "@utils": ["src/app/utils"],
       "@utils/*": ["src/app/utils/*"]

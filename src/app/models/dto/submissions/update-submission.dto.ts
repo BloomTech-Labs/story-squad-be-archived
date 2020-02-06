@@ -1,12 +1,13 @@
-import { IsString } from 'class-validator';
+import { IsArray, IsString, IsOptional } from 'class-validator';
 
 export class UpdateSubmissionDTO {
-  @IsString()
-  public story: string;
+  @IsArray()
+  public illustration: string[];
+
+  @IsArray()
+  public story: string[];
 
   @IsString()
-  public storyText: string;
-
-  @IsString()
-  public illustration: string;
+  @IsOptional()
+  public storyText?: string;
 }

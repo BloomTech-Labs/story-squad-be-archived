@@ -1,22 +1,24 @@
-# API Documentation
+# API v2 Documentation
 
-#### Backend deployed at [heroku](https://story-squad.herokuapp.com/) <br>
+#### Backend deployed at [Heroku](https://story-squad.herokuapp.com/) <br>
 
 ## Getting started
 
 ### Requirements
 
-- **python3**
-- **pip3**
-- **pipenv**
-- **node13**
-- **yarn**
+All of these are required to be installed before running the application. Please do this first.
+
+- **Python 3.7+**
+- **Pip for Python 3**
+- **Pipenv**
+- **Node 13+**
+- **Yarn 1.21+**
 
 ### To get the server running locally:
 
 - **Clone this repo**
-- **Setup Postgress** locally
-- **Setup `.env`** (See: [Environment Variables](#environment-variables))
+- **Setup `.env`** See: [Environment Variables](#environment-variables)
+- **Setup Postgress** using the same configuration settings used in your `DATABASE_URL` and run `yarn migrate:up` to instantiate the database
 - **pipenv install** to install the python dependencies (for DS integration)
 - **yarn install** to install dependencies and setup prisma
 - **yarn dev** to start the local server
@@ -26,11 +28,15 @@
 - **yarn dev** to start the local server
 - **yarn build** to build production version
 - **yarn start** to start built production version
-- **yarn test** to start server using testing environment
+- **yarn test** to run Jest Unit test on the application
+- **yarn test:e2e** to run Jest Integration test on the application
 - **yarn lint** to see errors and warnings in all files
 - **yarn format** to format all files
 - **yarn migrate:save** to build a migration based on edits to schema.prisma
 - **yarn migrate:up** to apply migrations
+- **yarn migrate:down** to revert migrations
+- **yarn migrate:test:up** to apply migrations on the testing database as defined in `.env.test`
+- **yarn migrate:test:down** to revert migrations on the testing database as defined in `.env.test`
 
 ### Backend framework
 
@@ -139,20 +145,26 @@
 
 ## Actions
 
-[Prisma Docs](https://github.com/prisma/prisma2/blob/master/README.md)
+[Prisma Client API Docs](https://github.com/prisma/prisma2/blob/master/docs/prisma-client-js/api.md)
 
 ## Environment Variables
 
 In order for the app to function correctly, the user must set up their own environment variables.
 
-create a .env file that includes the following:
+Create a .env file that includes the following:
 
-    DATABASE_URL=postgresql://postgres:password@localhost:5432/story-squad
-    PORT=4000
-    SALT=3
-    SECRET_SIGNATURE=secret
-    STRIPE_API=sk_test_etc
-    GOOGLE_CREDS={...creds_for_GCP}
+    export DATABASE_URL=postgresql://postgres:password@localhost:5432/story-squad
+    export PORT=4000
+    export SALT=3
+    export SECRET_SIGNATURE=secret
+    export STRIPE_API=sk_test_etc
+    export GOOGLE_CREDS={...creds_for_GCP}
+
+Duplicate the `.env` file to create a `.env.test` file to be used for E2E testing.
+Note: You should probably use a different database in the `.env.test` I recommend appending `-testing` to the end of `DATABASE_URL`
+
+For more information please consult the notion documentation which details all the API keys
+and credentials
 
 ## Contributing
 
@@ -189,7 +201,7 @@ Remember that this project is licensed under the MIT license, and by submitting 
 
 ### Attribution
 
-These contribution guidelines have been adapted from [this good-Contributing.md-template](https://gist.github.com/PurpleBooth/b24679402957c63ec426).
+These contribution guidelines have been adapted from [this good Contributing.md template](https://gist.github.com/PurpleBooth/b24679402957c63ec426).
 
 ## Documentation
 

@@ -12,6 +12,7 @@ import urllib.request
 api_key = config('GOOGLE_CREDS')
 api_key = loads(api_key)
 api_key = service_account.Credentials.from_service_account_info(api_key)
+client = vision.ImageAnnotatorClient(credentials=api_key)
 
 
 def extract_data(uri):
@@ -19,8 +20,6 @@ def extract_data(uri):
 
 
 def transcribe(encoded_image):
-    """Detects document features in the file located in Google Cloud Storage."""
-    client = vision.ImageAnnotatorClient(credentials=api_key)
     image = types.Image(content=encoded_image)
     response = client.document_text_detection(image)
 
@@ -36,9 +35,9 @@ def nothing(image):
 
 def process_images(raw_images):
     data = map(extract_data, raw_images)
-    transcripts = list(map(transcribe, data))
-    metadata = list(map(nothing, transcripts))
-    return {'images': transcripts, 'metadata': metadata}
+    transcripts = map(transcribe, data)
+    metadata = map(nothing, transcripts)
+    return {'images': list(transcripts), 'metadata': list(metadata)}
 
 
 incoming = load(stdin)

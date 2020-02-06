@@ -1,9 +1,4 @@
-import {
-  Injectable,
-  BadRequestException,
-  InternalServerErrorException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, BadRequestException, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaClientRequestError } from '@prisma/client';
 
@@ -32,9 +27,7 @@ export class AuthService {
       return this.jwt.sign({ parentID });
     } catch (err) {
       if (err instanceof PrismaClientRequestError) {
-        throw new BadRequestException(
-          'Failed to create account... Do you already have an account?'
-        );
+        throw new BadRequestException('Failed to create account... Do you already have an account?');
       } else {
         throw new InternalServerErrorException('An unexpected error occurred...');
       }
@@ -50,9 +43,7 @@ export class AuthService {
       return { ...admin, password: plainPassword };
     } catch (err) {
       if (err instanceof PrismaClientRequestError) {
-        throw new BadRequestException(
-          'Failed to create account... Do you already have an account?'
-        );
+        throw new BadRequestException('Failed to create account... Do you already have an account?');
       } else {
         throw new InternalServerErrorException('An unexpected error occurred...');
       }
@@ -90,8 +81,7 @@ export class AuthService {
   public async validateAdmin({ email, password }: LoginDTO) {
     try {
       const admin =
-        (await this.prisma.admin.findOne({ where: { email } })) ||
-        (await this.setupDefaultAdmin({ email, password }));
+        (await this.prisma.admin.findOne({ where: { email } })) || (await this.setupDefaultAdmin({ email, password }));
 
       if (!(await compare(password, admin?.password))) throw new Error();
       return admin;

@@ -3,25 +3,24 @@ import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify
 import { ValidationPipe } from '@nestjs/common';
 
 import * as helmet from 'helmet';
-import * as cors from 'cors';
 import * as compression from 'compression';
 
 import { port } from '@environment';
-import { JwtGuard } from '@features/auth/jwt.guard';
+import { JWTGuard } from '@app/features/auth/jwt/jwt.guard';
 
 import { AppModule } from './app/app.module';
 
 const bootstrap = async (): Promise<void> => {
   const fastify = new FastifyAdapter({ bodyLimit: 10048576 });
   const app = await NestFactory.create<NestFastifyApplication>(AppModule, fastify);
+  app.enableCors();
 
   app.use(helmet());
-  app.use(cors());
   app.use(compression());
 
   const reflector = app.get(Reflector);
   app.useGlobalPipes(new ValidationPipe());
-  app.useGlobalGuards(new JwtGuard(reflector));
+  app.useGlobalGuards(new JWTGuard(reflector));
 
   await app.listen(port, '0.0.0.0');
   console.log(`Listening on port ${port}`);

@@ -2,7 +2,7 @@ import { Controller, Get, Post, Put, Body, Param, ParseIntPipe, Delete } from '@
 
 import { Cohort, Progress } from '@prisma/client';
 import { User } from '@shared/common';
-import { Child, Parent, UpdateProgressDTO, UpdateChildDTO, PreferencesDTO } from '@models';
+import { Child, ChildDTO, Parent, UpdateProgressDTO, UpdateChildDTO, PreferencesDTO } from '@models';
 import { ChildService } from './child.service';
 
 @Controller('children')
@@ -10,7 +10,7 @@ export class ChildController {
   constructor(private readonly childService: ChildService) {}
 
   @Get('/me')
-  public async whoAmI(@User('child') { id }: Child): Promise<Child> {
+  public async whoAmI(@User('child') { id }: Child): Promise<ChildDTO> {
     return this.childService.getMe(id);
   }
 
@@ -35,18 +35,12 @@ export class ChildController {
   }
 
   @Post('/progress')
-  public async updateProgress(
-    @User('child') { id }: Child,
-    @Body() update: UpdateProgressDTO
-  ): Promise<Progress> {
+  public async updateProgress(@User('child') { id }: Child, @Body() update: UpdateProgressDTO): Promise<Progress> {
     return await this.childService.updateProgress(id, update);
   }
 
   @Post('/login/:id')
-  public async childLogin(
-    @User('parent') { id }: Parent,
-    @Param('id', ParseIntPipe) childID: number
-  ): Promise<string> {
+  public async childLogin(@User('parent') { id }: Parent, @Param('id', ParseIntPipe) childID: number): Promise<string> {
     return await this.childService.loginChild(id, childID);
   }
 
@@ -56,18 +50,12 @@ export class ChildController {
   }
 
   @Get('/:id')
-  public async getChild(
-    @User('parent') { id }: Parent,
-    @Param('id', ParseIntPipe) childID: number
-  ): Promise<Child> {
+  public async getChild(@User('parent') { id }: Parent, @Param('id', ParseIntPipe) childID: number): Promise<Child> {
     return await this.childService.getChild(id, childID);
   }
 
   @Post('/')
-  public async addChild(
-    @User('parent') { id }: Parent,
-    @Body() child: UpdateChildDTO
-  ): Promise<Child> {
+  public async addChild(@User('parent') { id }: Parent, @Body() child: UpdateChildDTO): Promise<Child> {
     return await this.childService.addChild(id, child);
   }
 

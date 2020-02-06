@@ -11,7 +11,6 @@ import { User as UserModel } from '@models';
  * @param {keyof UserModel} key changes extraction to `req.user[key]` instead
  */
 export const User = createParamDecorator((key: keyof UserModel, req: Request) => {
-  const user = key ? (req.user as UserModel)[key] : req.user;
-  if (!user) throw new UnauthorizedException();
-  return user;
+  if (!req.user || !(req.user as UserModel)[key]) throw new UnauthorizedException();
+  return key ? (req.user as UserModel)[key] : req.user;
 });

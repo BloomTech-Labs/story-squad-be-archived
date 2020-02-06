@@ -10,7 +10,7 @@ describe('CanonController', () => {
   let canonController: CanonController;
   let prismaService: PrismaService;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       controllers: [CanonController],
       providers: [CanonService, PrismaService],
@@ -41,13 +41,7 @@ describe('CanonController', () => {
 
   describe('getCanon()', () => {
     let findOne: jest.Mock;
-    const childDetails: Child = {
-      id: 1,
-      grade: 3,
-      username: 'Dragon45',
-      subscription: '',
-      dyslexia: false,
-    };
+    const child: Child = { id: 1, username: 'Dragon45', grade: 3, dyslexia: false, subscription: '' };
 
     beforeEach(() => {
       const result = { week: 1, base64: 'base64', altbase64: 'altbase64' };
@@ -61,15 +55,15 @@ describe('CanonController', () => {
     });
 
     it('should use child preferences when available', async () => {
-      const regularChild: Child = { ...childDetails, dyslexia: false };
-      const dyslexicChild: Child = { ...childDetails, dyslexia: true };
+      const regularChild: Child = { ...child, dyslexia: false };
+      const dyslexicChild: Child = { ...child, dyslexia: true };
       expect(await canonController.getCanon({ child: regularChild }, 1, '')).toBe('base64');
       expect(await canonController.getCanon({ child: dyslexicChild }, 1, '')).toBe('altbase64');
     });
 
     it('should use the dyslexia query param above all else', async () => {
-      const regularChild: Child = { ...childDetails, dyslexia: false };
-      const dyslexicChild: Child = { ...childDetails, dyslexia: true };
+      const regularChild: Child = { ...child, dyslexia: false };
+      const dyslexicChild: Child = { ...child, dyslexia: true };
       expect(await canonController.getCanon({}, 1, 'force')).toBe('altbase64');
       expect(await canonController.getCanon({}, 1, 'force')).toBe('altbase64');
       expect(await canonController.getCanon({ child: regularChild }, 1, 'force')).toBe('altbase64');

@@ -68,9 +68,7 @@ export class PaymentService {
   }
 
   public async verifyChild(id: number, childID: number) {
-    const foundChild = await this.prisma.parent
-      .findOne({ where: { id } })
-      .children({ where: { id: childID } });
+    const foundChild = await this.prisma.parent.findOne({ where: { id } }).children({ where: { id: childID } });
     if (!foundChild) throw new NotFoundException();
     return !!foundChild;
   }

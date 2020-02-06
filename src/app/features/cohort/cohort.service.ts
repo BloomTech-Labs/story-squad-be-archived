@@ -28,9 +28,7 @@ export class CohortService {
       return created;
     } catch (err) {
       if (err instanceof PrismaClientRequestError)
-        throw new BadRequestException(
-          'Could not create cohort, does another cohort with the same name exist?'
-        );
+        throw new BadRequestException('Could not create cohort, does another cohort with the same name exist?');
       else throw err;
     }
   }

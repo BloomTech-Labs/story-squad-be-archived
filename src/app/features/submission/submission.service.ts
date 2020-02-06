@@ -2,11 +2,12 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { UpdateSubmissionDTO } from '@models';
 import { PrismaService } from '@shared/prisma';
-import { TranscriptionService } from '../../shared/transcription';
+import { ScriptService } from '@app/shared/script';
+import { attemptJSONParse, onlyTranscription } from '@utils';
 
 @Injectable()
 export class SubmissionService {
-  constructor(private readonly prisma: PrismaService, private readonly transcription: TranscriptionService) {}
+  constructor(private readonly prisma: PrismaService, private readonly transcription: ScriptService) {}
 
   public async getSubmissions(childID: number) {
     return await this.prisma.child.findOne({ where: { id: childID } }).submissions();
@@ -26,14 +27,29 @@ export class SubmissionService {
 
   public async createSubmission(childID: number, week: number, submission: UpdateSubmissionDTO) {
     const metadata = { week, child: { connect: { id: childID } } };
-    const { images } = await this.transcription.process({ images: [submission.story] }).toPromise();
-    const storyText = images[0];
-    return await this.prisma.submission.create({ data: { ...submission, storyText, ...metadata } });
+    const storyText = submission.storyText || (await this.transcribe(submission.story)).images.join('\n');
+    return await this.prisma.submission.create({
+      data: {
+        illustration: { set: submission.illustration },
+        story: { set: submission.story },
+        storyText,
+        ...metadata,
+      },
+    });
   }
 
-  public async updateSubmission(childID: number, id: number, update: UpdateSubmissionDTO) {
+  public async upsertSubmission(childID: number, id: number, update: UpdateSubmissionDTO) {
     await this.getSubmission(childID, id);
-    return await this.prisma.submission.update({ data: { ...update }, where: { id } });
+    const storyText = update.storyText || (await this.transcribe(update.story)).images.join('\n');
+    return await this.prisma.submission.update({
+      data: {
+        ...update,
+        illustration: { set: update.illustration },
+        story: { set: update.story },
+        storyText,
+      },
+      where: { id },
+    });
   }
 
   public async deleteSubmission(childID: number, id: number) {
@@ -49,5 +65,11 @@ export class SubmissionService {
   public async getSubmissionWeek(childID: number) {
     const { week } = await this.prisma.child.findOne({ where: { id: childID } }).cohort();
     return week;
+  }
+
+  public transcribe(images: string[]) {
+    return this.transcription.runScript('./data-science/transcription.py', { images }, (out) =>
+      out.map(attemptJSONParse).find(onlyTranscription)
+    );
   }
 }

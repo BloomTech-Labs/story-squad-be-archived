@@ -1,1 +1,1 @@
-export * from './rxjs.utils';
+export * from './arr.utils';

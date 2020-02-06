@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common';
 
 import { PrismaModule } from './prisma/prisma.module';
 import { StripeModule } from './stripe/stripe.module';
-import { TranscriptionModule } from './transcription';
+import { ScriptModule } from './script';
 
 @Module({
-  imports: [PrismaModule, StripeModule, TranscriptionModule],
-  exports: [PrismaModule, StripeModule, TranscriptionModule],
+  imports: [PrismaModule, StripeModule, ScriptModule],
+  exports: [PrismaModule, StripeModule, ScriptModule],
 })
 export class SharedModule {}

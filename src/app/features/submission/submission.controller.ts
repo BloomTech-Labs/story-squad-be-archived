@@ -38,7 +38,7 @@ export class SubmissionController {
     @Param('id', ParseIntPipe) submissionID: number,
     @Body() update: UpdateSubmissionDTO
   ): Promise<Submission> {
-    return await this.submissionService.updateSubmission(id, submissionID, update);
+    return await this.submissionService.upsertSubmission(id, submissionID, update);
   }
 
   @Delete('/:week')
