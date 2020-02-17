@@ -1,5 +1,5 @@
 from sys import stdin, stdout
-from json import load, loads, dumps
+from json import loads, dumps
 from decouple import config
 from datauri import DataURI
 
@@ -15,12 +15,10 @@ api_key = service_account.Credentials.from_service_account_info(api_key)
 client = vision.ImageAnnotatorClient(credentials=api_key)
 
 
-def extract_data(uri):
-    return DataURI(uri).data
-
-
-def transcribe(encoded_image):
-    image = types.Image(content=encoded_image)
+def transcribe(uri):
+    # Parses a URI and gets the encoded data string out
+    data = DataURI(uri).data
+    image = types.Image(content=data)
     response = client.document_text_detection(image)
 
     if response.text_annotations:
@@ -29,18 +27,41 @@ def transcribe(encoded_image):
         return "No Text"
 
 
-def nothing(image):
+# To be replaced with a function that gets the metadata out of the function
+def nothing(transcript):
     return {"nada": "nothing"}
 
 
-def process_images(raw_images):
-    data = map(extract_data, raw_images)
-    transcripts = map(transcribe, data)
+# Input list of URIs
+def process_images(uris):
+    # Map functions are used to take iterable data structures like list, maps, etc. and make a map
+    # that consist of the data of the original data structure after being run through a function.
+    # Outputs a map (list like data structure) of all the uris after being transcribed
+    transcripts = map(transcribe, uris)
+    # Outputs a map (list like data structure) of all the transcriptions after having the meta data parsed
     metadata = map(nothing, transcripts)
     return {'images': list(transcripts), 'metadata': list(metadata)}
 
 
-incoming = load(stdin)
-processed = process_images(incoming['images'])
-stringified = dumps(processed)
-stdout.write(stringified)
+# Input: JSON String in the transcribable data structure
+# Output: JSON String of the data being processed into transcripts and metadata
+def main(transcribable):
+    json = loads(transcribable)
+    transcriptions = process_images(json['images'])
+    return dumps(transcriptions)
+
+
+# Reads in from stdin the entire input as a string
+data = stdin.read()
+
+# Runs the main function using the input string and saving the output string
+output = main(data)
+
+# Prints the output string to stdout
+stdout.write(output)
+
+
+# Can be tested with this command
+# pipenv run python3 dotPy/transcription.py < integration/src/transcription_test.json
+
+# Notice how the `test.json` is piped into stdin with the `<`
