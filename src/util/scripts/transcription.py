@@ -2,7 +2,6 @@ from sys import stdin, stdout
 from json import loads, dumps
 from decouple import config
 from datauri import DataURI
-
 from google.cloud import vision
 from google.cloud.vision import types
 # from google.oauth2 import service_account
@@ -13,14 +12,6 @@ credentials = compute_engine.Credentials()
 
 import urllib.request
 
-# api_key = config({
-#   "type": "service_account",
-#   "project_id": "storysquad",
-#   "private_key_id": "2922ddf6e57d779ff13fd98d1204b4f9c7341460"
-# })
-# api_key = loads(api_key)
-# api_key = service_account.Credentials.from_service_account_info(api_key)
-# api_key = Client.from_service_account_json('./src/util/scripts/StorySquad-2922ddf6e57d.json')
 client = vision.ImageAnnotatorClient()
 
 
