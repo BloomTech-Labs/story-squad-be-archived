@@ -222,6 +222,7 @@ create a .env file that includes the following:
     * SALT=10
     * SECRET_SIGNATURE=Its a secret (example - create your own)
     * STRIPE_API=sk_test_v666XmnGJcP1Oz3GBg2iFmvd004Q3qp4jZ
+    * DATABASE_URL=postgresql://postgres:1234@localhost:5432/postgres
 
 ## Contributing
 
