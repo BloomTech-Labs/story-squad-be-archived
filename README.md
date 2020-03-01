@@ -110,12 +110,12 @@ To get the server running locally:
 
 #### Submissions Routes
 
-| Method | Endpoint             | Access Control | Description                                                   |
-| ------ | -------------------- | -------------- | ------------------------------------------------------------- |
-| GET    | `/submissions`       | child users    | json list of user's submissions                               |
-| GET    | `/submissions/:week` | child users    | json object of a user's submission for a specific week        |
-| POST   | `/submissions`       | child users    | upload and receive json object of a user's new submission     |
-| DELETE | `/submissions/:week` | child users    | delete and receive json object of a user's removed submission |
+| Method | Endpoint             | Access Control | Description                                                                              |
+| ------ | -------------------- | -------------- | ---------------------------------------------------------------------------------------- |
+| GET    | `/submissions`       | child users    | json list of user's submissions                                                          |
+| GET    | `/submissions/:week` | child users    | json object of a user's submission for a specific week                                   |
+| POST   | `/submissions`       | child users    | upload image and receive json object of a user's new submission and the transcribed text |
+| DELETE | `/submissions/:week` | child users    | delete and receive json object of a user's removed submission                            |
 
 # Database Entities
 
@@ -141,7 +141,7 @@ To get the server running locally:
 {
   week: NUMBER
   base64: STRING
-  altbase64: 
+  altbase64:
 }
 ```
 
@@ -159,7 +159,7 @@ To get the server running locally:
   progress: Progress
   parent: foreign key in PARENT table
   cohort: foreign key in COHORT table
-  submissions: ARRAY (Relation) 
+  submissions: ARRAY (Relation)
 }
 ```
 
