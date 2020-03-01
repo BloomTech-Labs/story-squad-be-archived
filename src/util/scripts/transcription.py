@@ -7,7 +7,12 @@ from google.cloud.vision import types
 # from google.oauth2 import service_account
 from google.auth import compute_engine
 import os
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="./src/util/scripts/StorySquad-2922ddf6e57d.json"
+
+try:
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="./src/util/scripts/StorySquad-2922ddf6e57d.json"
+except:
+    os.environ["GOOGLE_CREDS"]
+
 credentials = compute_engine.Credentials()
 
 import urllib.request
