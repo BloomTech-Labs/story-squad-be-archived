@@ -64,6 +64,11 @@ submissionRoutes.post('/', Only(Child), async (req, res) => {
                 .then((stats: Readability) => {
                     // Save readability stats to db
                     // Save transcribed text to db
+                    // await getRepository(readability, connection()).save({
+                    //     ...stats,
+                    //     transcribed_text: story
+                    // })
+                    console.log(stats);
                 })
                 .catch(console.error);
         });
@@ -79,6 +84,14 @@ submissionRoutes.post('/', Only(Child), async (req, res) => {
             child: req.user,
         });
         // END OLD DB CODE
+
+        // NEW DB CODE
+        // await getRepository(story_submissions, connection()).save({
+        //     child_id: req.user.id,
+        //     cohorts_chapter_id: week,
+        //     image: JSON.stringify(data)
+        // })
+        // END NEW DB CODE
 
         res.status(201).json({ submission, transcribed });
     } catch (err) {
