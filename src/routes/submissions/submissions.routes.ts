@@ -87,9 +87,15 @@ submissionRoutes.post('/', Only(Child), async (req, res) => {
 
         // NEW DB CODE
         // await getRepository(story_submissions, connection()).save({
+        // child_id: req.user.id,
+        // cohorts_chapter_id: week,
+        // image: JSON.stringify(data)
+        // })
+
+        // await getRepository(drawing_submissions, connection()).save({
         //     child_id: req.user.id,
         //     cohorts_chapter_id: week,
-        //     image: JSON.stringify(data)
+        //     image: illustration
         // })
         // END NEW DB CODE
 
