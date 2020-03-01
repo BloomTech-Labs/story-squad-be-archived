@@ -1,4 +1,4 @@
-import { Transcription } from './models';
+import { Transcription } from '../models';
 
 /**
  * @description Attempts to parse a data string into JSON, if it fails it returns the string instead

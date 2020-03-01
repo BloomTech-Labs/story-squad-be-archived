@@ -42,10 +42,6 @@ submissionRoutes.post('/', Only(Child), async (req, res) => {
         if (submissions.find((e) => e.week === week)) throw Error('400');
 
         // Start DS integration
-
-        // Loads the test.json file
-        // const data = require('./test.json');
-
         let images = [];
         Object.values(story).forEach((page) => {
             if (page.length > 1) {
@@ -57,25 +53,24 @@ submissionRoutes.post('/', Only(Child), async (req, res) => {
             images,
         };
 
-        // console.log(data);
+        const transcribed: Transcription | any = await transcribe(data);
 
-        // Runs the processing on that data then console.logs the result, if errors occurs it console.errors the errors
-        transcribe(data)
-            .then((response: Transcription) => {
-                console.log('Transcribe promise returns');
-                response.images.forEach((story) => {
-                    readable({ story })
-                        .then((response: Readability) => {
-                            console.log('Readability promise returns');
-                            console.log(response);
-                        })
-                        .catch(console.error);
-                });
-            })
-            .catch(console.error);
+        if (!transcribed) {
+            res.status(400).json({ message: 'Something went wrong transcribing image.' });
+        }
 
+        transcribed.images.forEach((story: string) => {
+            readable({ story })
+                .then((stats: Readability) => {
+                    // Save readability stats to db
+                    // Save transcribed text to db
+                })
+                .catch(console.error);
+        });
         // End DS integration
 
+        // START OLD DB CODE
+        // This will get replaced on the next merge with new database code
         const { child, ...submission } = await getRepository(Submissions, connection()).save({
             week,
             story,
@@ -83,8 +78,9 @@ submissionRoutes.post('/', Only(Child), async (req, res) => {
             illustration,
             child: req.user,
         });
+        // END OLD DB CODE
 
-        res.status(201).json({ submission });
+        res.status(201).json({ submission, transcribed });
     } catch (err) {
         if (err.toString() === 'Error: 400')
             res.status(400).json({ message: `Submission already exists` });
@@ -116,7 +112,6 @@ submissionRoutes.delete('/:week', Only(Child), async (req, res) => {
 // Wrapper function that runs a specific script
 // Parameters<typeof runScript>[1] is used to specify the second parameter type of `runScript`
 function transcribe(data: Transcribable) {
-    console.log('Transcribe function runs');
     return runScript(
         './src/util/scripts/transcription.py', // Specifies the script to use, the path is relative to the directory the application is started from
         data, // The data to pass into stdin of the script
@@ -125,11 +120,10 @@ function transcribe(data: Transcribable) {
 }
 
 function readable(story: Readable) {
-    console.log('Readability function runs');
     return runScript(
         './src/util/scripts/readability.py', // Specifies the script to use, the path is relative to the directory the application is started from
         story, // The data to pass into stdin of the script
-        (out: any) => out.map(attemptJSONParse) // A function to take the stdout of the script and find the result
+        (out: any) => out.map(attemptJSONParse) // A function to take the stdout of the script
     );
 }
 
