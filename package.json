@@ -5,7 +5,7 @@
     "main": "dist/index.js",
     "scripts": {
         "build": "tsc",
-        "start": "pipenv run node build/index.js",
+        "start": "pipenv run npx ts-node build/index.js",
         "dev": "ts-node-dev src/index.ts",
         "test": "jest --watch",
         "typeorm": "ts-node ./node_modules/typeorm/cli.js -f src/ormconfig.ts",
@@ -31,6 +31,17 @@
         "segal-decorators": "^0.3.1",
         "stripe": "^8.7.0",
         "ts-node": "^8.6.2",
+        "@types/bcryptjs": "^2.4.2",
+        "@types/cors": "^2.8.6",
+        "@types/dotenv": "^8.2.0",
+        "@types/express": "^4.17.2",
+        "@types/express-session": "^1.15.16",
+        "@types/helmet": "^0.0.45",
+        "@types/jest": "^25.1.0",
+        "@types/jsonwebtoken": "^8.3.7",
+        "@types/pg": "^7.14.1",
+        "@types/supertest": "^2.0.8",
+        "@types/webpack": "^4.41.3",
         "typeorm": "^0.2.22"
     },
     "devDependencies": {
