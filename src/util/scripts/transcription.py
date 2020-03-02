@@ -1,6 +1,6 @@
 from sys import stdin, stdout
 from json import loads, dumps
-from decouple import config
+# from decouple import config
 from datauri import DataURI
 from google.cloud import vision
 from google.cloud.vision import types
