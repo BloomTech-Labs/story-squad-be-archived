@@ -56,22 +56,23 @@ submissionRoutes.post('/', Only(Child), async (req, res) => {
         const transcribed: Transcription | any = await transcribe(data);
 
         if (!transcribed) {
-            res.status(400).json({ message: 'Something went wrong transcribing image.' });
+            return res.status(400).json({ message: 'Something went wrong transcribing image.' });
+        } else {
+            transcribed.images.forEach((story: string) => {
+                readable({ story })
+                    .then((stats: Readability) => {
+                        // Save readability stats to db
+                        // Save transcribed text to db
+                        // await getRepository(readability, connection()).save({
+                        //     ...stats,
+                        //     transcribed_text: story
+                        // })
+                        console.log(stats);
+                        return res.status(200).json(stats);
+                    })
+                    .catch(console.error);
+            });
         }
-
-        transcribed.images.forEach((story: string) => {
-            readable({ story })
-                .then((stats: Readability) => {
-                    // Save readability stats to db
-                    // Save transcribed text to db
-                    // await getRepository(readability, connection()).save({
-                    //     ...stats,
-                    //     transcribed_text: story
-                    // })
-                    console.log(stats);
-                })
-                .catch(console.error);
-        });
         // End DS integration
 
         // START OLD DB CODE
