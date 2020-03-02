@@ -55,9 +55,7 @@ submissionRoutes.post('/', Only(Child), async (req, res) => {
 
         const transcribed: Transcription | any = await transcribe(data);
 
-        if (!transcribed) {
-            return res.status(400).json({ message: 'Something went wrong transcribing image.' });
-        } else {
+        if (transcribed && transcribed.images) {
             transcribed.images.forEach((story: string) => {
                 readable({ story })
                     .then((stats: Readability) => {
@@ -72,6 +70,8 @@ submissionRoutes.post('/', Only(Child), async (req, res) => {
                     })
                     .catch(console.error);
             });
+        } else {
+            return res.status(400).json({ message: 'Something went wrong transcribing image.' });
         }
         // End DS integration
 
