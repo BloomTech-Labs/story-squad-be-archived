@@ -4,7 +4,6 @@
     "private": true,
     "main": "dist/index.js",
     "scripts": {
-        "prebuild": "pipenv install --deploy",
         "build": "tsc",
         "start": "pipenv run node build/index.js",
         "dev": "ts-node-dev src/index.ts",
