@@ -5,7 +5,6 @@
     "main": "dist/index.js",
     "scripts": {
         "build": "tsc",
-        "postbuild": "pipenv install",
         "start": "pipenv run node build/index.js",
         "dev": "ts-node-dev src/index.ts",
         "test": "jest --watch",
