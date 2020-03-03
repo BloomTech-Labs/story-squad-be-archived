@@ -11,7 +11,7 @@ import os
 try:
     os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="./src/util/scripts/StorySquad-2922ddf6e57d.json"
 except:
-    os.environ["GOOGLE_CREDS"]
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"]
 
 credentials = compute_engine.Credentials()
 
