@@ -2,7 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn, OneToMany
 import { Child } from '../Child';
 
 @Entity()
-class StorySubmissions {
+class DrawingSubmissions {
 
     @PrimaryGeneratedColumn()
     id: number;
