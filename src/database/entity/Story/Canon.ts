@@ -1,4 +1,5 @@
 import { Entity, Column, PrimaryColumn, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { Story } from './Story';
 // change name to Chapter before migrating
 @Entity()
 class Canon {
@@ -19,10 +20,11 @@ class Canon {
     title: string;
 
     // @ManyToOne(
-    //     (type) => Parent,
-    //     (parent) => parent.children
+    //     (type) => Story,
+    //     (story) => story.children
     // )
-    // parent: Parent;
+    // story: Story;
+    // relation
 }
 
 export { Canon };
