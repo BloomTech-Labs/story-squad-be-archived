@@ -1,5 +1,13 @@
-import { Entity, Column, PrimaryColumn, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import {
+    Entity,
+    Column,
+    PrimaryColumn,
+    PrimaryGeneratedColumn,
+    OneToMany,
+    JoinColumn,
+} from 'typeorm';
 import { Story } from './Story';
+import { Cohort_Canon } from './Cohort_Canon';
 // change name to Chapter before migrating
 @Entity()
 class Canon {
@@ -19,12 +27,12 @@ class Canon {
     @Column({ nullable: true })
     title: string;
 
-    // @ManyToOne(
-    //     (type) => Story,
-    //     (story) => story.children
-    // )
-    // story: Story;
-    // relation
+    @OneToMany(
+        () => Cohort_Canon,
+        (cohort_canon) => cohort_canon.canon
+    )
+    @JoinColumn({ name: 'id' })
+    cohortConnection: number;
 }
 
 export { Canon };

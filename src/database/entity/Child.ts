@@ -5,8 +5,6 @@ import { Progress } from './Progress';
 import { Parent } from './Parent';
 import { Cohort } from './Story/Cohort';
 import { Submissions } from './Submission/Submissions';
-// import nested entity Points 3.2.20
-import { Points } from './Points';
 
 @Entity()
 class Child {
@@ -32,15 +30,20 @@ class Child {
     @Column((type) => Progress)
     progress: Progress;
 
-    // nested Points with total_points/total_wins/total_games_played
-    // @Column((type) => Points)
-    // points: Points;
-
     @Column()
     avatar: string;
 
     @Column()
     pin: string;
+
+    @Column()
+    total_points: number;
+
+    @Column()
+    total_wins: number;
+
+    @Column()
+    total_games_played: number;
 
     @ManyToOne(
         (type) => Parent,

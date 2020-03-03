@@ -1,17 +1,22 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn, OneToMany } from 'typeorm'
+import { Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn, ManyToOne } from 'typeorm';
 import { Child } from '../Child';
+import { Cohort_Canon } from '../Story/Cohort_Canon';
 
 @Entity()
-class StorySubmissions {
-
+class Story_Submission {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @OneToOne(()=> Child)
+    @OneToOne(() => Child)
     @JoinColumn()
     child_id: Child;
 
     //cohort chapter - one to many
+    @ManyToOne(
+        () => Cohort_Canon,
+        (cohort_canon) => cohort_canon.story_submission
+    )
+    cohort_canon: number;
 
     @Column()
     cohort_chapters_id: number;
@@ -23,14 +28,14 @@ class StorySubmissions {
     allocated_points: number;
 
     @Column()
-    final_points: number;   
-    
+    final_points: number;
+
     @Column()
     high_bracket: boolean;
 
     @Column()
     low_bracket: boolean;
-    
+
     @Column()
     win: boolean;
 
@@ -40,3 +45,5 @@ class StorySubmissions {
     @Column()
     votes: number;
 }
+
+export { Story_Submission };

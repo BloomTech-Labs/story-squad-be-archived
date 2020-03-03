@@ -1,7 +1,7 @@
 import { Column } from 'typeorm';
 
 import { Activities } from '../../models';
-
+// currently implements syntax isn't actually being used
 class DueDates implements Activities {
     @Column()
     reading: Date;
