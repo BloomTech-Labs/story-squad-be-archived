@@ -8,6 +8,6 @@
     "editor.tabSize": 4,
     "eslint.enable": false,
     "git.autofetch": true,
-    "python.pythonPath": "C:\\Program Files (x86)\\Python37-32\\python.exe",
+    "python.pythonPath": "C:\\Users\\Hui\\.virtualenvs\\story-squad-be-18bgcBHk\\Scripts\\python.exe",
     "python.autoComplete.extraPaths": ["./src/util/scripts"]
 }
