@@ -1,1 +1,1 @@
-web: pipenv run yarn start
+web: yarn start
