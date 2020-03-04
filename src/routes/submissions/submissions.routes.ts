@@ -128,11 +128,8 @@ submissionRoutes.delete('/:week', Only(Child), async (req, res) => {
         return res.json({ submission });
     } catch (err) {
         if (err.toString() === 'Error: 404')
-            return res.status(404).json({ message: `Submission not found` });
-        else
-            return res
-                .status(500)
-                .json({ message: 'Hmm... That did not work, please try again later.' });
+            res.status(404).json({ message: `Submission not found` });
+        else res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
     }
 });
 
