@@ -13,9 +13,11 @@ const submissionRoutes = Router();
 submissionRoutes.get('/', Only(Child), async (req, res) => {
     try {
         const { submissions } = req.user as Child;
-        res.json({ submissions });
+        return res.json({ submissions });
     } catch (err) {
-        res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
+        return res
+            .status(500)
+            .json({ message: 'Hmm... That did not work, please try again later.' });
     }
 });
 
@@ -24,11 +26,14 @@ submissionRoutes.get('/:week', Only(Child), async (req, res) => {
         const { submissions } = req.user as Child;
         const submission = submissions.find(({ week }) => week === parseInt(req.params.week));
         if (!submission) throw Error('404');
-        res.json({ submission });
+        return res.json({ submission });
     } catch (err) {
         if (err.toString() === 'Error: 404')
-            res.status(404).json({ message: `Submission not found` });
-        else res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
+            return res.status(404).json({ message: `Submission not found` });
+        else
+            return res
+                .status(500)
+                .json({ message: 'Hmm... That did not work, please try again later.' });
     }
 });
 
@@ -48,10 +53,6 @@ submissionRoutes.post('/', Only(Child), async (req, res) => {
                 images.push(page);
             }
         });
-
-        // const data = {
-        //     images,
-        // };
 
         const transcribed: Transcription | any = await transcribe({ images });
 
@@ -100,11 +101,14 @@ submissionRoutes.post('/', Only(Child), async (req, res) => {
         // })
         // END NEW DB CODE
 
-        res.status(201).json({ submission, transcribed });
+        return res.status(201).json({ submission, transcribed });
     } catch (err) {
         if (err.toString() === 'Error: 400')
-            res.status(400).json({ message: `Submission already exists` });
-        else res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
+            return res.status(400).json({ message: `Submission already exists` });
+        else
+            return res
+                .status(500)
+                .json({ message: 'Hmm... That did not work, please try again later.' });
     }
 });
 
@@ -121,11 +125,14 @@ submissionRoutes.delete('/:week', Only(Child), async (req, res) => {
         });
         if (!affected) throw Error();
 
-        res.json({ submission });
+        return res.json({ submission });
     } catch (err) {
         if (err.toString() === 'Error: 404')
-            res.status(404).json({ message: `Submission not found` });
-        else res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
+            return res.status(404).json({ message: `Submission not found` });
+        else
+            return res
+                .status(500)
+                .json({ message: 'Hmm... That did not work, please try again later.' });
     }
 });
 
