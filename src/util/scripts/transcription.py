@@ -5,20 +5,13 @@ from datauri import DataURI
 from google.cloud import vision
 from google.cloud.vision import types
 from google.oauth2 import service_account
-# from google.auth import compute_engine
 import os
-
-# credentials = compute_engine.Credentials(os.environ["GOOGLE_APPLICATION_CREDENTIALS"])
-
 import urllib.request
 
 api_key = config("GOOGLE_APPLICATION_CREDENTIALS")
 api_key = loads(api_key)
 api_key = service_account.Credentials.from_service_account_info(api_key)
 client = vision.ImageAnnotatorClient(credentials=api_key)
-
-# client = vision.ImageAnnotatorClient(credentials=api_key)
-
 
 def transcribe(uri):
     # Parses a URI and gets the encoded data string out

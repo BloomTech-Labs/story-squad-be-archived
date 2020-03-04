@@ -49,15 +49,15 @@ submissionRoutes.post('/', Only(Child), async (req, res) => {
             }
         });
 
-        const data = {
-            images,
-        };
+        // const data = {
+        //     images,
+        // };
 
-        const transcribed: Transcription | any = await transcribe(data);
+        const transcribed: Transcription | any = await transcribe({ images });
 
-        // if (!transcribed) {
-        //     return res.status(400).json({ message: 'Something went wrong transcribing image.' });
-        // }
+        if (!transcribed) {
+            return res.status(400).json({ message: 'Something went wrong transcribing image.' });
+        }
 
         transcribed.images.forEach((story: string) => {
             readable({ story })
