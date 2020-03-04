@@ -17,17 +17,20 @@ import { Matches } from '../Matching/Matches';
 
 @Entity()
 class Cohort_Canon {
+    //key
     @PrimaryGeneratedColumn()
     id: number;
 
+    //fields
+    @Column()
+    current: boolean;
+
+    //reference
     @PrimaryColumn()
     canonId: number;
 
     @PrimaryColumn()
     cohortId: number;
-
-    @Column()
-    current: boolean;
 
     @ManyToOne(
         () => Canon,
@@ -45,6 +48,7 @@ class Cohort_Canon {
     @JoinColumn({ name: 'cohortId' })
     cohort: Cohort;
 
+    //relation
     @OneToMany(
         () => Story_Submission,
         (story_submission) => story_submission.cohort_canon

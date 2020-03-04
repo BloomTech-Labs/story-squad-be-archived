@@ -12,27 +12,11 @@ import { Cohort_Canon } from '../Story/Cohort_Canon';
 import { Drawing_Feedback } from '../Feedback/Drawing_Feedback';
 @Entity()
 class Drawing_Submission {
+    //key
     @PrimaryGeneratedColumn()
     id: number;
 
-    @OneToOne(() => Child)
-    @JoinColumn()
-    child_id: Child;
-
-    //cohort chapter - one to many
-    @ManyToOne(
-        () => Cohort_Canon,
-        (cohort_canon) => cohort_canon.id
-    )
-    cohort_canon: Cohort_Canon[];
-
-    //drawing_feedback ref - 3.4.20
-    @OneToMany(
-        () => Drawing_Feedback,
-        (drawing_feedback) => drawing_feedback.drawing_submission
-    )
-    drawing_feedback: Drawing_Feedback[];
-
+    //fields
     @Column()
     cohort_chapters_id: number;
 
@@ -59,6 +43,25 @@ class Drawing_Submission {
 
     @Column()
     votes: number;
+
+    //relations
+    @OneToOne(() => Child)
+    @JoinColumn()
+    child_id: Child;
+
+    //cohort chapter - one to many
+    @ManyToOne(
+        () => Cohort_Canon,
+        (cohort_canon) => cohort_canon.id
+    )
+    cohort_canon: Cohort_Canon[];
+
+    //drawing_feedback ref - 3.4.20
+    @OneToMany(
+        () => Drawing_Feedback,
+        (drawing_feedback) => drawing_feedback.drawing_submission
+    )
+    drawing_feedback: Drawing_Feedback[];
 }
 
 export { Drawing_Submission };

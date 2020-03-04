@@ -1,7 +1,8 @@
-import { Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { Column, PrimaryGeneratedColumn, ManyToOne, Entity } from 'typeorm';
 import { Child } from '../User/Child';
 import { Drawing_Submission } from '../Submission/Drawing_Submission';
 
+@Entity()
 class Drawing_Feedback {
     @PrimaryGeneratedColumn()
     id: number;

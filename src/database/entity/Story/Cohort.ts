@@ -7,9 +7,11 @@ import { Cohort_Canon } from './Cohort_Canon';
 // 3.2.20 individual chapter being used by cohort needs to be reflected in a relationship, not sure how
 @Entity()
 class Cohort {
+    //key
     @PrimaryGeneratedColumn()
     id: number;
 
+    //field
     @Column()
     name: string;
 
@@ -22,6 +24,7 @@ class Cohort {
     @Column((type) => DueDates)
     dueDates: DueDates;
 
+    //relation
     @OneToMany(
         (type) => Child,
         (child) => child.cohort

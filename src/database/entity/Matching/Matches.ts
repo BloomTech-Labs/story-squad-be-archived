@@ -1,12 +1,27 @@
-import { Column, PrimaryGeneratedColumn, OneToMany, ManyToOne } from 'typeorm';
+import { Column, PrimaryGeneratedColumn, OneToMany, ManyToOne, Entity } from 'typeorm';
 import { Child_Votes } from '../Feedback/Child_Votes';
 import { Child } from '../User/Child';
 import { Cohort_Canon } from '../Story/Cohort_Canon';
-
+@Entity()
 class Matches {
+    //key
     @PrimaryGeneratedColumn()
     id: number;
 
+    //fields
+    @Column()
+    team1_child1_id: number;
+
+    @Column()
+    team1_child2_id: number;
+
+    @Column()
+    team2_child1_id: number;
+
+    @Column()
+    team2_child2_id: number;
+
+    //relations
     //child_votes ref - 3.4.20
     @OneToMany(
         () => Child_Votes,
@@ -20,18 +35,6 @@ class Matches {
         (cohort_canon) => cohort_canon.matches
     )
     cohort_canon: Cohort_Canon[];
-
-    @Column()
-    team1_child1_id: number;
-
-    @Column()
-    team1_child2_id: number;
-
-    @Column()
-    team2_child1_id: number;
-
-    @Column()
-    team2_child2_id: number;
 }
 
 export { Matches };

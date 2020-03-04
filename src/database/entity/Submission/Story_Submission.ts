@@ -13,27 +13,11 @@ import { Story_Feedback } from '../Feedback/Story_Feedback';
 
 @Entity()
 class Story_Submission {
+    //key
     @PrimaryGeneratedColumn()
     id: number;
 
-    @OneToOne(() => Child)
-    @JoinColumn()
-    child_id: Child;
-
-    //cohort chapter - one to many
-    @ManyToOne(
-        () => Cohort_Canon,
-        (cohort_canon) => cohort_canon.story_submission
-    )
-    cohort_canon: Cohort_Canon;
-
-    //story feedback ref - 3.4.20
-    @OneToMany(
-        () => Story_Feedback,
-        (story_feedback) => story_feedback.story_submission
-    )
-    story_feedback: Story_Feedback[];
-
+    //fields
     @Column()
     cohort_chapters_id: number;
 
@@ -60,6 +44,25 @@ class Story_Submission {
 
     @Column()
     votes: number;
+
+    //relation
+    @OneToOne(() => Child)
+    @JoinColumn()
+    child_id: Child;
+
+    //cohort chapter - one to many
+    @ManyToOne(
+        () => Cohort_Canon,
+        (cohort_canon) => cohort_canon.story_submission
+    )
+    cohort_canon: Cohort_Canon;
+
+    //story feedback ref - 3.4.20
+    @OneToMany(
+        () => Story_Feedback,
+        (story_feedback) => story_feedback.story_submission
+    )
+    story_feedback: Story_Feedback[];
 }
 
 export { Story_Submission };

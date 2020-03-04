@@ -1,7 +1,8 @@
-import { Column, PrimaryGeneratedColumn, OneToMany, ManyToOne } from 'typeorm';
+import { Column, PrimaryGeneratedColumn, OneToMany, ManyToOne, Entity } from 'typeorm';
 import { Child } from '../User/Child';
 import { Story_Submission } from '../Submission/Story_Submission';
 
+@Entity()
 class Story_Feedback {
     @PrimaryGeneratedColumn()
     id: number;
