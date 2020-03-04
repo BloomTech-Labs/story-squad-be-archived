@@ -56,9 +56,9 @@ submissionRoutes.post('/', Only(Child), async (req, res) => {
 
         const transcribed: Transcription | any = await transcribe({ images });
 
-        if (!transcribed) {
-            return res.status(400).json({ message: 'Something went wrong transcribing image.' });
-        }
+        // if (!transcribed) {
+        //     return res.status(400).json({ message: 'Something went wrong transcribing image.' });
+        // }
 
         transcribed.images.forEach((story: string) => {
             readable({ story })
@@ -128,7 +128,7 @@ submissionRoutes.delete('/:week', Only(Child), async (req, res) => {
         return res.json({ submission });
     } catch (err) {
         if (err.toString() === 'Error: 404')
-            res.status(404).json({ message: `Submission not found` });
+            return res.status(404).json({ message: `Submission not found` });
         else res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
     }
 });
