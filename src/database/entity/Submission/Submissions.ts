@@ -1,7 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 
-import { Child } from '../Child';
-import { Pages } from '../Pages';
+import { Child } from '../User/Child';
+import { Pages } from '../Story/Pages';
 
 @Entity()
 class Submissions {

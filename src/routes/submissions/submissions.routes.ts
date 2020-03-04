@@ -6,7 +6,7 @@ import { attemptJSONParse, onlyTranscription } from '../../util/utils';
 import { connection } from '../../util/typeorm-connection';
 import { Only } from '../../middleware';
 import { Child, Submissions } from '../../database/entity';
-import { Pages } from '../../database/entity/Pages';
+import { Pages } from '../../database/entity/Story/Pages';
 
 const submissionRoutes = Router();
 

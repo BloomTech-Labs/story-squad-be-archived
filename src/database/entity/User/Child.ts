@@ -1,10 +1,14 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'typeorm';
 
 import { Preferences } from './Preferences';
-import { Progress } from './Progress';
+import { Progress } from '../Progress';
 import { Parent } from './Parent';
-import { Cohort } from './Story/Cohort';
-import { Submissions } from './Submission/Submissions';
+import { Cohort } from '../Story/Cohort';
+import { Submissions } from '../Submission/Submissions';
+import { Child_Votes } from '../Feedback/Child_Votes';
+import { Story_Feedback } from '../Feedback/Story_Feedback';
+import { Drawing_Feedback } from '../Feedback/Drawing_Feedback';
+import { Matches } from '../Matching/Matches';
 
 @Entity()
 class Child {
@@ -62,6 +66,27 @@ class Child {
         (submissions) => submissions.child
     )
     submissions: Submissions[];
+
+    //ref votes. 3-4-20
+    @ManyToOne(
+        () => Child_Votes,
+        (child_votes) => child_votes.child
+    )
+    child_votes: Child_Votes[];
+
+    //story_feedback - 3.4.20
+    @OneToMany(
+        () => Story_Feedback,
+        (story_feedback) => story_feedback.child
+    )
+    story_feedback: Story_Feedback[];
+
+    //drawing_feedback - 3.4.20
+    @OneToMany(
+        () => Drawing_Feedback,
+        (drawing_feedback) => drawing_feedback.child
+    )
+    drawing_feedback: Drawing_Feedback[];
 }
 
 export { Child };

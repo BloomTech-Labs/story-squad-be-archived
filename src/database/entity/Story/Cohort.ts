@@ -1,11 +1,10 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinColumn } from 'typeorm';
 
-import { Child } from '../Child';
+import { Child } from '../User/Child';
 import { DueDates } from '../DueDates';
 import { Cohort_Canon } from './Cohort_Canon';
 
 // 3.2.20 individual chapter being used by cohort needs to be reflected in a relationship, not sure how
-
 @Entity()
 class Cohort {
     @PrimaryGeneratedColumn()
@@ -34,7 +33,7 @@ class Cohort {
         (cohort_canon) => cohort_canon.canon
     )
     @JoinColumn({ name: 'id' })
-    cohortConnection: number;
+    cohort_canon: number;
 }
 
 export { Cohort };

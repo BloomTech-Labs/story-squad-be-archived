@@ -1,6 +1,6 @@
 // Story entity for sake of persisting chapters within larger story entity for re-use
 // Not in a rush to implement this
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { Canon } from './Canon';
 
 @Entity()
@@ -17,7 +17,12 @@ class Story {
     @Column({ nullable: true })
     title: string;
 
-    // needs a one to many with canon/chapters
+    //canon ref - 3.4.20
+    @OneToMany(
+        () => Canon,
+        (canon) => canon.story
+    )
+    canon: Canon;
 }
 
 export { Story };

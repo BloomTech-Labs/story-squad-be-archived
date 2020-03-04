@@ -1,19 +1,9 @@
-import {
-    Entity,
-    Column,
-    PrimaryColumn,
-    PrimaryGeneratedColumn,
-    OneToMany,
-    JoinColumn,
-} from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 import { Story } from './Story';
 import { Cohort_Canon } from './Cohort_Canon';
 // change name to Chapter before migrating
 @Entity()
 class Canon {
-    // @PrimaryColumn({ nullable: false, unique: true })
-    // week: number;
-
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -27,12 +17,20 @@ class Canon {
     @Column({ nullable: true })
     title: string;
 
+    //junction ref - 3.4.20
     @OneToMany(
         () => Cohort_Canon,
         (cohort_canon) => cohort_canon.canon
     )
     @JoinColumn({ name: 'id' })
-    cohortConnection: number;
+    cohort_canon: Cohort_Canon;
+    //story ref - 3.4.20
+
+    @ManyToOne(
+        () => Story,
+        (story) => story.canon
+    )
+    story: Story;
 }
 
 export { Canon };
