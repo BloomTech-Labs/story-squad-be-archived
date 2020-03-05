@@ -13,9 +13,6 @@ class Submission {
 
     //fields
     @Column()
-    cohort_chapters_id: number;
-
-    @Column()
     image: string;
 
     @Column()
