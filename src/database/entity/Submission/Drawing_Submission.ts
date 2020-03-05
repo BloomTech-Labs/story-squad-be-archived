@@ -29,7 +29,7 @@ class Drawing_Submission {
     //drawing_feedback ref - 3.4.20
     @OneToMany(
         () => Drawing_Feedback,
-        (drawing_feedback) => drawing_feedback.drawing_submission
+        (drawing_feedback) => drawing_feedback
     )
     drawing_feedback: Drawing_Feedback[];
 

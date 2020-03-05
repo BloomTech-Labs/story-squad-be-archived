@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import { Parent } from '../../database/entity';
+import { Parent } from '../../database/entity/User';
 import { Only } from '../../middleware';
 
 const parentRoutes = Router();

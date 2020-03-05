@@ -2,7 +2,8 @@ import * as request from 'supertest';
 import * as express from 'express';
 import { plainToClass } from 'class-transformer';
 
-import { Admin, Canon } from '../../database/entity';
+import { Admin } from '../../database/entity/User';
+import { Canon } from '../../database/entity/Story'
 
 import { canonRoutes } from './canon.routes';
 
