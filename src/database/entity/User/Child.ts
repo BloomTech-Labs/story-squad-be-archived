@@ -5,6 +5,8 @@ import { Progress } from '../Progress';
 import { Parent } from './Parent';
 import { Cohort } from '../Story/Cohort';
 import { Submissions } from '../Submission/Submissions';
+import { Story_Submission } from '../Submission/Story_Submission';
+import { Drawing_Submission } from '../Submission/Drawing_Submission';
 import { Child_Votes } from '../Feedback/Child_Votes';
 import { Story_Feedback } from '../Feedback/Story_Feedback';
 import { Drawing_Feedback } from '../Feedback/Drawing_Feedback';
@@ -61,11 +63,23 @@ class Child {
     )
     cohort: Cohort;
 
+    // @OneToMany(
+    //     (type) => Submissions,
+    //     (submissions) => submissions.child
+    // )
+    // submissions: Submissions[];
+
     @OneToMany(
-        (type) => Submissions,
-        (submissions) => submissions.child
+        (type) => Story_Submission,
+        (story_submissions) => story_submissions.child
     )
-    submissions: Submissions[];
+    story_submissions: Story_Submission[];
+
+    @OneToMany(
+        (type) => Drawing_Submission,
+        (drawing_submission) => drawing_submission.child
+    )
+    drawing_submission: Drawing_Submission[];
 
     //ref votes. 3-4-20
     @ManyToOne(

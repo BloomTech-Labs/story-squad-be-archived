@@ -49,6 +49,12 @@ class Drawing_Submission {
     @JoinColumn()
     child_id: Child;
 
+    @ManyToOne(
+        () => Child,
+        (child) => child.drawing_submission
+    )
+    child: Child[];
+
     //cohort chapter - one to many
     @ManyToOne(
         () => Cohort_Canon,

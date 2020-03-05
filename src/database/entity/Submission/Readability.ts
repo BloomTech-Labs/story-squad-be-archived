@@ -1,5 +1,6 @@
 // 3.2.20 -
 import { Entity, Column, PrimaryGeneratedColumn, PrimaryColumn, OneToOne } from 'typeorm';
+import { Story_Submission } from './Story_Submission';
 
 @Entity()
 class Readability {
@@ -7,6 +8,11 @@ class Readability {
     id: number;
 
     // needs a one to one with story_submission
+    @OneToOne(
+        () => Story_Submission,
+        (story_submission) => story_submission.readability
+    )
+    story_submission: Story_Submission[];
 
     @Column()
     flesch_reading_ease: string;

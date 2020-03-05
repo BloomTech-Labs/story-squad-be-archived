@@ -1,8 +1,9 @@
-import { Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { Column, PrimaryGeneratedColumn, ManyToOne, Entity } from 'typeorm';
 import { Child } from '../User/Child';
 import { Matches } from '../Matching/Matches';
 import { Cohort_Canon } from '../Story/Cohort_Canon';
 
+@Entity()
 class Child_Votes {
     @PrimaryGeneratedColumn()
     id: number;

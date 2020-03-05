@@ -10,6 +10,7 @@ import {
 import { Child } from '../User/Child';
 import { Cohort_Canon } from '../Story/Cohort_Canon';
 import { Story_Feedback } from '../Feedback/Story_Feedback';
+import { Readability } from './Readability';
 
 @Entity()
 class Story_Submission {
@@ -46,9 +47,17 @@ class Story_Submission {
     votes: number;
 
     //relation
-    @OneToOne(() => Child)
-    @JoinColumn()
-    child_id: Child;
+    @ManyToOne(
+        () => Child,
+        (child) => child
+    )
+    child: Child;
+
+    @OneToOne(
+        () => Readability,
+        (readability) => readability.story_submission
+    )
+    readability: Readability[];
 
     //cohort chapter - one to many
     @ManyToOne(
