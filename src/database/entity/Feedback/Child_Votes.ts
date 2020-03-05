@@ -1,8 +1,10 @@
-import { Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { Column, PrimaryGeneratedColumn, ManyToOne, Entity } from 'typeorm';
+//entities
 import { Child } from '../User/Child';
 import { Matches } from '../Matching/Matches';
-import { Cohort_Canon } from '../Story/Cohort_Canon';
+import { Round } from '../Story/Round';
 
+@Entity()
 class Child_Votes {
     @PrimaryGeneratedColumn()
     id: number;
@@ -26,10 +28,10 @@ class Child_Votes {
 
     //cohorts_chapters ref - 3.4.20
     @ManyToOne(
-        () => Cohort_Canon,
-        (cohort_canon) => cohort_canon.child_votes
+        () => Round,
+        (round) => round.child_votes
     )
-    cohort_canon: Cohort_Canon[];
+    round: Round[];
 }
 
 export { Child_Votes };

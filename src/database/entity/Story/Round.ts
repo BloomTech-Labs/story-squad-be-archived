@@ -10,66 +10,64 @@ import {
 
 import { Canon } from './Canon';
 import { Cohort } from './Cohort';
-import { Story_Submission } from '../Submission/Story_Submission';
-import { Drawing_Submission } from '../Submission/Drawing_Submission';
+import { Submission } from '../Submission/Submission';
 import { Child_Votes } from '../Feedback/Child_Votes';
 import { Matches } from '../Matching/Matches';
 
 @Entity()
-class Cohort_Canon {
+class Round {
+    //key
     @PrimaryGeneratedColumn()
     id: number;
 
+    //fields
+    @Column()
+    current: boolean;
+
+    //reference
     @PrimaryColumn()
     canonId: number;
 
     @PrimaryColumn()
     cohortId: number;
 
-    @Column()
-    current: boolean;
-
     @ManyToOne(
         () => Canon,
-        (canon) => canon.cohort_canon,
+        (canon) => canon.round,
         { primary: true }
     )
     @JoinColumn({ name: 'canonId' })
-    canon: Canon;
+    canon: Canon[];
 
     @ManyToOne(
         () => Cohort,
-        (cohort) => cohort.cohort_canon,
+        (cohort) => cohort.round,
         { primary: true }
     )
     @JoinColumn({ name: 'cohortId' })
-    cohort: Cohort;
+    cohort: Cohort[];
+
+    //relation
 
     @OneToMany(
-        () => Story_Submission,
-        (story_submission) => story_submission.cohort_canon
+        () => Submission,
+        (submission) => submission.round
     )
-    story_submission: Story_Submission;
-
-    @OneToMany(
-        () => Drawing_Submission,
-        (drawing_submission) => drawing_submission.cohort_chapters_id
-    )
-    drawing_submission: Drawing_Submission;
+    submission: Submission[];
 
     //child_votes ref - 3.4.20
     @OneToMany(
         () => Child_Votes,
-        (child_votes) => child_votes.cohort_canon
+        (child_votes) => child_votes.round
     )
     child_votes: Child_Votes[];
 
     //matches
     @OneToMany(
         () => Matches,
-        (matches) => matches.cohort_canon
+        (matches) => matches.round
     )
     matches: Matches[];
 }
 
-export { Cohort_Canon };
+export { Round };
