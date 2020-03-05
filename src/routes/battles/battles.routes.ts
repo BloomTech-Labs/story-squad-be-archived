@@ -2,14 +2,11 @@ import { Router } from 'express';
 import { getRepository, getCustomRepository } from 'typeorm';
 
 
-import { Child } from '../../database/entity/User/Child'
-import { Cohort_Canon } from '../../database/entity/Story/Cohort_Canon'
-import { Drawing_Submission, Story_Submission } from '../../database/entity/Submission'
-import { MatchInfoRepository } from './customRepository'
+import { Child, Round, Matches } from '../../database/entity'
+import { MatchInfoRepository } from './custom'
 
 import { Only } from '../../middleware/only/only.middleware'
 import { connection } from '../../util/typeorm-connection';
-import { Matches } from '../../database/entity/Matching/Matches';
 
 
 const battlesRoutes = Router()
@@ -19,13 +16,13 @@ battlesRoutes.get("/battles", Only(Child), async(req, res) => {
     try{
         const { id } = req.user as Child
         //first get matchid so we know who this child is up against
-        const activeCohort = await getRepository(Cohort_Canon, connection()).findOne({ where: { activeCohort: true }})
+        const activeCohort = await getRepository(Round, connection()).findOne({ where: { current: true }})
         const [ match ] = await getRepository(Matches, connection()).find({
             where: [
-                { team1_child1_id: id, cohort_canon: activeCohort.id },
-                { team1_child2_id: id, cohort_canon: activeCohort.id },
-                { team2_child1_id: id, cohort_canon: activeCohort.id },
-                { team2_child2_id: id, cohort_canon: activeCohort.id }
+                { team1_child1_id: id, round: activeCohort.id },
+                { team1_child2_id: id, round: activeCohort.id },
+                { team2_child1_id: id, round: activeCohort.id },
+                { team2_child2_id: id, round: activeCohort.id }
             ]
         })
 
