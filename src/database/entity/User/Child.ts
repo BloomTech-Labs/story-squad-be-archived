@@ -1,15 +1,12 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'typeorm';
 
 import { Preferences } from './Preferences';
-import { Progress } from '../Progress';
+// import { Progress } from '../Deprecated/Progress';
 import { Parent } from './Parent';
 import { Cohort } from '../Story/Cohort';
-import { Submissions } from '../Submission/Submissions';
-import { Story_Submission } from '../Submission/Story_Submission';
-import { Drawing_Submission } from '../Submission/Drawing_Submission';
+import { Submission } from '../Submission/Submission';
 import { Child_Votes } from '../Feedback/Child_Votes';
-import { Story_Feedback } from '../Feedback/Story_Feedback';
-import { Drawing_Feedback } from '../Feedback/Drawing_Feedback';
+import { Feedback } from '../Feedback/Feedback';
 import { Matches } from '../Matching/Matches';
 
 @Entity()
@@ -17,69 +14,50 @@ class Child {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
+    @Column({ nullable: false })
     username: string;
 
-    @Column()
+    @Column({ nullable: false })
     grade: number;
 
     @Column({ default: false })
     subscription: boolean;
 
-    // accounts for dyslexia option
-    // how does this work as a nested field?
-    @Column((type) => Preferences)
+    @Column(() => Preferences)
     preferences: Preferences;
 
-    // progress - reading / writing / submission
-    // do we need this?
-    @Column((type) => Progress)
-    progress: Progress;
-
-    @Column()
+    @Column({ nullable: true })
     avatar: string;
 
-    @Column()
+    @Column({ nullable: true })
     pin: string;
 
-    @Column()
+    @Column({ nullable: true })
     total_points: number;
 
-    @Column()
+    @Column({ nullable: true })
     total_wins: number;
 
-    @Column()
+    @Column({ nullable: true })
     total_games_played: number;
 
     @ManyToOne(
-        (type) => Parent,
+        () => Parent,
         (parent) => parent.children
     )
     parent: Parent;
 
     @ManyToOne(
-        (type) => Cohort,
+        () => Cohort,
         (cohort) => cohort.children
     )
     cohort: Cohort;
 
-    // @OneToMany(
-    //     (type) => Submissions,
-    //     (submissions) => submissions.child
-    // )
-    // submissions: Submissions[];
-
     @OneToMany(
-        (type) => Story_Submission,
-        (story_submissions) => story_submissions.child
+        () => Submission,
+        (submissions) => submissions.child
     )
-    story_submissions: Story_Submission[];
-
-    @OneToMany(
-        (type) => Drawing_Submission,
-        (drawing_submission) => drawing_submission.child
-    )
-    drawing_submission: Drawing_Submission[];
+    submissions: Submission[];
 
     //ref votes. 3-4-20
     @ManyToOne(
@@ -90,17 +68,10 @@ class Child {
 
     //story_feedback - 3.4.20
     @OneToMany(
-        () => Story_Feedback,
-        (story_feedback) => story_feedback.child
+        () => Feedback,
+        (feedback) => feedback.child
     )
-    story_feedback: Story_Feedback[];
-
-    //drawing_feedback - 3.4.20
-    @OneToMany(
-        () => Drawing_Feedback,
-        (drawing_feedback) => drawing_feedback.child
-    )
-    drawing_feedback: Drawing_Feedback[];
+    feedback: Feedback[];
 }
 
 export { Child };

@@ -1,8 +1,8 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinColumn } from 'typeorm';
-
+//entities
 import { Child } from '../User/Child';
-import { DueDates } from '../DueDates';
-import { Cohort_Canon } from './Cohort_Canon';
+// import { DueDates } from '../DueDates';
+import { Round } from './Round';
 
 // 3.2.20 individual chapter being used by cohort needs to be reflected in a relationship, not sure how
 @Entity()
@@ -21,8 +21,8 @@ class Cohort {
     @Column()
     activity: string;
 
-    @Column((type) => DueDates)
-    dueDates: DueDates;
+    // @Column((type) => DueDates)
+    // dueDates: DueDates;
 
     //relation
     @OneToMany(
@@ -32,11 +32,10 @@ class Cohort {
     children: Child[];
 
     @OneToMany(
-        () => Cohort_Canon,
-        (cohort_canon) => cohort_canon.canon
+        () => Round,
+        (round) => round.canon
     )
-    @JoinColumn({ name: 'id' })
-    cohort_canon: number;
+    round: Round[];
 }
 
 export { Cohort };

@@ -1,19 +1,12 @@
-import {
-    Entity,
-    Column,
-    PrimaryGeneratedColumn,
-    OneToOne,
-    JoinColumn,
-    ManyToOne,
-    OneToMany,
-} from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToOne, ManyToOne, OneToMany } from 'typeorm';
+//entities
 import { Child } from '../User/Child';
-import { Cohort_Canon } from '../Story/Cohort_Canon';
-import { Story_Feedback } from '../Feedback/Story_Feedback';
+import { Feedback } from '../Feedback/Feedback';
+import { Round } from '../Story/Round';
 import { Readability } from './Readability';
 
 @Entity()
-class Story_Submission {
+class Submission {
     //key
     @PrimaryGeneratedColumn()
     id: number;
@@ -46,6 +39,10 @@ class Story_Submission {
     @Column()
     votes: number;
 
+    //fornow
+    @Column()
+    type: 'story' | 'illustration';
+
     //relation
     @ManyToOne(
         () => Child,
@@ -55,23 +52,23 @@ class Story_Submission {
 
     @OneToOne(
         () => Readability,
-        (readability) => readability.story_submission
+        (readability) => readability.submission
     )
     readability: Readability[];
 
     //cohort chapter - one to many
     @ManyToOne(
-        () => Cohort_Canon,
-        (cohort_canon) => cohort_canon.story_submission
+        () => Round,
+        (round) => round.submission
     )
-    cohort_canon: Cohort_Canon;
+    round: Round[];
 
     //story feedback ref - 3.4.20
     @OneToMany(
-        () => Story_Feedback,
-        (story_feedback) => story_feedback.story_submission
+        () => Feedback,
+        (feedback) => feedback.submission
     )
-    story_feedback: Story_Feedback[];
+    feedback: Feedback[];
 }
 
-export { Story_Submission };
+export { Submission };

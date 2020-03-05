@@ -1,7 +1,6 @@
 import { Column, PrimaryGeneratedColumn, OneToMany, ManyToOne, Entity } from 'typeorm';
 import { Child_Votes } from '../Feedback/Child_Votes';
-import { Child } from '../User/Child';
-import { Cohort_Canon } from '../Story/Cohort_Canon';
+import { Round } from '../Story/Round';
 @Entity()
 class Matches {
     //key
@@ -31,10 +30,10 @@ class Matches {
 
     //Cohort_Canon ref - 3.4.20
     @ManyToOne(
-        () => Cohort_Canon,
-        (cohort_canon) => cohort_canon.matches
+        () => Round,
+        (round) => round.matches
     )
-    cohort_canon: Cohort_Canon[];
+    round: Round[];
 }
 
 export { Matches };

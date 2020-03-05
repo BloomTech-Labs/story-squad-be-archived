@@ -1,6 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
+//entities
 import { Story } from './Story';
-import { Cohort_Canon } from './Cohort_Canon';
+import { Round } from './Round';
 // change name to Chapter before migrating
 @Entity()
 class Canon {
@@ -19,11 +20,11 @@ class Canon {
 
     //junction ref - 3.4.20
     @OneToMany(
-        () => Cohort_Canon,
-        (cohort_canon) => cohort_canon.canon
+        () => Round,
+        (round) => round.canon
     )
     @JoinColumn({ name: 'id' })
-    cohort_canon: Cohort_Canon;
+    round: Round;
     //story ref - 3.4.20
 
     @ManyToOne(
