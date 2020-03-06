@@ -7,5 +7,7 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.tabSize": 4,
     "eslint.enable": false,
-    "git.autofetch": true
+    "git.autofetch": true,
+    "python.pythonPath": "C:\\Program Files (x86)\\Python37-32\\python.exe",
+    "python.autoComplete.extraPaths": ["./src/util/scripts"]
 }

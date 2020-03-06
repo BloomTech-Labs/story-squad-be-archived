@@ -23,3 +23,7 @@ yarn-debug.log*
 yarn-error.log*
 
 .env
+
+StorySquad-2922ddf6e57d.json*
+readability.json*
+scripts.spec.ts*
