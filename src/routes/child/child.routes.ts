@@ -6,7 +6,7 @@ import { Parent, Child } from '../../database/entity';
 import { Only } from '../../middleware';
 import { connection } from '../../util/typeorm-connection';
 
-import { Cohort } from '../../database/entity/Cohort';
+import { Cohort } from '../../database/entity/Story/Cohort';
 
 const childRoutes = Router();
 
