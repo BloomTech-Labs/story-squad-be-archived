@@ -133,6 +133,7 @@ adminRoutes.put('/register', CheckJwt(), Only(Admin), async (req, res) => {
         const { password: pass } = res.locals.body as Admin;
         const salt: number = parseInt(process.env.SALT || '3', 10);
         const password = await hash(pass, salt);
+        console.log(password);
 
         const { affected } = await getRepository(Admin, connection()).update(id, {
             password,

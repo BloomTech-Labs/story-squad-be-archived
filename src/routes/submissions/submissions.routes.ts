@@ -13,9 +13,11 @@ const submissionRoutes = Router();
 submissionRoutes.get('/', Only(Child), async (req, res) => {
     try {
         const { submissions } = req.user as Child;
-        res.json({ submissions });
+        return res.json({ submissions });
     } catch (err) {
-        res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
+        return res
+            .status(500)
+            .json({ message: 'Hmm... That did not work, please try again later.' });
     }
 });
 
@@ -24,11 +26,14 @@ submissionRoutes.get('/:week', Only(Child), async (req, res) => {
         const { submissions } = req.user as Child;
         const submission = submissions.find(({ week }) => week === parseInt(req.params.week));
         if (!submission) throw Error('404');
-        res.json({ submission });
+        return res.json({ submission });
     } catch (err) {
         if (err.toString() === 'Error: 404')
-            res.status(404).json({ message: `Submission not found` });
-        else res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
+            return res.status(404).json({ message: `Submission not found` });
+        else
+            return res
+                .status(500)
+                .json({ message: 'Hmm... That did not work, please try again later.' });
     }
 });
 
@@ -43,9 +48,6 @@ submissionRoutes.post('/', Only(Child), async (req, res) => {
 
         // Start DS integration
 
-        // Loads the test.json file
-        // const data = require('./test.json');
-
         let images = [];
         Object.values(story).forEach((page) => {
             if (page.length > 1) {
@@ -53,28 +55,30 @@ submissionRoutes.post('/', Only(Child), async (req, res) => {
             }
         });
 
-        const data = {
-            images,
-        };
+        const transcribed: Transcription | any = await transcribe({ images });
 
-        // console.log(data);
+        if (!transcribed) {
+            return res.status(400).json({ message: 'Something went wrong transcribing image.' });
+        }
 
-        // Runs the processing on that data then console.logs the result, if errors occurs it console.errors the errors
-        transcribe(data)
-            .then((response: Transcription) => {
-                console.log('Transcribe promise returns');
-                response.images.forEach((story) => {
-                    readable({ story })
-                        .then((response: Readability) => {
-                            console.log('Readability promise returns');
-                            console.log(response);
-                        })
-                        .catch(console.error);
-                });
-            })
-            .catch(console.error);
-
+        transcribed.images.forEach((story: string) => {
+            readable({ story })
+                .then((stats: Readability) => {
+                    // Save readability stats to db
+                    // Save transcribed text to db
+                    // await getRepository(readability, connection()).save({
+                    //     ...stats,
+                    //     transcribed_text: story
+                    // })
+                    console.log(stats);
+                    return res.status(200).json(stats);
+                })
+                .catch(console.error);
+        });
         // End DS integration
+
+        // START OLD DB CODE
+        // This will get replaced on the next merge with new database code
 
         const { child, ...submission } = await getRepository(Submissions, connection()).save({
             week,
@@ -83,12 +87,30 @@ submissionRoutes.post('/', Only(Child), async (req, res) => {
             illustration,
             child: req.user,
         });
+        // END OLD DB CODE
 
-        res.status(201).json({ submission });
+        // NEW DB CODE
+        // await getRepository(story_submissions, connection()).save({
+        // child_id: req.user.id,
+        // cohorts_chapter_id: week,
+        // image: JSON.stringify(data)
+        // })
+
+        // await getRepository(drawing_submissions, connection()).save({
+        //     child_id: req.user.id,
+        //     cohorts_chapter_id: week,
+        //     image: illustration
+        // })
+        // END NEW DB CODE
+
+        return res.status(201).json({ submission, transcribed });
     } catch (err) {
         if (err.toString() === 'Error: 400')
-            res.status(400).json({ message: `Submission already exists` });
-        else res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
+            return res.status(400).json({ message: `Submission already exists` });
+        else
+            return res
+                .status(500)
+                .json({ message: 'Hmm... That did not work, please try again later.' });
     }
 });
 
@@ -105,10 +127,10 @@ submissionRoutes.delete('/:week', Only(Child), async (req, res) => {
         });
         if (!affected) throw Error();
 
-        res.json({ submission });
+        return res.json({ submission });
     } catch (err) {
         if (err.toString() === 'Error: 404')
-            res.status(404).json({ message: `Submission not found` });
+            return res.status(404).json({ message: `Submission not found` });
         else res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
     }
 });
@@ -116,7 +138,6 @@ submissionRoutes.delete('/:week', Only(Child), async (req, res) => {
 // Wrapper function that runs a specific script
 // Parameters<typeof runScript>[1] is used to specify the second parameter type of `runScript`
 function transcribe(data: Transcribable) {
-    console.log('Transcribe function runs');
     return runScript(
         './src/util/scripts/transcription.py', // Specifies the script to use, the path is relative to the directory the application is started from
         data, // The data to pass into stdin of the script
@@ -125,11 +146,10 @@ function transcribe(data: Transcribable) {
 }
 
 function readable(story: Readable) {
-    console.log('Readability function runs');
     return runScript(
         './src/util/scripts/readability.py', // Specifies the script to use, the path is relative to the directory the application is started from
         story, // The data to pass into stdin of the script
-        (out: any) => out.map(attemptJSONParse) // A function to take the stdout of the script and find the result
+        (out: any) => out.map(attemptJSONParse) // A function to take the stdout of the script
     );
 }
 

@@ -4,16 +4,14 @@ from decouple import config
 from datauri import DataURI
 from google.cloud import vision
 from google.cloud.vision import types
-# from google.oauth2 import service_account
-from google.auth import compute_engine
+from google.oauth2 import service_account
 import os
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="./src/util/scripts/StorySquad-2922ddf6e57d.json"
-credentials = compute_engine.Credentials()
-
 import urllib.request
 
-client = vision.ImageAnnotatorClient()
-
+api_key = config("GOOGLE_APPLICATION_CREDENTIALS")
+api_key = loads(api_key)
+api_key = service_account.Credentials.from_service_account_info(api_key)
+client = vision.ImageAnnotatorClient(credentials=api_key)
 
 def transcribe(uri):
     # Parses a URI and gets the encoded data string out
