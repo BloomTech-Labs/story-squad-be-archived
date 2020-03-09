@@ -62,6 +62,7 @@ submissionRoutes.post('/', Only(Child), async (req, res) => {
 
         let readabilityStats = [];
 
+
         transcribed.images.forEach((story: string) => {
             readable({ story })
                 .then((stats: Readability) => {
