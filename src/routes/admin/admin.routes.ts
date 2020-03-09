@@ -150,8 +150,4 @@ adminRoutes.put('/register', CheckJwt(), Only(Admin), async (req, res) => {
     }
 });
 
-// adminRoutes.put('/:id', async (req, res) => {});
-
-// adminRoutes.delete('/:id', async (req, res) => {});
-
 export { adminRoutes };
