@@ -3,7 +3,7 @@ import { getRepository } from 'typeorm';
 import { sign } from 'jsonwebtoken';
 import Stripe from 'stripe';
 
-import { Parent } from '../../database/entity/User/Parent';
+import { Parent } from '../../database/entity/Parent';
 import { Hash, ValidateHash } from '../../middleware';
 import { connection } from '../../util/typeorm-connection';
 

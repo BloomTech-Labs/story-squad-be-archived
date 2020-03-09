@@ -6,7 +6,7 @@ import { attemptJSONParse, onlyTranscription } from '../../util/utils';
 import { connection } from '../../util/typeorm-connection';
 import { Only } from '../../middleware';
 import { Child, Submissions } from '../../database/entity';
-import { Pages } from '../../database/entity/Story/Pages';
+import { Pages } from '../../database/entity/Pages';
 
 const submissionRoutes = Router();
 
@@ -47,7 +47,6 @@ submissionRoutes.post('/', Only(Child), async (req, res) => {
         if (submissions.find((e) => e.week === week)) throw Error('400');
 
         // Start DS integration
-
         let images = [];
         Object.values(story).forEach((page) => {
             if (page.length > 1) {
@@ -57,9 +56,9 @@ submissionRoutes.post('/', Only(Child), async (req, res) => {
 
         const transcribed: Transcription | any = await transcribe({ images });
 
-        if (!transcribed) {
-            return res.status(400).json({ message: 'Something went wrong transcribing image.' });
-        }
+        // if (!transcribed) {
+        //     return res.status(400).json({ message: 'Something went wrong transcribing image.' });
+        // }
 
         transcribed.images.forEach((story: string) => {
             readable({ story })
@@ -79,7 +78,6 @@ submissionRoutes.post('/', Only(Child), async (req, res) => {
 
         // START OLD DB CODE
         // This will get replaced on the next merge with new database code
-
         const { child, ...submission } = await getRepository(Submissions, connection()).save({
             week,
             story,
