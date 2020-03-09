@@ -4,7 +4,7 @@ import { getRepository } from 'typeorm';
 import { sign } from 'jsonwebtoken';
 
 import { connection } from '../../util/typeorm-connection';
-import { Admin } from '../../database/entity/User';
+import { Admin } from '../../database/entity';
 import { CheckJwt, Only } from '../../middleware';
 
 const adminRoutes = Router();

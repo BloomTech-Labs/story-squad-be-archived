@@ -2,8 +2,7 @@ import { Router } from 'express';
 import { getRepository } from 'typeorm';
 
 import { Only } from '../../middleware';
-import { Admin, Child } from '../../database/entity';
-import { Canon } from '../../database/entity'
+import { Admin, Canon, Child } from '../../database/entity';
 import { connection } from '../../util/typeorm-connection';
 
 const canonRoutes = Router();
