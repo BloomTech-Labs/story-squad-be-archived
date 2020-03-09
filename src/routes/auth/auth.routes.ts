@@ -20,10 +20,13 @@ authRoutes.post('/register', Hash(), async (req, res) => {
         const { id: stripeID } = await stripe.customers.create({
             email: req.register.email,
         });
+        // when we decide what we need name for on front-end we can pass it in instead of dummy data
+        const name = 'dummyName';
 
         const newUser: Parent = {
             ...req.register,
             stripeID,
+            name,
         };
 
         const { id } = await getRepository(Parent, connection()).save(newUser);
