@@ -12,6 +12,10 @@ const matchMakingRoutes = Router();
 // into matchmaking and populate matches in db
 matchMakingRoutes.post('/:roundInfo', Only(Admin), async (req, res) => {
     // roundInfo is anything we can use to refer to the round
+    // route receives round info,
+    // filter out the submissions within the round
+    // pass into matchmaking
+    // persist the matches
     try {
     } catch (err) {
         res.status(500).json(err.toString());
