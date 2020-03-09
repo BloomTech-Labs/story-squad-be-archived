@@ -27,3 +27,6 @@ yarn-error.log*
 StorySquad-2922ddf6e57d.json*
 readability.json*
 scripts.spec.ts*
+
+Pipfile
+Pipfile.lock
