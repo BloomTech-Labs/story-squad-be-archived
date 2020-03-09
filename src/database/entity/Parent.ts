@@ -6,6 +6,9 @@ class Parent {
     @PrimaryGeneratedColumn()
     public id?: number;
 
+    @Column({ nullable: true })
+    name: string;
+
     @OneToMany(
         (type) => Child,
         (child) => child.parent
