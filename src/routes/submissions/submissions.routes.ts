@@ -46,9 +46,7 @@ submissionRoutes.post('/', Only(Child), async (req, res) => {
 
         if (submissions.find((e) => e.week === week)) throw Error('400');
 
-        // Start DS integration
         let images = [];
-
         Object.values(story).forEach((page) => {
             if (page.length > 1) {
                 images.push(page);
@@ -61,31 +59,10 @@ submissionRoutes.post('/', Only(Child), async (req, res) => {
             return res.status(400).json({ message: 'Something went wrong transcribing image.' });
         }
 
-        // transcribed.images.forEach((story: string) => {
-        //     readable({ story })
-        //         .then((stats: Readability) => {
-        //             // Save readability stats to db
-        //             // Save transcribed text to db
-        //             // await getRepository(readability, connection()).save({
-        //             //     ...stats,
-        //             //     transcribed_text: story
-        //             // })
-        //             console.log(stats);
-
-        //             return res.status(200).json(stats);
-        //         })
-        //         .catch(console.error);
-        // });
-
-        console.log(transcribed.images);
         const readabilityStats: Readability | Transcription = await readable({
             story: transcribed.images[0],
         });
 
-        // End DS integration
-
-        // START OLD DB CODE
-        // This will get replaced on the next merge with new database code
         try {
             const { child, ...submission } = await getRepository(Submissions, connection()).save({
                 week,
@@ -102,49 +79,13 @@ submissionRoutes.post('/', Only(Child), async (req, res) => {
                     page4: transcribed.images[3] ? transcribed.images[3] : '',
                     page5: transcribed.images[4] ? transcribed.images[4] : '',
                 },
-                // flesch_reading_ease: transcribed.images[0].flesch_reading_ease,
-                // smog_index: transcribed.images[0].smog_index,
-                // flesch_kincaid_grade: transcribed.images[0].flesch_kincaid_grade,
-                // coleman_liau_index: transcribed.images[0].coleman_liau_index,
-                // automated_readability_index: transcribed.images[0].automated_readability_index,
-                // dale_chall_readability_score: readabilityStats[0].dale_chall_readability_score,
-                // difficult_words: readabilityStats[0].difficult_words,
-                // // needs to be a sum
-                // linsear_write_formula: readabilityStats[0].linsear_write_formula,
-                // gunning_fog: readabilityStats[0].gunning_fog,
-                // consolidated_score: readabilityStats[0].consolidated_score,
-                // doc_length: readabilityStats[0].doc_length,
-                // // needs to be a sum
-                // quote_count: readabilityStats[0].quote_count,
-                // // needs to be a sum
-                // transcribed_text: readabilityStats[0].transcribed_text,
-                // // needs to be a concatenation
             });
-            console.log(child);
-            console.log(submission);
-            console.log('the stuff');
+
             return res.status(201).json({ transcribed, submission });
         } catch (err) {
             console.log(err.toString());
             return res.status(500).json({ message: err.toString() });
         }
-
-        // END OLD DB CODE
-
-        // NEW DB CODE
-        // await getRepository(story_submissions, connection()).save({
-        // child_id: req.user.id,
-        // cohorts_chapter_id: week,
-        // image: JSON.stringify(data)
-        // })
-
-        // await getRepository(drawing_submissions, connection()).save({
-        //     child_id: req.user.id,
-        //     cohorts_chapter_id: week,
-        //     image: illustration
-        // })
-        // END NEW DB CODE
-        // removed 'transcribed' from json res return
     } catch (err) {
         if (err.toString() === 'Error: 400')
             return res.status(400).json({ message: `Submission already exists` });
