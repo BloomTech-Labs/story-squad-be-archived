@@ -119,6 +119,7 @@ To get the server running locally:
 | DELETE | `/submissions/:week` | child users    | delete and receive json object of a user's removed submission                            |
 
 # Database Entities
+/src/database/entity
 
 #### Admin
 
@@ -142,7 +143,7 @@ To get the server running locally:
 {
   week: NUMBER
   base64: STRING
-  altbase64:
+  altbase64: STRING
 }
 ```
 
@@ -156,11 +157,11 @@ To get the server running locally:
   username: STRING
   grade: NUM
   subscription: boolean
-  preferences: Preferences
+  preferences: Preferences { dyslexia: boolean }
   progress: Progress
-  parent: foreign key in PARENT table
-  cohort: foreign key in COHORT table
-  submissions: ARRAY (Relation)
+  parent: ManyToOne(Parent)
+  cohort: ManyToOne(Cohort)
+  submissions: OneToMany(ARRAY[Submissions])
 }
 ```
 
@@ -174,34 +175,8 @@ To get the server running locally:
   name: STRING
   week: NUMBER
   activity: STRING
-  dueDates: DueDates
-  children: ARRAY (Relation)
-}
-```
-
-#### DueDates
-
----
-
-```
-{
-  reading: Date
-  writing: Date
-  submission: Date
-}
-```
-
-#### Pages
-
----
-
-```
-{
-  page1: string
-  page2: string
-  page3: string
-  page4: string
-  page5: string
+  dueDates: DueDates { reading: Date, writing: Date, submission: Date }
+  children: OneToMany(ARRAY[Child])
 }
 ```
 
@@ -212,34 +187,14 @@ To get the server running locally:
 ```
 {
   id: NUM
-  children: ARRAY (Relation)
+  name: STRING
+  children: OneToMany(ARRAY[Child])
   email: STRING
   password: STRING
   stripeID: STRING
 }
 ```
 
-#### Preferences
-
----
-
-```
-{
-  dyslexia: boolean
-}
-```
-
-#### Progress
-
----
-
-```
-{
-  reading: Date
-  writing: Date
-  submission: Date
-}
-```
 
 #### Submissions
 
@@ -248,11 +203,27 @@ To get the server running locally:
 ```
 {
   id: NUM
-  child: foreign key in CHILD table
+  child: ManyToOne(Child)
   week: NUM
-  story: Pages
+  story: Pages{ page1: STRING, page2: STRING, page3: STRING, page4: STRING, page5: STRING }
   storyText: STRING
   illustration: STRING
+  
+  // readability
+  
+  flesch_reading_ease: NUM
+  smog_index: NUM
+  flesch_kincaid_grade: NUM
+  coleman_liau_index: NUM
+  automated_readability_index: NUM
+  dale_chall_readability_score: NUM
+  difficult_words: NUM
+  linsear_write_formula: NUM
+  gunning_fog: NUM
+  consolidated_score: STRING
+  doc_length: NUM
+  quote_count: NUM
+  transcribed_text: Pages{ page1: STRING, page2: STRING, page3: STRING, page4: STRING, page5: STRING }
 }
 ```
 
