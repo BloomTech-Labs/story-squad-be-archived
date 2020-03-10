@@ -31,6 +31,7 @@ class Submissions {
     // we will need to make a separate table and link it with individual pages
     // for now just pass in one page's readability
     // 3.9.20
+
     @Column({ type: 'double precision', nullable: true })
     flesch_reading_ease: number;
     @Column({ nullable: true })
@@ -57,6 +58,7 @@ class Submissions {
     quote_count: number;
     @Column((type) => Pages)
     transcribed_text: Pages;
+
 }
 
 export { Submissions };
