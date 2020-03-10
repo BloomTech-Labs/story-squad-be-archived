@@ -30,6 +30,19 @@ export interface Readability {
     quote_count: number;
 }
 
+export interface Matchmaking {
+    [name: string]: Readability
+}
+
+export interface WeekMatches {
+    [name: string]: Match
+}
+
+export interface Match {
+    team_1: string[],
+    team_2: string[]
+}
+
 // An interface used to determine what scripts are valid for `runScripts()`
 export interface Scripts {
     // Each script path should be used as a key here, the keys are used in the `keyof Scripts` param of `runScripts()`
@@ -40,5 +53,10 @@ export interface Scripts {
     './src/util/scripts/readability.py': {
         input: Readable; // This is the data shape that the script is built for
         output: Readability; // This is the data shape of the expected output of the script
+    };
+
+    './src/util/scripts/matchmaking.py': {
+        input: Matchmaking; // This is the data shape that the script is built for
+        output: WeekMatches; // This is the data shape of the expected output of the script
     };
 }
