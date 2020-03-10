@@ -7,7 +7,8 @@
 To get the server running locally:
 
 -   Clone this repo
--   **yarn install** to install all required dependencies
+-   **yarn install --production=false** to install all required dependencies (dev environment specified for @types)
+-   **pipenv run yarn dev** to start the local server within .py env required for scripts
 -   **yarn dev** to start the local server
 -   **yarn build** to build production version
 -   **yarn start** to start built production version
@@ -262,19 +263,17 @@ Story Squad uses TypeORM; see their [docs](https://typeorm.io/#/) for available 
 ## Environment Variables
 
 In order for the app to function correctly, the user must set up their own environment variables.
-
 create a .env file that includes the following:
-
-    * PORT=4000
-    * SALT=10
-    * SECRET_SIGNATURE=Its a secret (example - create your own)
-    * STRIPE_API=sk_test_v666XmnGJcP1Oz3GBg2iFmvd004Q3qp4jZ
-    * DATABASE_URL=postgresql://postgres:1234@localhost:5432/postgres
+_ PORT=4000
+_ SALT=10
+_ SECRET_SIGNATURE=Its a secret (example - create your own)
+_ STRIPE_API=sk_test_v666XmnGJcP1Oz3GBg2iFmvd004Q3qp4jZ
+_ DATABASE_URL=postgresql://postgres:1234@localhost:5432/postgres
+_ GOOGLE_APPLICATION_CREDENTIALS='YOUR_GOOGLE_CLOUD_VISION_SERVICE_ACCOUNT_API_INFORMATION'
 
 ## Contributing
 
 When contributing to this repository, please first discuss the change you wish to make via issue, email, or any other method with the owners of this repository before making a change.
-
 Please note we have a [code of conduct](./code_of_conduct.md). Please follow it in all your interactions with the project.
 
 ### Issue/Bug Request
@@ -293,7 +292,6 @@ We would love to hear from you about new features which would improve this app a
 ### Pull Requests
 
 If you have developed a patch, bug fix, or new feature that would improve this app, please submit a pull request. It is best to communicate your ideas with the developers first before investing a great deal of time into a pull request to ensure that it will mesh smoothly with the project.
-
 Remember that this project is licensed under the MIT license, and by submitting a pull request, you agree that your work will be, too.
 
 #### Pull Request Guidelines
