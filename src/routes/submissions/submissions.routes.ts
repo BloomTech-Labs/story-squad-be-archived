@@ -82,10 +82,12 @@ submissionRoutes.post('/', Only(Child), async (req, res) => {
             story: transcribed.images[0],
         });
 
+
         // End DS integration
 
         // START OLD DB CODE
         // This will get replaced on the next merge with new database code
+
         try {
             const { child, ...submission } = await getRepository(Submissions, connection()).save({
                 week,
@@ -144,7 +146,10 @@ submissionRoutes.post('/', Only(Child), async (req, res) => {
         //     image: illustration
         // })
         // END NEW DB CODE
-        // removed 'transcribed' from json res return
+
+
+        return res.status(201).json({ submission, transcribed });
+
     } catch (err) {
         if (err.toString() === 'Error: 400')
             return res.status(400).json({ message: `Submission already exists` });
