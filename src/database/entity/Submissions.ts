@@ -31,32 +31,32 @@ class Submissions {
     // we will need to make a separate table and link it with individual pages
     // for now just pass in one page's readability
     // 3.9.20
-    @Column()
+    @Column({ type: 'double precision', nullable: true })
     flesch_reading_ease: number;
-    @Column()
+    @Column({ nullable: true })
     smog_index: number;
-    @Column()
+    @Column({ type: 'double precision', nullable: true })
     flesch_kincaid_grade: number;
-    @Column()
+    @Column({ type: 'double precision', nullable: true })
     coleman_liau_index: number;
-    @Column()
+    @Column({ nullable: true })
     automated_readability_index: number;
-    @Column()
+    @Column({ type: 'double precision', nullable: true })
     dale_chall_readability_score: number;
-    @Column()
+    @Column({ nullable: true })
     difficult_words: number;
-    @Column()
+    @Column({ nullable: true })
     linsear_write_formula: number;
-    @Column()
+    @Column({ type: 'double precision', nullable: true })
     gunning_fog: number;
-    @Column()
-    consolidated_score: number;
-    @Column()
+    @Column({ nullable: true })
+    consolidated_score: string;
+    @Column({ nullable: true })
     doc_length: number;
-    @Column()
+    @Column({ nullable: true })
     quote_count: number;
-    @Column()
-    transcribed_text: string[];
+    @Column((type) => Pages)
+    transcribed_text: Pages;
 }
 
 export { Submissions };
