@@ -32,31 +32,31 @@ class Submissions {
     // for now just pass in one page's readability
     // 3.9.20
     @Column()
-    flesch_reading_ease: string;
+    flesch_reading_ease: number;
     @Column()
-    smog_index: string;
+    smog_index: number;
     @Column()
-    flesch_kincaid_grade: string;
+    flesch_kincaid_grade: number;
     @Column()
-    coleman_liau_index: string;
+    coleman_liau_index: number;
     @Column()
-    automated_readability_index: string;
+    automated_readability_index: number;
     @Column()
-    dale_chall_readability_score: string;
+    dale_chall_readability_score: number;
     @Column()
-    difficult_words: string;
+    difficult_words: number;
     @Column()
-    linsear_write_formula: string;
+    linsear_write_formula: number;
     @Column()
-    gunning_fog: string;
+    gunning_fog: number;
     @Column()
-    consolidated_score: string;
+    consolidated_score: number;
     @Column()
-    doc_length: string;
+    doc_length: number;
     @Column()
-    quote_count: string;
+    quote_count: number;
     @Column()
-    transcribed_text: string;
+    transcribed_text: number;
 }
 
 export { Submissions };
