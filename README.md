@@ -7,8 +7,8 @@
 To get the server running locally:
 
 -   Clone this repo
--   **yarn install** to install all required dependencies
--   **yarn dev** to start the local server
+-   **yarn install --production=false** to install all required dependencies (dev environment specified for @types)
+-   **pipenv run yarn dev** to start the local server within .py env required for scripts
 -   **yarn build** to build production version
 -   **yarn start** to start built production version
 -   **yarn test** to start server using testing environment
