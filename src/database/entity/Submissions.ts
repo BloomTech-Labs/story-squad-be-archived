@@ -56,7 +56,7 @@ class Submissions {
     @Column()
     quote_count: number;
     @Column()
-    transcribed_text: number;
+    transcribed_text: string[];
 }
 
 export { Submissions };
