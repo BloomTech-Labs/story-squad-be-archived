@@ -48,6 +48,7 @@ submissionRoutes.post('/', Only(Child), async (req, res) => {
 
         // Start DS integration
         let images = [];
+
         Object.values(story).forEach((page) => {
             if (page.length > 1) {
                 images.push(page);
@@ -61,7 +62,6 @@ submissionRoutes.post('/', Only(Child), async (req, res) => {
         }
 
         let readabilityStats = [];
-
 
         transcribed.images.forEach((story: string) => {
             readable({ story })
