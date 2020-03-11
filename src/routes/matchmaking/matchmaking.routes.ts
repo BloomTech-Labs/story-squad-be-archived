@@ -58,21 +58,21 @@ matchMakingRoutes.get('/', Only(Admin), async (req, res) => {
     console.log(matchmaking)
     try {
         const competitions = await match(matchmaking)
-        console.log(competitions)
+        console.log(JSON.parse(competitions[0]))
 
         try{
-            for (let [key, value] of Object.entries(competitions)) {
+            for (let [key, value] of Object.entries(JSON.parse(competitions[0]))) {
                 console.log(`${key} and ${value}`)
-                for (let [key1, value1] of Object.entries(value)){
-                    console.log(`${key1} and ${value1}`)
+                // for (let [key1, value1] of Object.entries(value)){
+                //     console.log(`${key1} and ${value1}`)
                     await getRepository(Matches, connection()).save({
-                        team1_child1_id: parseInt(value1['team_1'][0]),
-                        team1_child2_id: parseInt(value1['team_1'][1]),
-                        team2_child1_id: parseInt(value1['team_2'][0]),
-                        team2_child2_id: parseInt(value1['team_2'][1]),
+                        team1_child1_id: parseInt(value['team_1'][0]),
+                        team1_child2_id: parseInt(value['team_1'][1]),
+                        team2_child1_id: parseInt(value['team_2'][0]),
+                        team2_child2_id: parseInt(value['team_2'][1]),
                         week: 0
                     })
-                }
+                // }
             }
             const matches = getRepository(Matches, connection())
             res.status(200).json({ message: `saved success`, match: matches })
