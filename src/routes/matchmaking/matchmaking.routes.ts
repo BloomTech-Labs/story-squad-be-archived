@@ -55,9 +55,10 @@ matchMakingRoutes.get('/', Only(Admin), async (req, res) => {
         //     }
         //     ))
 
-
+    console.log(matchmaking)
     try {
         const competitions = await match(matchmaking)
+        console.log(competitions)
         try{
             for (let [key, value] of Object.entries(competitions)) {
                 await getRepository(Matches, connection()).save({
@@ -65,17 +66,17 @@ matchMakingRoutes.get('/', Only(Admin), async (req, res) => {
                     team1_child2_id: parseInt(value.team_1[1]),
                     team2_child1_id: parseInt(value.team_2[0]),
                     team2_child2_id: parseInt(value.team_2[1]),
-                    week: parseInt(req.params.week)
+                    week: 0
                 })  
             }
             const matches = getRepository(Matches, connection())
             res.status(200).json({ message: `saved success`, match: matches })
         } catch (err) {
-            res.status(500).json(err.toString());
+            res.status(500).json({ message: `Saving error, ${err.toString()}` });
         }
         
     } catch (err) {
-        res.status(500).json(err.toString());
+        res.status(500).json({ message: `Matchmaking error, ${err.toString()}` });
     }
 
        
