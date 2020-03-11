@@ -89,7 +89,7 @@ function match(data: Matchmaking){
     return runScript(
         './src/util/scripts/matchmaking.py', 
         data, 
-        (out:any) => out.map(attemptJSONParse))
+        (out:any) => out)
 }
 
 export { matchMakingRoutes };
