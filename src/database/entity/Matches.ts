@@ -7,17 +7,20 @@ class Matches {
     id: number;
 
     //fields
-    @Column()
+    @Column({ nullable: true })
     team1_child1_id: number;
 
-    @Column()
+    @Column({ nullable: true })
     team1_child2_id: number;
 
-    @Column()
+    @Column({ nullable: true })
     team2_child1_id: number;
 
-    @Column()
+    @Column({ nullable: true })
     team2_child2_id: number;
+
+    @Column({ nullable: true })
+    week: number;
 }
 
 export { Matches };

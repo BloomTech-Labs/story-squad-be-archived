@@ -31,16 +31,16 @@ export interface Readability {
 }
 
 export interface Matchmaking {
-    [name: string]: Readability
+    [name: string]: Readability;
 }
 
 export interface WeekMatches {
-    [name: string]: Match
+    [name: string]: Match;
 }
 
 export interface Match {
-    team_1: string[],
-    team_2: string[]
+    team_1: string[];
+    team_2: string[];
 }
 
 // An interface used to determine what scripts are valid for `runScripts()`

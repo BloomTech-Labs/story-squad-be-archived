@@ -1,11 +1,11 @@
 import { Router } from 'express'
 import { getRepository } from 'typeorm';
 import { runScript } from '../../util/scripts/scripting'
-const matchmaking_test = require('./matchmaking_test.json')
+import { matchmaking } from './matchmaking_test'
 import { attemptJSONParse } from '../../util/utils';
 
 import { Only } from '../../middleware'
-import { Admin, Matches } from '../../database/entity'
+import { Admin, Matches, Submissions } from '../../database/entity'
 import { Matchmaking, WeekMatches } from '../../models';
 import { connection } from '../../util/typeorm-connection';
 
@@ -21,52 +21,83 @@ const matchMakingRoutes = Router();
 // post route blocked by Only(Admin)
 // to pass submissions within fe specified round
 // into matchmaking and populate matches in db
-matchMakingRoutes.post('/:roundInfo', Only(Admin), async (req, res) => {
+matchMakingRoutes.get('/', Only(Admin), async (req, res) => {
     // roundInfo is anything we can use to refer to the round
     // route receives round info,
     // filter out the submissions within the round
     // pass into matchmaking
     // persist the matches
-        
-
-        //1 get submisisons array based on the criteria
-        // const submissions = getRepository(submission, connection()).find({ criteria })
-        
+        //4 return success  
+    
 
 
-        // clean the data before sending it to python script (turn it into an array needed by the script)
-        // requirement:: an object with studentIds as keys = { studentId: Readability }
-        // const new = submissions.map(submission => )
-        //2 matchmaking integration
-        // submissions object into matchmaking
+        // const submissions = await getRepository(Submissions, connection()).find({ where: { week: req.params.week, type: 'story' } })
+    
+    
 
-        const competitions = await match(matchmaking_test)
-
-        //3 persist the match
-       
-        for ( let [key, value ] of Object.entries(competitions) ) {
-            await getRepository(Matches, connection()).save({
-                team1_child1_id: parseInt(value.team_1[0]),
-                team1_child2_id: parseInt(value.team_1[1]),
-                team2_child1_id: parseInt(value.team_2[0]),
-                team2_child2_id: parseInt(value.team_2[1])
-            })
-        }
-
-        res.status(200).json({ message: `success`})
-        //4 return success
+        // let submissionObject = {}
+        // submissions.forEach(submission =>
+        //     Object.assign(submissionObject, {
+        //         [submission.child.id]: {
+        //             flesch_reading_ease: submission.flesch_reading_ease,
+        //             smog_index: submission.smog_index,
+        //             flesch_kincaid_grade: submission.flesch_kincaid_grade,
+        //             coleman_liau_index: submission.coleman_liau_index,
+        //             automated_readability_index: submission.automated_readability_index,
+        //             dale_chall_readability_score: submission.dale_chall_readability_score,
+        //             difficult_words: submission.difficult_words,
+        //             linsear_write_formula: submission.linsear_write_formula,
+        //             gunning_fog: submission.gunning_fog,
+        //             doc_length: submission.doc_length,
+        //             quote_count: submission.quote_count,
+        //             transcribed_text: submission.transcribed_text
+        //         }
+        //     }
+        //     ))
 
     try {
+        const competitions = await match(matchmaking)
+        
+        console.log(competitions[0])
+        const competition = JSON.parse(competitions[0])
+        console.log(competition)
+
+        try{
+            for (let [key, value] of Object.entries(competition)) {
+                console.log(`${key} and ${value}`)
+                // for (let [key1, value1] of Object.entries(value)){
+                //     console.log(`${key1} and ${value1}`)
+                    await getRepository(Matches, connection()).save({
+                        team1_child1_id: parseInt(value['team_1'][0]),
+                        team1_child2_id: parseInt(value['team_1'][1]),
+                        team2_child1_id: parseInt(value['team_2'][0]),
+                        team2_child2_id: parseInt(value['team_2'][1]),
+                        week: 0
+                    })
+                // }
+            }
+            const matches = getRepository(Matches, connection())
+            res.status(200).json({ message: `saved success`, match: matches })
+        } catch (err) {
+            console.log(err.toString())
+            res.status(500).json({ message: `Saving error, ${err.toString()}` });
+        }
+        
     } catch (err) {
-        res.status(500).json(err.toString());
+        res.status(500).json({ message: `Matchmaking error, ${err.toString()}` });
     }
+
+       
+    
+        //3 persist the match k?
+
 });
 
 function match(data: Matchmaking){
     return runScript(
         './src/util/scripts/matchmaking.py', 
         data, 
-        (out: any) => out.map(attemptJSONParse))
+        (out:any) => out.map(attemptJSONParse))
 }
 
 export { matchMakingRoutes };

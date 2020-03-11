@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { getRepository } from 'typeorm';
-import { Transcribable, Transcription, Readability, Readable } from '../../models/internal/DS';
+import { Transcribable, Transcription, Readability, Readable, WeekMatches } from '../../models/internal/DS';
 import { runScript } from '../../util/scripts/scripting';
 import { attemptJSONParse, onlyTranscription } from '../../util/utils';
 import { connection } from '../../util/typeorm-connection';
@@ -58,11 +58,11 @@ submissionRoutes.post('/', Only(Child), async (req, res) => {
         if (!transcribed) {
             return res.status(400).json({ message: 'Something went wrong transcribing image.' });
         }
-
-        const readabilityStats: Readability | Transcription = await readable({
+        //added WeekMatches as in DS.ts to stop typescript from throwing error
+        const readabilityStats: Readability | Transcription | WeekMatches = await readable({
             story: transcribed.images[0],
         });
-
+        console.log(readabilityStats);
         try {
             const { child, ...submission } = await getRepository(Submissions, connection()).save({
                 week,
