@@ -58,9 +58,10 @@ matchMakingRoutes.get('/', Only(Admin), async (req, res) => {
     console.log(matchmaking)
     try {
         const competitions = await match(matchmaking)
-        console.log(competitions[0])
+        console.log(competitions)
+        const competition = competitions[0]
         try{
-            for (let [key, value] of Object.entries(competitions['0'])) {
+            for (let [key, value] of Object.entries(competition)) {
                 console.log(`${key} and ${value}`)
                 // for (let [key1, value1] of value){
                     await getRepository(Matches, connection()).save({
