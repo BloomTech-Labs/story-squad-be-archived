@@ -62,7 +62,7 @@ submissionRoutes.post('/', Only(Child), async (req, res) => {
         const readabilityStats: Readability | Transcription = await readable({
             story: transcribed.images[0],
         });
-
+        console.log(readabilityStats);
         try {
             const { child, ...submission } = await getRepository(Submissions, connection()).save({
                 week,
