@@ -76,7 +76,7 @@ matchMakingRoutes.post('/:week', Only(Admin), async (req, res) => {
 });
 
 function match(data: Matchmaking){
-    return runScript  
+    return runScript(
         './src/util/scripts/matchmaking.py', 
         data, 
         (out:any) => out.map(attemptJSONParse))
