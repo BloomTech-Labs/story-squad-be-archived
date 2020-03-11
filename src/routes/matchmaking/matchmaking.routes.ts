@@ -54,7 +54,7 @@ matchMakingRoutes.post('/:week', Only(Admin), async (req, res) => {
 
     const competitions = await match(submissionObject)
 
-    //3 persist the match
+    //3 persist the match k?
 
     for (let [key, value] of Object.entries(competitions)) {
         await getRepository(Matches, connection()).save({
