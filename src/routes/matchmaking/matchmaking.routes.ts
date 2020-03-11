@@ -58,9 +58,10 @@ matchMakingRoutes.get('/', Only(Admin), async (req, res) => {
     try {
         const competitions = await match(matchmaking)
         console.log(typeof competitions[0])
+        const competition = JSON.parse(competitions[0])
 
         try{
-            for (let [key, value] of Object.entries(competitions[0])) {
+            for (let [key, value] of Object.entries(competition)) {
                 console.log(`${key} and ${value}`)
                 // for (let [key1, value1] of Object.entries(value)){
                 //     console.log(`${key1} and ${value1}`)
