@@ -21,20 +21,20 @@ const matchMakingRoutes = Router();
 // post route blocked by Only(Admin)
 // to pass submissions within fe specified round
 // into matchmaking and populate matches in db
-matchMakingRoutes.post('/:roundInfo', Only(Admin), async (req, res) => {
+matchMakingRoutes.post('/:week', Only(Admin), async (req, res) => {
     // roundInfo is anything we can use to refer to the round
     // route receives round info,
     // filter out the submissions within the round
     // pass into matchmaking
     // persist the matches
 
-    //pass 'week' in with the request body
-    
-    const submissions = await getRepository(Submissions, connection()).find({ where: { week: req }})
+
+
+    const submissions = await getRepository(Submissions, connection()).find({ where: { week: req.params.week, type: 'story' } })
 
     let submissionObject = {}
-    submissions.forEach( submission => 
-        Object.assign(submissionObject, { 
+    submissions.forEach(submission =>
+        Object.assign(submissionObject, {
             [submission.child.id]: {
                 flesch_reading_ease: submission.flesch_reading_ease,
                 smog_index: submission.smog_index,
@@ -54,20 +54,21 @@ matchMakingRoutes.post('/:roundInfo', Only(Admin), async (req, res) => {
 
     const competitions = await match(submissionObject)
 
-        //3 persist the match
-       
-    for ( let [key, value ] of Object.entries(competitions) ) {
+    //3 persist the match
+
+    for (let [key, value] of Object.entries(competitions)) {
         await getRepository(Matches, connection()).save({
-                team1_child1_id: parseInt(value.team_1[0]),
-                team1_child2_id: parseInt(value.team_1[1]),
-                team2_child1_id: parseInt(value.team_2[0]),
-                team2_child2_id: parseInt(value.team_2[1]),
-        })
+            team1_child1_id: parseInt(value.team_1[0]),
+            team1_child2_id: parseInt(value.team_1[1]),
+            team2_child1_id: parseInt(value.team_2[0]),
+            team2_child2_id: parseInt(value.team_2[1]),
+            week: parseInt(req.params.week)
+        })  
     }
 
     res.status(200).json({ message: `success`})
-        //4 return success
-
+        //4 return success  
+    
     try {
     } catch (err) {
         res.status(500).json(err.toString());
@@ -75,10 +76,10 @@ matchMakingRoutes.post('/:roundInfo', Only(Admin), async (req, res) => {
 });
 
 function match(data: Matchmaking){
-    return runScript(
+    return runScript  
         './src/util/scripts/matchmaking.py', 
         data, 
-        (out: any) => out.map(attemptJSONParse))
+        (out:any) => out.map(attemptJSONParse))
 }
 
 export { matchMakingRoutes };
