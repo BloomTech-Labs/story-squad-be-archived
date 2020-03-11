@@ -57,6 +57,7 @@ matchMakingRoutes.get('/', Only(Admin), async (req, res) => {
 
     try {
         const competitions = await match(matchmaking)
+        
         console.log(competitions[0])
         const competition = JSON.parse(competitions[0])
         console.log(competition)
