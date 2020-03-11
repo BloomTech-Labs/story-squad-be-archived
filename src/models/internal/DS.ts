@@ -25,7 +25,7 @@ export interface Readability {
     difficult_words: number;
     linsear_write_formula: number;
     gunning_fog: number;
-    consolidated_score: number;
+    consolidated_score: string;
     doc_length: number;
     quote_count: number;
 }

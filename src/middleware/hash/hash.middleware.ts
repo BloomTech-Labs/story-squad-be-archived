@@ -2,7 +2,7 @@ import { hash, compare } from 'bcryptjs';
 import { getRepository } from 'typeorm';
 
 import { Middleware } from '../../models/common/Middleware';
-import { Parent } from '../../database/entity/User/Parent';
+import { Parent } from '../../database/entity/Parent';
 import { connection } from '../../util/typeorm-connection';
 
 const Hash: Middleware = () => async (req, res, next) => {

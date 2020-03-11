@@ -2,8 +2,12 @@ import { Router } from 'express';
 import { getRepository } from 'typeorm';
 
 import { connection } from '../../util/typeorm-connection';
+<<<<<<< HEAD
 import { Cohort } from '../../database/entity';
 import { Child, Admin } from '../../database/entity/User';
+=======
+import { Child, Admin, Cohort } from '../../database/entity';
+>>>>>>> ec5518f1cc3eb4729a727737f25b0d62d5b1e1ec
 import { Only } from '../../middleware';
 
 const cohortRoutes = Router();

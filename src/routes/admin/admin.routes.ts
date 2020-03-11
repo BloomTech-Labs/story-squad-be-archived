@@ -4,7 +4,7 @@ import { getRepository } from 'typeorm';
 import { sign } from 'jsonwebtoken';
 
 import { connection } from '../../util/typeorm-connection';
-import { Admin } from '../../database/entity/User';
+import { Admin } from '../../database/entity';
 import { CheckJwt, Only } from '../../middleware';
 
 const adminRoutes = Router();
@@ -149,9 +149,5 @@ adminRoutes.put('/register', CheckJwt(), Only(Admin), async (req, res) => {
         else res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
     }
 });
-
-// adminRoutes.put('/:id', async (req, res) => {});
-
-// adminRoutes.delete('/:id', async (req, res) => {});
 
 export { adminRoutes };

@@ -5,7 +5,7 @@ const matchmaking_test = require('./matchmaking_test.json')
 import { attemptJSONParse } from '../../util/utils';
 
 import { Only } from '../../middleware'
-import { Admin, Matches } from '../../database/entity'
+import { Admin, Matches, Submissions } from '../../database/entity'
 import { Matchmaking, WeekMatches } from '../../models';
 import { connection } from '../../util/typeorm-connection';
 
@@ -27,33 +27,45 @@ matchMakingRoutes.post('/:roundInfo', Only(Admin), async (req, res) => {
     // filter out the submissions within the round
     // pass into matchmaking
     // persist the matches
-        
 
-        //1 get submisisons array based on the criteria
-        // const submissions = getRepository(submission, connection()).find({ criteria })
-        
+    //pass 'week' in with the request body
+    
+    const submissions = await getRepository(Submissions, connection()).find({ where: { week: req }})
 
+    let submissionObject = {}
+    submissions.forEach( submission => 
+        Object.assign(submissionObject, { 
+            [submission.child.id]: {
+                flesch_reading_ease: submission.flesch_reading_ease,
+                smog_index: submission.smog_index,
+                flesch_kincaid_grade: submission.flesch_kincaid_grade,
+                coleman_liau_index: submission.coleman_liau_index,
+                automated_readability_index: submission.automated_readability_index,
+                dale_chall_readability_score: submission.dale_chall_readability_score,
+                difficult_words: submission.difficult_words,
+                linsear_write_formula: submission.linsear_write_formula,
+                gunning_fog: submission.gunning_fog,
+                doc_length: submission.doc_length,
+                quote_count: submission.quote_count,
+                transcribed_text: submission.transcribed_text
+            }
+        }
+        ))
 
-        // clean the data before sending it to python script (turn it into an array needed by the script)
-        // requirement:: an object with studentIds as keys = { studentId: Readability }
-        // const new = submissions.map(submission => )
-        //2 matchmaking integration
-        // submissions object into matchmaking
-
-        const competitions = await match(matchmaking_test)
+    const competitions = await match(submissionObject)
 
         //3 persist the match
        
-        for ( let [key, value ] of Object.entries(competitions) ) {
-            await getRepository(Matches, connection()).save({
+    for ( let [key, value ] of Object.entries(competitions) ) {
+        await getRepository(Matches, connection()).save({
                 team1_child1_id: parseInt(value.team_1[0]),
                 team1_child2_id: parseInt(value.team_1[1]),
                 team2_child1_id: parseInt(value.team_2[0]),
-                team2_child2_id: parseInt(value.team_2[1])
-            })
-        }
+                team2_child2_id: parseInt(value.team_2[1]),
+        })
+    }
 
-        res.status(200).json({ message: `success`})
+    res.status(200).json({ message: `success`})
         //4 return success
 
     try {

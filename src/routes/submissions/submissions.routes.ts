@@ -1,15 +1,15 @@
 import { Router } from 'express';
 import { getRepository } from 'typeorm';
-import { Transcribable, Transcription, Readability, Readable } from '../../models/internal/DS';
+import { Transcribable, Transcription, Readability, Readable, WeekMatches } from '../../models/internal/DS';
 import { runScript } from '../../util/scripts/scripting';
 import { attemptJSONParse, onlyTranscription } from '../../util/utils';
 import { connection } from '../../util/typeorm-connection';
 import { Only } from '../../middleware';
 import { Child, Submissions } from '../../database/entity';
-import { Pages } from '../../database/entity/Story/Pages';
+import { Pages } from '../../database/entity/Pages';
 
 const submissionRoutes = Router();
-
+//test
 submissionRoutes.get('/', Only(Child), async (req, res) => {
     try {
         const { submissions } = req.user as Child;
@@ -46,8 +46,6 @@ submissionRoutes.post('/', Only(Child), async (req, res) => {
 
         if (submissions.find((e) => e.week === week)) throw Error('400');
 
-        // Start DS integration
-
         let images = [];
         Object.values(story).forEach((page) => {
             if (page.length > 1) {
@@ -60,50 +58,34 @@ submissionRoutes.post('/', Only(Child), async (req, res) => {
         if (!transcribed) {
             return res.status(400).json({ message: 'Something went wrong transcribing image.' });
         }
-
-        transcribed.images.forEach((story: string) => {
-            readable({ story })
-                .then((stats: Readability) => {
-                    // Save readability stats to db
-                    // Save transcribed text to db
-                    // await getRepository(readability, connection()).save({
-                    //     ...stats,
-                    //     transcribed_text: story
-                    // })
-                    console.log(stats);
-                    return res.status(200).json(stats);
-                })
-                .catch(console.error);
+        //added WeekMatches as in DS.ts to stop typescript from throwing error
+        const readabilityStats: Readability | Transcription | WeekMatches = await readable({
+            story: transcribed.images[0],
         });
-        // End DS integration
 
-        // START OLD DB CODE
-        // This will get replaced on the next merge with new database code
+        try {
+            const { child, ...submission } = await getRepository(Submissions, connection()).save({
+                week,
+                story,
+                storyText,
+                illustration,
+                child: req.user,
 
-        const { child, ...submission } = await getRepository(Submissions, connection()).save({
-            week,
-            story,
-            storyText,
-            illustration,
-            child: req.user,
-        });
-        // END OLD DB CODE
+                ...readabilityStats[0],
+                transcribed_text: {
+                    page1: transcribed.images[0] ? transcribed.images[0] : '',
+                    page2: transcribed.images[1] ? transcribed.images[1] : '',
+                    page3: transcribed.images[2] ? transcribed.images[2] : '',
+                    page4: transcribed.images[3] ? transcribed.images[3] : '',
+                    page5: transcribed.images[4] ? transcribed.images[4] : '',
+                },
+            });
 
-        // NEW DB CODE
-        // await getRepository(story_submissions, connection()).save({
-        // child_id: req.user.id,
-        // cohorts_chapter_id: week,
-        // image: JSON.stringify(data)
-        // })
-
-        // await getRepository(drawing_submissions, connection()).save({
-        //     child_id: req.user.id,
-        //     cohorts_chapter_id: week,
-        //     image: illustration
-        // })
-        // END NEW DB CODE
-
-        return res.status(201).json({ submission, transcribed });
+            return res.status(201).json({ transcribed, submission });
+        } catch (err) {
+            console.log(err.toString());
+            return res.status(500).json({ message: err.toString() });
+        }
     } catch (err) {
         if (err.toString() === 'Error: 400')
             return res.status(400).json({ message: `Submission already exists` });
@@ -154,3 +136,4 @@ function readable(story: Readable) {
 }
 
 export { submissionRoutes };
+//test
