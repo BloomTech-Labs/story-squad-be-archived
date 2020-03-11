@@ -58,7 +58,7 @@ matchMakingRoutes.get('/', Only(Admin), async (req, res) => {
     console.log(matchmaking)
     try {
         const competitions = await match(matchmaking)
-        console.log(competitions)
+        console.log(competitions[0])
         try{
             for (let [key, value] of Object.entries(competitions)) {
                 await getRepository(Matches, connection()).save({
@@ -89,7 +89,7 @@ function match(data: Matchmaking){
     return runScript(
         './src/util/scripts/matchmaking.py', 
         data, 
-        (out:any) => out)
+        (out:any) => out.map(attemptJSONParse))
 }
 
 export { matchMakingRoutes };
