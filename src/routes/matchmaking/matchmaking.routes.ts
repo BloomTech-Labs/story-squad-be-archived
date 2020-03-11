@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import { getRepository } from 'typeorm';
 import { runScript } from '../../util/scripts/scripting'
-const matchmaking_test = require('./matchmaking_test.json')
+import { matchmaking } from './matchmaking_test'
 import { attemptJSONParse } from '../../util/utils';
 
 import { Only } from '../../middleware'
@@ -21,7 +21,7 @@ const matchMakingRoutes = Router();
 // post route blocked by Only(Admin)
 // to pass submissions within fe specified round
 // into matchmaking and populate matches in db
-matchMakingRoutes.post('/:week', Only(Admin), async (req, res) => {
+matchMakingRoutes.get('/', Only(Admin), async (req, res) => {
     // roundInfo is anything we can use to refer to the round
     // route receives round info,
     // filter out the submissions within the round
@@ -57,7 +57,7 @@ matchMakingRoutes.post('/:week', Only(Admin), async (req, res) => {
 
 
     try {
-        const competitions = await match(matchmaking_test)
+        const competitions = await match(matchmaking)
         try{
             for (let [key, value] of Object.entries(competitions)) {
                 await getRepository(Matches, connection()).save({

@@ -28,6 +28,7 @@ export interface Readability {
     consolidated_score: string;
     doc_length: number;
     quote_count: number;
+    grade: number;
 }
 
 export interface Matchmaking {
