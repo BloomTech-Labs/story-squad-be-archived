@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import { getRepository } from 'typeorm';
 import { runScript } from '../../util/scripts/scripting'
-const matchmaking_test = require('./matchmaking_test.json')
+// const matchmaking_test = require('./matchmaking_test.json')
 import { attemptJSONParse } from '../../util/utils';
 
 import { Only } from '../../middleware'
