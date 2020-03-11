@@ -34,19 +34,19 @@ class Submissions {
 
     @Column({ type: 'double precision', nullable: true })
     flesch_reading_ease: number;
-    @Column({ nullable: true })
+    @Column({ type: 'double precision', nullable: true })
     smog_index: number;
     @Column({ type: 'double precision', nullable: true })
     flesch_kincaid_grade: number;
     @Column({ type: 'double precision', nullable: true })
     coleman_liau_index: number;
-    @Column({ nullable: true })
+    @Column({ type: 'double precision', nullable: true })
     automated_readability_index: number;
     @Column({ type: 'double precision', nullable: true })
     dale_chall_readability_score: number;
-    @Column({ nullable: true })
+    @Column({ type: 'double precision', nullable: true })
     difficult_words: number;
-    @Column({ nullable: true })
+    @Column({ type: 'double precision', nullable: true })
     linsear_write_formula: number;
     @Column({ type: 'double precision', nullable: true })
     gunning_fog: number;
@@ -56,7 +56,6 @@ class Submissions {
     quote_count: number;
     @Column((type) => Pages)
     transcribed_text: Pages;
-
 }
 
 export { Submissions };
