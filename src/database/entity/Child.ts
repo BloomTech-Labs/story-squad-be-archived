@@ -20,6 +20,9 @@ class Child {
     @Column({ default: false })
     subscription: boolean;
 
+    @Column({ nullable: true })
+    avatar: string;
+
     @Column((type) => Preferences)
     preferences: Preferences;
 
