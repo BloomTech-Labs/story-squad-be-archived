@@ -12,12 +12,6 @@ import { connection } from '../../util/typeorm-connection';
 
 const matchMakingRoutes = Router();
 
-const myAsyncLoopFunction = async (arr, cb) => {
-    const promises = arr.map(cb);
-    await Promise.all(promises);
-    console.log(`All async tasks complete!`);
-};
-
 matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
     try {
         const submissions = await getRepository(Submissions, connection()).find({
@@ -55,14 +49,25 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
 
         try {
             for (let [key, value] of Object.entries(competition)) {
-                await getRepository(Matches, connection()).save({
-                    team1_child1_id: value['team_1'][0] ? parseInt(value['team_1'][0]) : 0,
-                    team1_child2_id: value['team_1'][1] ? parseInt(value['team_1'][1]) : 0,
-                    team2_child1_id: value['team_2'][0] ? parseInt(value['team_2'][0]) : 0,
-                    team2_child2_id: value['team_2'][1] ? parseInt(value['team_2'][1]) : 0,
-                    week: parseInt(req.params.week),
-                });
+                // determines that none of the children in a group already have a group 3.12.20
+                const existingMatch = checkTeams(value);
+                if (
+                    !existingMatch[0] &&
+                    !existingMatch[1] &&
+                    !existingMatch[2] &&
+                    !existingMatch[3]
+                ) {
+                    // if match not pre-existing, generate a match-up 3.12.20
+                    await getRepository(Matches, connection()).save({
+                        team1_child1_id: value['team_1'][0] ? parseInt(value['team_1'][0]) : 0,
+                        team1_child2_id: value['team_1'][1] ? parseInt(value['team_1'][1]) : 0,
+                        team2_child1_id: value['team_2'][0] ? parseInt(value['team_2'][0]) : 0,
+                        team2_child2_id: value['team_2'][1] ? parseInt(value['team_2'][1]) : 0,
+                        week: parseInt(req.params.week),
+                    });
+                }
             }
+            // await match-ups and responds to FE with match-ups 3.12.20
             const matches = await getRepository(Matches, connection()).find({
                 where: { week: req.params.week },
             });
@@ -83,3 +88,53 @@ function match(data: Matchmaking) {
 }
 
 export { matchMakingRoutes };
+
+async function checkTeams(value) {
+    let existingMatch = [];
+    // wrap await check logic within try/catch to resolve an error message 3.12.20
+    try {
+        existingMatch[0] = await getRepository(Matches, connection()).find({
+            where: {
+                team1_child1_id:
+                    parseInt(value['team_1'][0]) ||
+                    parseInt(value['team_1'][1]) ||
+                    parseInt(value['team_2'][0]) ||
+                    parseInt(value['team_2'][1]),
+            },
+        });
+
+        existingMatch[1] = await getRepository(Matches, connection()).find({
+            where: {
+                team1_child2_id:
+                    parseInt(value['team_1'][0]) ||
+                    parseInt(value['team_1'][1]) ||
+                    parseInt(value['team_2'][0]) ||
+                    parseInt(value['team_2'][1]),
+            },
+        });
+
+        existingMatch[2] = await getRepository(Matches, connection()).find({
+            where: {
+                team2_child1_id:
+                    parseInt(value['team_1'][0]) ||
+                    parseInt(value['team_1'][1]) ||
+                    parseInt(value['team_2'][0]) ||
+                    parseInt(value['team_2'][1]),
+            },
+        });
+
+        existingMatch[3] = await getRepository(Matches, connection()).find({
+            where: {
+                team2_child2_id:
+                    parseInt(value['team_1'][0]) ||
+                    parseInt(value['team_1'][1]) ||
+                    parseInt(value['team_2'][0]) ||
+                    parseInt(value['team_2'][1]),
+            },
+        });
+    } catch (err) {
+        console.log(err.toString());
+    }
+
+    return existingMatch;
+}
