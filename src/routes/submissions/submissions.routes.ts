@@ -79,11 +79,11 @@ submissionRoutes.post('/', Only(Child), async (req, res) => {
 
                 ...readabilityStats[0],
                 transcribed_text: {
-                    page1: transcribed.images[0] ? transcribed.images[0] : '',
-                    page2: transcribed.images[1] ? transcribed.images[1] : '',
-                    page3: transcribed.images[2] ? transcribed.images[2] : '',
-                    page4: transcribed.images[3] ? transcribed.images[3] : '',
-                    page5: transcribed.images[4] ? transcribed.images[4] : '',
+                    t_page1: transcribed.images[0] ? transcribed.images[0] : '',
+                    t_page2: transcribed.images[1] ? transcribed.images[1] : '',
+                    t_page3: transcribed.images[2] ? transcribed.images[2] : '',
+                    t_page4: transcribed.images[3] ? transcribed.images[3] : '',
+                    t_page5: transcribed.images[4] ? transcribed.images[4] : '',
                 },
             });
 
