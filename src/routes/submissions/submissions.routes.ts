@@ -1,6 +1,12 @@
 import { Router } from 'express';
 import { getRepository } from 'typeorm';
-import { Transcribable, Transcription, Readability, Readable, WeekMatches } from '../../models/internal/DS';
+import {
+    Transcribable,
+    Transcription,
+    Readability,
+    Readable,
+    WeekMatches,
+} from '../../models/internal/DS';
 import { runScript } from '../../util/scripts/scripting';
 import { attemptJSONParse, onlyTranscription } from '../../util/utils';
 import { connection } from '../../util/typeorm-connection';

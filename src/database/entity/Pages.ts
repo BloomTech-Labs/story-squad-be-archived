@@ -18,4 +18,21 @@ class Pages {
     page5: string;
 }
 
-export { Pages };
+class Transcribed_Pages {
+    @Column({ nullable: true })
+    t_page1: string;
+
+    @Column({ nullable: true })
+    t_page2: string;
+
+    @Column({ nullable: true })
+    t_page3: string;
+
+    @Column({ nullable: true })
+    t_page4: string;
+
+    @Column({ nullable: true })
+    t_page5: string;
+}
+
+export { Pages, Transcribed_Pages };
