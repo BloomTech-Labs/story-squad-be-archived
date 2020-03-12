@@ -63,7 +63,7 @@ matchMakingRoutes.get('/', Only(Admin), async (req, res) => {
 
         try{
             for (let [key, value] of Object.entries<WeekMatches>(competitionObject)) {
-                console.log(`${key} and ${value.team_1}`)
+                console.log(`${key} and team 1 first person ${value.team_1[0]} all team 2 ${value.team_2}`)
                 // for (let [key1, value1] of Object.entries(value)){
                 //     console.log(`${key1} and ${value1}`)
                     let result = await getRepository(Matches, connection()).save({
