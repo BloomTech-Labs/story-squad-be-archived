@@ -30,8 +30,24 @@ export interface Readability {
     quote_count: number;
 }
 
+interface forMatchmaking {
+    flesch_reading_ease: number;
+    smog_index: number;
+    flesch_kincaid_grade: number;
+    coleman_liau_index: number;
+    automated_readability_index: number;
+    dale_chall_readability_score: number;
+    difficult_words: number;
+    linsear_write_formula: number;
+    gunning_fog: number;
+    consolidated_score: string;
+    doc_length: number;
+    quote_count: number;
+    grade: number;
+}
+
 export interface Matchmaking {
-    [name: string]: Readability;
+    [name: string]: forMatchmaking;
 }
 
 export interface WeekMatches {
