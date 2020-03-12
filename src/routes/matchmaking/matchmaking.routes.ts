@@ -66,14 +66,14 @@ matchMakingRoutes.get('/', Only(Admin), async (req, res) => {
                 console.log(`${key} and team 1 first person ${value.team_1[0]} all team 2 ${value.team_2}`)
                 // for (let [key1, value1] of Object.entries(value)){
                 //     console.log(`${key1} and ${value1}`)
-                    let result = await getRepository(Matches, connection()).save({
-                        team1_child1_id: parseInt(value.team_1[0]),
-                        team1_child2_id: parseInt(value.team_1[1]),
-                        team2_child1_id: parseInt(value.team_2[0]),
-                        team2_child2_id: parseInt(value.team_2[1]),
-                        week: 0
-                    })
-                    console.log(result)
+                    // let result = await getRepository(Matches, connection()).save({
+                    //     team1_child1_id: parseInt(value.team_1[0]),
+                    //     team1_child2_id: parseInt(value.team_1[1]),
+                    //     team2_child1_id: parseInt(value.team_2[0]),
+                    //     team2_child2_id: parseInt(value.team_2[1]),
+                    //     week: 0
+                    // })
+                    // console.log(result)
                 // }
             }
             const matches = getRepository(Matches, connection())
