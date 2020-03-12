@@ -1,6 +1,12 @@
 import { Router } from 'express';
 import { getRepository } from 'typeorm';
-import { Transcribable, Transcription, Readability, Readable } from '../../models/internal/DS';
+import {
+    Transcribable,
+    Transcription,
+    Readability,
+    Readable,
+    WeekMatches,
+} from '../../models/internal/DS';
 import { runScript } from '../../util/scripts/scripting';
 import { attemptJSONParse, onlyTranscription } from '../../util/utils';
 import { connection } from '../../util/typeorm-connection';
@@ -58,8 +64,8 @@ submissionRoutes.post('/', Only(Child), async (req, res) => {
         if (!transcribed) {
             return res.status(400).json({ message: 'Something went wrong transcribing image.' });
         }
-
-        const readabilityStats: Readability | Transcription = await readable({
+        //added WeekMatches as in DS.ts to stop typescript from throwing error
+        const readabilityStats: Readability | Transcription | WeekMatches = await readable({
             story: transcribed.images[0],
         });
         console.log(readabilityStats);
@@ -73,11 +79,11 @@ submissionRoutes.post('/', Only(Child), async (req, res) => {
 
                 ...readabilityStats[0],
                 transcribed_text: {
-                    page1: transcribed.images[0] ? transcribed.images[0] : '',
-                    page2: transcribed.images[1] ? transcribed.images[1] : '',
-                    page3: transcribed.images[2] ? transcribed.images[2] : '',
-                    page4: transcribed.images[3] ? transcribed.images[3] : '',
-                    page5: transcribed.images[4] ? transcribed.images[4] : '',
+                    t_page1: transcribed.images[0] ? transcribed.images[0] : '',
+                    t_page2: transcribed.images[1] ? transcribed.images[1] : '',
+                    t_page3: transcribed.images[2] ? transcribed.images[2] : '',
+                    t_page4: transcribed.images[3] ? transcribed.images[3] : '',
+                    t_page5: transcribed.images[4] ? transcribed.images[4] : '',
                 },
             });
 
