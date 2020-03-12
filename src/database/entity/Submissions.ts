@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
 
 import { Child } from './Child';
 import { Pages } from './Pages';
@@ -8,11 +8,14 @@ class Submissions {
     @PrimaryGeneratedColumn()
     id: number;
 
+    @Column()
+    childId: number;
     @ManyToOne(
         (type) => Child,
         (child) => child.submissions,
         { onDelete: 'CASCADE' }
     )
+    @JoinColumn({ name: "childId"})
     child: Child;
 
     @Column({ nullable: false })

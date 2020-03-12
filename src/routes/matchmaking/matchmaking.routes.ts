@@ -6,7 +6,7 @@ import { matchmaking2 } from './matchmaking2'
 import { attemptJSONParse } from '../../util/utils';
 
 import { Only } from '../../middleware';
-import { Admin, Matches, Submissions } from '../../database/entity';
+import { Admin, Matches, Submissions, Child } from '../../database/entity';
 import { Matchmaking, WeekMatches } from '../../models';
 import { connection } from '../../util/typeorm-connection';
 
@@ -29,29 +29,43 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
     // persist the matches
     //4 return success
 
-    // const submissions = await getRepository(Submissions, connection()).find({ where: { week: req.params.week, type: 'story' } })
-
-    // let submissionObject = {}
-    // submissions.forEach(submission =>
-    //     Object.assign(submissionObject, {
-    //         [submission.child.id]: {
-    //             flesch_reading_ease: submission.flesch_reading_ease,
-    //             smog_index: submission.smog_index,
-    //             flesch_kincaid: submission.flesch_kincaid_grade,
-    //             coleman_liau_index: submission.coleman_liau_index,
-    //             automated_readability_index: submission.automated_readability_index,
-    //             dale_chall_readability_score: submission.dale_chall_readability_score,
-    //             difficult_words: submission.difficult_words,
-    //             linsear_write_formula: submission.linsear_write_formula,
-    //             gunning_fog: submission.gunning_fog,
-    //             doc_length: submission.doc_length,
-    //             quote_count: submission.quote_count
-    //         }
-    //     }
-    //     ))
-
     try {
-        const competitions = await match(matchmaking);
+
+        const submissions  = await getRepository(Submissions, connection()).find({ where: { week: req.params.week, type: 'story' } })
+
+        let submissionObject = {}
+        submissions.forEach(async (submission) => {
+            const { grade } =  await getRepository(Child, connection()).findOne({ where: { id: submission.childId }})
+
+            //issue with asynchronus action
+            // getRepository(Child, connection())
+            //     .findOne({ where: { id: submission.childId }})
+            //     .then(res => {
+            //         console.log(res)
+                    submissionObject = {
+                        ...submissionObject,
+                            [submission.childId]: {
+                                flesch_reading_ease: submission.flesch_reading_ease,
+                                smog_index: submission.smog_index,
+                                flesch_kincaid: submission.flesch_kincaid_grade,
+                                coleman_liau_index: submission.coleman_liau_index,
+                                automated_readability_index: submission.automated_readability_index,
+                                dale_chall_readability_score: submission.dale_chall_readability_score,
+                                difficult_words: submission.difficult_words,
+                                linsear_write_formula: submission.linsear_write_formula,
+                                gunning_fog: submission.gunning_fog,
+                                doc_length: submission.doc_length,
+                                quote_count: submission.quote_count,
+                                grade: grade
+                            }
+                        }
+                    console.log("INSIDE submission Object", submissionObject)
+            })
+
+        console.log("OUTSIDE", submissionObject)
+
+
+        const competitions = await match(submissionObject);
         console.log(competitions)
         console.log('competitions [0]', competitions[0]);
 
@@ -68,7 +82,7 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
                         team1_child2_id: parseInt(value['team_1'][1]),
                         team2_child1_id: parseInt(value['team_2'][0]),
                         team2_child2_id: parseInt(value['team_2'][1]),
-                        week: 1
+                        week: parseInt(req.params.week)
                     })
                 // }
             }
