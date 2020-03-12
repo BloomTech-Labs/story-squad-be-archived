@@ -58,13 +58,9 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
                     !existingMatch[3]
                 ) {
                     // if match not pre-existing, generate a match-up 3.12.20
-                    await getRepository(Matches, connection()).save({
-                        team1_child1_id: value['team_1'][0] ? parseInt(value['team_1'][0]) : 0,
-                        team1_child2_id: value['team_1'][1] ? parseInt(value['team_1'][1]) : 0,
-                        team2_child1_id: value['team_2'][0] ? parseInt(value['team_2'][0]) : 0,
-                        team2_child2_id: value['team_2'][1] ? parseInt(value['team_2'][1]) : 0,
-                        week: parseInt(req.params.week),
-                    });
+                    persistMatch(value, req.params.week);
+                } else {
+                    console.log('matches pre-existing');
                 }
             }
             // await match-ups and responds to FE with match-ups 3.12.20
@@ -137,4 +133,14 @@ async function checkTeams(value) {
     }
 
     return existingMatch;
+}
+
+async function persistMatch(matchUp, week) {
+    await getRepository(Matches, connection()).save({
+        team1_child1_id: matchUp['team_1'][0] ? parseInt(matchUp['team_1'][0]) : 0,
+        team1_child2_id: matchUp['team_1'][1] ? parseInt(matchUp['team_1'][1]) : 0,
+        team2_child1_id: matchUp['team_2'][0] ? parseInt(matchUp['team_2'][0]) : 0,
+        team2_child2_id: matchUp['team_2'][1] ? parseInt(matchUp['team_2'][1]) : 0,
+        week: parseInt(week),
+    });
 }
