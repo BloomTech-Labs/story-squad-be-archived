@@ -7,3 +7,4 @@ export * from './parent/parent.routes';
 export * from './stripe/stripe.routes';
 export * from './submissions/submissions.routes';
 export * from './matchmaking/matchmaking.routes';
+export * from './battles/battles.routes'

@@ -14,6 +14,7 @@ import {
     submissionRoutes,
     cohortRoutes,
     matchMakingRoutes,
+    battlesRoutes,
 } from './routes';
 import { connection } from './util/typeorm-connection';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
