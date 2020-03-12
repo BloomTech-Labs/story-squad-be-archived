@@ -56,10 +56,10 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
         try {
             for (let [key, value] of Object.entries(competition)) {
                 await getRepository(Matches, connection()).save({
-                    team1_child1_id: parseInt(value['team_1'][0]),
-                    team1_child2_id: parseInt(value['team_1'][1]),
-                    team2_child1_id: parseInt(value['team_2'][0]),
-                    team2_child2_id: parseInt(value['team_2'][1]),
+                    team1_child1_id: value['team_1'][0] ? parseInt(value['team_1'][0]) : 0,
+                    team1_child2_id: value['team_1'][1] ? parseInt(value['team_1'][1]) : 0,
+                    team2_child1_id: value['team_2'][0] ? parseInt(value['team_2'][0]) : 0,
+                    team2_child2_id: value['team_2'][1] ? parseInt(value['team_2'][1]) : 0,
                     week: parseInt(req.params.week),
                 });
             }
