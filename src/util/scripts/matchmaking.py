@@ -41,34 +41,36 @@ def break_index(li, start):
     return matches
 
 
-def break_df(df):
-    """Takes a dataframe, buckets by length, sorts by cli, teamifies"""
-    if df.shape[0] <= 50:
-        # small playing field means everyone plays together
-        df_sort = df.sort_values('coleman_liau_index')
-        return break_index(list(df_sort.index), 0)
+# def break_df(df):
+#     """Takes a dataframe, buckets by length, sorts by cli, teamifies"""
+#     if df.shape[0] <= 50:
+#         # small playing field means everyone plays together
+#         df_sort = df.sort_values('coleman_liau_index')
+#         return break_index(list(df_sort.index), 0)
 
-    lower_bound = df.quantile(q=.3, axis=0)['doc_length']
-    upper_bound = df.quantile(q=.7, axis=0)['doc_length']
+#     lower_bound = df.quantile(q=.3, axis=0)['doc_length']
+#     upper_bound = df.quantile(q=.7, axis=0)['doc_length']
 
-    df_short = df[df['doc_length'] <
-                  lower_bound].sort_values('coleman_liau_index')
-    df_long = df[df['doc_length'] >
-                 upper_bound].sort_values('coleman_liau_index')
+#     df_short = df[df['doc_length'] <
+#                   lower_bound].sort_values('coleman_liau_index')
+#     df_long = df[df['doc_length'] >
+#                  upper_bound].sort_values('coleman_liau_index')
 
-    df_filter = df[df['doc_length'] >= lower_bound]
-    df_med = df_filter[df_filter['doc_length'] <=
-                       upper_bound].sort_values('coleman_liau_index')
+#     df_filter = df[df['doc_length'] >= lower_bound]
+#     df_med = df_filter[df_filter['doc_length'] <=
+#                        upper_bound].sort_values('coleman_liau_index')
 
-    matches = {}
-    matches.update(break_index(list(df_short.index), 0))
-    matches.update(break_index(list(df_long.index), len(matches)))
-    matches.update(break_index(list(df_med.index), len(matches)))
-    return str(matches)
+#     matches = {}
+#     matches.update(break_index(list(df_short.index), 0))
+#     matches.update(break_index(list(df_long.index), len(matches)))
+#     matches.update(break_index(list(df_med.index), len(matches)))
+#     return str(matches)
 
 def get_cluster(df):
+    """Applies clustering (with appropriate cluster number) to df"""
+    feats = ['doc_length','quote_count','difficult_words','grade']
     scaler = StandardScaler()
-    norm_X = scaler.fit_transform(df[['doc_length','quote_count','difficult_words','grade']])
+    norm_X = scaler.fit_transform(df[feats])
     cluster_size = get_cluster_size(norm_X)
     model = AgglomerativeClustering(n_clusters=cluster_size, affinity='euclidean', linkage='ward')
     model.fit(norm_X)
@@ -76,16 +78,23 @@ def get_cluster(df):
     return df
 
 def break_clusters(df):
+    """outputs matches for a dataframe with any number of clusters"""
     no_cluster = len(df['cluster'].unique())
     
     matches = {}
     
     for i in range(no_cluster):
-        matches.update(break_index(list(df[df['cluster'] == i].index), len(matches)))
+        cluster_df = df[df['cluster'] == i]
+        # cluster_index = cluster_df.sort_values('coleman_liau_index').index
+        cluster_index = cluster_df.index
+        matches.update(break_index(list(cluster_index), len(matches)))
         
     return str(matches)
 
 def get_cluster_size(norm_X):
+    """checks smallest cluster size for each number of clusters,
+    returns max number of clusters such that the smallest cluster
+    isn't under the minimum size"""
     cluster_size = 2
     min_cluster_size = 5
     while min_cluster_size >= 4:
@@ -95,10 +104,10 @@ def get_cluster_size(norm_X):
         cluster_size += 1
     return cluster_size - 2
 
-def check_cluster_size(cluster_size, labels):
-    min_size = min(Counter(labels).values())
-    print(min_size)
-    return None
+# def check_cluster_size(cluster_size, labels):
+#     min_size = min(Counter(labels).values())
+#     print(min_size)
+#     return None
 
 def make_match(df):
     df = get_cluster(df)
@@ -124,8 +133,3 @@ data_in = stdin.read()
 output = main(data_in)
 
 stdout.write(output)
-
-main()
-
-# Can be tested with this command
-# pipenv run python3 dotPy/matchmaking.py < integration/src/matchmaking_test.json

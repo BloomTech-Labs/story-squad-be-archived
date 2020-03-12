@@ -51,6 +51,8 @@ class Submissions {
     @Column({ type: 'double precision', nullable: true })
     gunning_fog: number;
     @Column({ nullable: true })
+    consolidated_score: string;
+    @Column({ nullable: true })
     doc_length: number;
     @Column({ nullable: true })
     quote_count: number;
