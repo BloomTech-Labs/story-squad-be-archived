@@ -15,7 +15,7 @@ class Submissions {
         (child) => child.submissions,
         { onDelete: 'CASCADE' }
     )
-    @JoinColumn({ name: "childId"})
+    @JoinColumn({ name: 'childId' })
     child: Child;
 
     @Column({ nullable: false })
@@ -30,6 +30,9 @@ class Submissions {
     @Column({ nullable: true })
     illustration: string;
     
+    @Column({ nullable: true })
+    type: 'story' | 'illustration';
+
     @Column({ nullable: true })
     type: 'story' | 'illustration';
 

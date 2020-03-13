@@ -14,6 +14,7 @@ import {
     submissionRoutes,
     cohortRoutes,
     matchMakingRoutes,
+    battlesRoutes,
 } from './routes';
 import { connection } from './util/typeorm-connection';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
@@ -39,6 +40,7 @@ const main = async () => {
         app.use('/payment', CheckJwt(), UpdateStripeRecords(), stripeRoutes);
         app.use('/submissions', CheckJwt(), submissionRoutes);
         app.use('/matchmaking', CheckJwt(), matchMakingRoutes);
+        app.use('/battlesRoutes', CheckJwt(), battlesRoutes);
 
         const port = process.env.PORT || 4000;
         app.listen(port);
