@@ -1,4 +1,4 @@
-import { EntityRepository, EntityManager } from 'typeorm';
+import { EntityRepository, EntityManager } from 'typeorm'
 
 import { Child, Submissions } from '../../database/entity';
 
@@ -9,56 +9,64 @@ export class MatchInfoRepository {
     findMatchInfo(student1id: number, student2id: number, week: number) {
         let submissions = null;
         let student1 = {
+            id: student1id,
             story: {},
             illustration: {},
-            username: {},
-            avatar: {},
+            username: "",
+            avatar: "",
         };
         let student2 = {
+            id: student2id,
             story: {},
             illustration: {},
-            username: {},
-            avatar: {},
+            username: "",
+            avatar: "",
         };
-        this.manager
-            .findOne(Submissions, {
+        return this.manager
+            .find(Submissions, {
                 where: { week: week },
             })
             .then((res) => {
                 submissions = res;
-            });
+                console.log(submissions)
+                student1.story = submissions.filter(
+                    (submission) => submission['childId'] === student1id
+                );
+                student1.illustration = submissions.filter(
+                    (submission) =>
+                        submission['childId'] === student1id
+                );
+                student2.story = submissions.filter(
+                    (submission) => submission['childId'] === student2id
+                );
+                student2.illustration = submissions.filter(
+                    (submission) =>
+                        submission['childId'] === student2id
+                )
+                
+                return this.manager.findOne(Child, {
+                    where: { id: student1id }
+                }).then(res => {
+                    student1.username = res.username
+                    student1.avatar = res.avatar
 
-        student1.story = submissions.filter(
-            (submission) => submission['child']['id'] === student1id && submission.type === 'story'
-        );
-        student1.illustration = submissions.filter(
-            (submission) =>
-                submission['child']['id'] === student1id && submission.type === 'illustration'
-        );
-        student2.story = submissions.filter(
-            (submission) => submission['child']['id'] === student2id && submission.type === 'story'
-        );
-        student2.illustration = submissions.filter(
-            (submission) =>
-                submission['child']['id'] === student2id && submission.type === 'illustration'
-        );
+                    return this.manager.findOne(Child, {
+                        where: { id: student2id }
+                    }).then(res => {
+                            student2.username = res.username
+                            student2.avatar = res.avatar
 
-        this.manager
-            .findOne(Child, {
-                where: { id: student1id },
+                            return { student1, student2 }
+                    })
+                        
+                })
+
+                    
             })
-            .then((res) => {
-                student1.username = res.username;
-            });
 
-        this.manager
-            .findOne(Child, {
-                where: { id: student2id },
-            })
-            .then((res) => {
-                student2.username = res.username;
-            });
-
-        return [student1, student2];
+                
+                
+        };
+        
     }
-}
+
