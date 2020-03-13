@@ -10,10 +10,11 @@ import { connection } from '../../util/typeorm-connection';
 
 const battlesRoutes = Router()
 
-battlesRoutes.get("/battles", Only(Child), async(req, res) => {
+battlesRoutes.get("/", Only(Child), async(req, res) => {
 
     try{
         const { id, cohort } = req.user as Child
+        console.log(id, cohort)
         //first get matchid so we know who this child is up against
         const [ match ] = await getRepository(Matches, connection()).find({
             where: [
@@ -23,6 +24,8 @@ battlesRoutes.get("/battles", Only(Child), async(req, res) => {
                 { team2_child2_id: id, week: cohort.week } 
             ]
         })
+
+        console.log(match)
 
         let thisMatch = {
             matchId: match.id,
@@ -34,13 +37,17 @@ battlesRoutes.get("/battles", Only(Child), async(req, res) => {
             res.json(401).json({ message: `Match for Student ID ${id}, for week ${cohort.week} not found`})
         }
         if ((match.team1_child1_id === id) || (match.team1_child2_id == id ) ){
+            console.log("team1", match.team1_child1_id, match.team1_child2_id)
             const team1 = await getCustomRepository(MatchInfoRepository, connection())
                 .findMatchInfo(match.team1_child1_id, match.team1_child2_id, cohort.week)
+            console.log(team1)
             thisMatch.team = team1
         } else {
+            console.log("team2", match.team2_child1_id, match.team2_child2_id)
             const team2 = await getCustomRepository(MatchInfoRepository, connection())
                 .findMatchInfo(match.team2_child1_id, match.team2_child2_id, cohort.week)
             thisMatch.team = team2
+            console.log(team2)
         }
         
 

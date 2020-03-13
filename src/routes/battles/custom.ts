@@ -45,8 +45,8 @@ export class MatchInfoRepository{
         }).then(res => {
             student2.username = res.username
         })
-
-        return [ student1, student2 ]
+        console.log(student1)
+        return { student1, student2 }
     }
 
 
