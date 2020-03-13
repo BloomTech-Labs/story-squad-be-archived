@@ -59,32 +59,60 @@ submissionRoutes.post('/', Only(Child), async (req, res) => {
             }
         });
 
-        const transcribed: Transcription | any = await transcribe({ images });
+        let transcribed: Transcription | any;
+        let readabilityStats: Readability | Transcription | WeekMatches;
+        let type: 'story' | 'illustration';
 
-        if (!transcribed) {
-            return res.status(400).json({ message: 'Something went wrong transcribing image.' });
+        if (!illustration) {
+            type = 'story';
+            transcribed = await transcribe({ images });
+
+            if (!transcribed) {
+                return res
+                    .status(400)
+                    .json({ message: 'Something went wrong transcribing image.' });
+            }
+            //added WeekMatches as in DS.ts to stop typescript from throwing error
+            readabilityStats = await readable({
+                story: transcribed.images[0],
+            });
+        } else {
+            type = 'illustration';
+            readabilityStats = {
+                flesch_reading_ease: NaN,
+                smog_index: NaN,
+                flesch_kincaid_grade: NaN,
+                coleman_liau_index: NaN,
+                automated_readability_index: NaN,
+                dale_chall_readability_score: NaN,
+                difficult_words: NaN,
+                linsear_write_formula: NaN,
+                gunning_fog: NaN,
+                consolidated_score: 'n/a',
+                doc_length: NaN,
+                quote_count: NaN,
+            };
         }
-        //added WeekMatches as in DS.ts to stop typescript from throwing error
-        const readabilityStats: Readability | Transcription | WeekMatches = await readable({
-            story: transcribed.images[0],
-        });
-        console.log(readabilityStats);
+
         try {
             const { child, ...submission } = await getRepository(Submissions, connection()).save({
                 week,
                 story,
                 storyText,
                 illustration,
+                type,
                 child: req.user,
 
                 ...readabilityStats[0],
-                transcribed_text: {
-                    t_page1: transcribed.images[0] ? transcribed.images[0] : '',
-                    t_page2: transcribed.images[1] ? transcribed.images[1] : '',
-                    t_page3: transcribed.images[2] ? transcribed.images[2] : '',
-                    t_page4: transcribed.images[3] ? transcribed.images[3] : '',
-                    t_page5: transcribed.images[4] ? transcribed.images[4] : '',
-                },
+                transcribed_text: transcribed
+                    ? {
+                          t_page1: transcribed.images[0] ? transcribed.images[0] : '',
+                          t_page2: transcribed.images[1] ? transcribed.images[1] : '',
+                          t_page3: transcribed.images[2] ? transcribed.images[2] : '',
+                          t_page4: transcribed.images[3] ? transcribed.images[3] : '',
+                          t_page5: transcribed.images[4] ? transcribed.images[4] : '',
+                      }
+                    : null,
             });
 
             return res.status(201).json({ transcribed, submission });
