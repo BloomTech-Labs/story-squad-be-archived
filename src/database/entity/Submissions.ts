@@ -33,9 +33,6 @@ class Submissions {
     @Column({ nullable: true })
     type: 'story' | 'illustration';
 
-    @Column({ nullable: true })
-    type: 'story' | 'illustration';
-
     // readability
     // we will need to make a separate table and link it with individual pages
     // for now just pass in one page's readability
