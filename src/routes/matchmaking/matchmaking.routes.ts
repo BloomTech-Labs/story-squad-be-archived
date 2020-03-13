@@ -13,15 +13,12 @@ import { connection } from '../../util/typeorm-connection';
 const matchMakingRoutes = Router();
 
 matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
-    try {
-        const matches = await getRepository(Matches, connection()).find({
-            where: { week: req.params.week },
-        });
-        if (matches) {
-            return res.status(200).json({ message: `fetch matches success`, match: matches });
-        }
-    } catch (err) {
-        return res.json({ message: err.toString() });
+    const matches = await getRepository(Matches, connection()).find({
+        where: { week: req.params.week },
+    });
+    if (matches[0]) {
+        console.log(matches);
+        return res.status(200).json({ message: `fetch matches success`, match: matches });
     }
 
     try {
@@ -54,9 +51,15 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
                 },
             };
         }
-
-        const competitions = await match(submissionObject);
-        const competition = JSON.parse(competitions[0].split(`'`).join(`"`));
+        let competition;
+        if (Object.keys(submissionObject).length) {
+            const competitions = await match(submissionObject);
+            competition = JSON.parse(competitions[0].split(`'`).join(`"`));
+        } else {
+            return res.json({
+                message: `not enough submissions to generate matchmaking within week: ${req.params.week}`,
+            });
+        }
 
         try {
             for (let [key, value] of Object.entries(competition)) {
