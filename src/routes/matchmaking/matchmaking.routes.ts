@@ -22,17 +22,6 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
     }
 
     try {
-        const matches = await getRepository(Matches, connection()).find({
-            where: { week: req.params.week },
-        });
-        if (matches) {
-            return res.status(200).json({ message: `fetch matches success`, match: matches });
-        }
-    } catch (err) {
-        return res.json({ message: err.toString() });
-    }
-
-    try {
         const submissions = await getRepository(Submissions, connection()).find({
             where: { week: req.params.week, type: 'story' },
         });
@@ -63,7 +52,8 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
             };
         }
         let competition;
-        if (Object.keys(submissionObject).length) {
+
+        if (Object.keys(submissionObject).length > 1) {
             const competitions = await match(submissionObject);
             competition = JSON.parse(competitions[0].split(`'`).join(`"`));
         } else {
