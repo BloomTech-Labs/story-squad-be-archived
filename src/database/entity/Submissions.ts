@@ -29,9 +29,6 @@ class Submissions {
 
     @Column({ nullable: true })
     illustration: string;
-    
-    @Column({ nullable: true })
-    type: 'story' | 'illustration';
 
     @Column({ nullable: true })
     type: 'story' | 'illustration';
