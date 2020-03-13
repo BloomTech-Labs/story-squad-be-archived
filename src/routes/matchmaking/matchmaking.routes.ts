@@ -14,6 +14,17 @@ const matchMakingRoutes = Router();
 
 matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
     try {
+        const matches = await getRepository(Matches, connection()).find({
+            where: { week: req.params.week },
+        });
+        if (matches) {
+            return res.status(200).json({ message: `fetch matches success`, match: matches });
+        }
+    } catch (err) {
+        return res.json({ message: err.toString() });
+    }
+
+    try {
         const submissions = await getRepository(Submissions, connection()).find({
             where: { week: req.params.week, type: 'story' },
         });
