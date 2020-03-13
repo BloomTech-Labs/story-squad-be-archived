@@ -43,21 +43,32 @@ export class MatchInfoRepository {
                 submission['child']['id'] === student2id && submission.type === 'illustration'
         );
 
-        this.manager
-            .findOne(Child, {
-                where: { id: student1id },
-            })
-            .then((res) => {
-                student1.username = res.username;
-            });
 
-        this.manager
-            .findOne(Child, {
-                where: { id: student2id },
-            })
-            .then((res) => {
-                student2.username = res.username;
-            });
+//         this.manager
+//             .findOne(Child, {
+//                 where: { id: student1id },
+//             })
+//             .then((res) => {
+//                 student1.username = res.username;
+//             });
+
+//         this.manager
+//             .findOne(Child, {
+//                 where: { id: student2id },
+//             })
+//             .then((res) => {
+//                 student2.username = res.username;
+//             });
+
+        this.manager.findOne(Child, {
+            where: { id: student2id }
+        }).then(res => {
+            student2.username = res.username
+        })
+        console.log(student1)
+        return { student1, student2 }
+    }
+
 
         return [student1, student2];
     }

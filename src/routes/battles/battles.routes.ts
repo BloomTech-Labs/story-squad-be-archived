@@ -9,12 +9,16 @@ import { connection } from '../../util/typeorm-connection';
 
 const battlesRoutes = Router();
 
-battlesRoutes.get('/battles', Only(Child), async (req, res) => {
-    try {
-        const { id, cohort } = req.user as Child;
+battlesRoutes.get("/", Only(Child), async(req, res) => {
+
+    try{
+        const { id, cohort } = req.user as Child
+        console.log(id, cohort)
         //first get matchid so we know who this child is up against
 
         const match = await returnMatch(id, cohort.week);
+
+        console.log(match)
 
         let thisMatch = {
             matchId: match.id,
@@ -28,43 +32,52 @@ battlesRoutes.get('/battles', Only(Child), async (req, res) => {
             });
         } else {
             // previous syntax structure commented out below 3.12.20
-            const team1 = await getCustomRepository(
-                MatchInfoRepository,
-                connection()
-            ).findMatchInfo(match.team1_child1_id, match.team1_child2_id, cohort.week);
-            thisMatch.team = team1;
+//             const team1 = await getCustomRepository(
+//                 MatchInfoRepository,
+//                 connection()
+//             ).findMatchInfo(match.team1_child1_id, match.team1_child2_id, cohort.week);
+//             thisMatch.team = team1;
 
-            const team2 = await getCustomRepository(
-                MatchInfoRepository,
-                connection()
-            ).findMatchInfo(match.team2_child1_id, match.team2_child2_id, cohort.week);
-            thisMatch.team = team2;
+//             const team2 = await getCustomRepository(
+//                 MatchInfoRepository,
+//                 connection()
+//             ).findMatchInfo(match.team2_child1_id, match.team2_child2_id, cohort.week);
+//             thisMatch.team = team2;
 
-            console.log(team1, team2, 'the teams');
-            if (team1) {
-                thisMatch.team = team1;
-            } else if (team2) {
-                thisMatch.team = team2;
+//             console.log(team1, team2, 'the teams');
+//             if (team1) {
+//                 thisMatch.team = team1;
+//             } else if (team2) {
+//                 thisMatch.team = team2;
+//             } else {
+//                 console.log('2nd match check fail');
+//             }
+            if ((match.team1_child1_id === id) || (match.team1_child2_id == id ) ){
+            console.log("team1", match.team1_child1_id, match.team1_child2_id)
+            const team1 = await getCustomRepository(MatchInfoRepository, connection())
+                .findMatchInfo(match.team1_child1_id, match.team1_child2_id, cohort.week)
+            console.log(team1)
+            thisMatch.team = team1
             } else {
-                console.log('2nd match check fail');
+                console.log("team2", match.team2_child1_id, match.team2_child2_id)
+                const team2 = await getCustomRepository(MatchInfoRepository, connection())
+                    .findMatchInfo(match.team2_child1_id, match.team2_child2_id, cohort.week)
+                thisMatch.team = team2
+                console.log(team2)
             }
+            if ((match.team1_child1_id === id) || (match.team1_child2_id == id ) ){
+                console.log("team1", match.team1_child1_id, match.team1_child2_id)
+                const team1 = await getCustomRepository(MatchInfoRepository, connection())
+                    .findMatchInfo(match.team1_child1_id, match.team1_child2_id, cohort.week)
+                console.log(team1)
+                thisMatch.team = team1
+            } else {
+                console.log("team2", match.team2_child1_id, match.team2_child2_id)
+                const team2 = await getCustomRepository(MatchInfoRepository, connection())
+                    .findMatchInfo(match.team2_child1_id, match.team2_child2_id, cohort.week)
+                thisMatch.team = team2
+                console.log(team2)
         }
-
-        // if (match.team1_child1_id === id || match.team1_child2_id == id) {
-        //     const team1 = await getCustomRepository(
-        //         MatchInfoRepository,
-        //         connection()
-        //     ).findMatchInfo(match.team1_child1_id, match.team1_child2_id, cohort.week);
-        //     thisMatch.team = team1;
-        // } else if (match.team2_child1_id === id || match.team2_child2_id == id) {
-        //     const team2 = await getCustomRepository(
-        //         MatchInfoRepository,
-        //         connection()
-        //     ).findMatchInfo(match.team2_child1_id, match.team2_child2_id, cohort.week);
-        //     thisMatch.team = team2;
-        // } else {
-        //     console.log('2nd match check fail');
-        // }
 
         return res.status(200).json({
             thisMatch,
