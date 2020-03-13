@@ -52,6 +52,7 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
             };
         }
         let competition;
+
         if (Object.keys(submissionObject).length > 1) {
             const competitions = await match(submissionObject);
             competition = JSON.parse(competitions[0].split(`'`).join(`"`));
