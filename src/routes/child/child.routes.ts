@@ -12,8 +12,10 @@ const childRoutes = Router();
 
 childRoutes.get('/me', Only(Child), async (req, res) => {
     try {
-        const { parent, submissions, ...me } = req.user as Child;
-        res.json({ me });
+        // pass 'progress' into logic that needs to determine {}
+        // hui - 3.14.20
+        const { progress, parent, submissions, ...me } = req.user as Child;
+        res.json({ me, progress });
     } catch (err) {
         res.status(500).json({
             message: 'Hmm... That did not work, please try again later.',

@@ -10,7 +10,7 @@ class Progress implements Activities {
     writing: boolean;
 
     @Column({ default: false })
-    submission: boolean;
+    drawing: boolean;
 
     // @Column({ default: false })
     // teamReview: boolean;
