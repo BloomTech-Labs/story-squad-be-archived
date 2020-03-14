@@ -12,14 +12,14 @@ class Progress implements Activities {
     @Column({ default: false })
     drawing: boolean;
 
-    // @Column({ default: false })
-    // teamReview: boolean;
+    @Column({ default: false })
+    teamReview: boolean;
 
-    // @Column({ default: false })
-    // randomReview: boolean;
+    @Column({ default: false })
+    randomReview: boolean;
 
-    // @Column({ default: false })
-    // results: boolean;
+    @Column({ default: false })
+    results: boolean;
 }
 
 export { Progress };

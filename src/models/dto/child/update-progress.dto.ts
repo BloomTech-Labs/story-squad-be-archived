@@ -13,7 +13,7 @@ export class UpdateProgressDTO implements Partial<Activities> {
 
     @IsBoolean()
     @IsOptional()
-    submission?: boolean;
+    drawing?: boolean;
 
     @IsBoolean()
     @IsOptional()
