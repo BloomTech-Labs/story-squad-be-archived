@@ -10,7 +10,7 @@ class DueDates implements Activities {
     writing: Date;
 
     @Column()
-    submission: Date;
+    drawing: Date;
 
     // @Column()
     // teamReview: Date;
