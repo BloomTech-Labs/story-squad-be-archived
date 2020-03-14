@@ -50,22 +50,6 @@ battlesRoutes.get('/battles', Only(Child), async (req, res) => {
             }
         }
 
-        // if (match.team1_child1_id === id || match.team1_child2_id == id) {
-        //     const team1 = await getCustomRepository(
-        //         MatchInfoRepository,
-        //         connection()
-        //     ).findMatchInfo(match.team1_child1_id, match.team1_child2_id, cohort.week);
-        //     thisMatch.team = team1;
-        // } else if (match.team2_child1_id === id || match.team2_child2_id == id) {
-        //     const team2 = await getCustomRepository(
-        //         MatchInfoRepository,
-        //         connection()
-        //     ).findMatchInfo(match.team2_child1_id, match.team2_child2_id, cohort.week);
-        //     thisMatch.team = team2;
-        // } else {
-        //     console.log('2nd match check fail');
-        // }
-
         return res.status(200).json({
             thisMatch,
         });
