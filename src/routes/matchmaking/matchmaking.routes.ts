@@ -78,6 +78,7 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
                 }
             }
             // await match-ups and responds to FE with match-ups 3.12.20
+            // first call to assign match-ups works, but this next await doesn't fully resolve for some reason and generates an empty array
             const matches = await getRepository(Matches, connection()).find({
                 where: { week: req.params.week },
             });
