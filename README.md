@@ -1,5 +1,4 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/027a84a375d801c1cbd9/maintainability)](https://codeclimate.com/github/Lambda-School-Labs/story-squad-be/maintainability)
-
 [![Test Coverage](https://api.codeclimate.com/v1/badges/027a84a375d801c1cbd9/test_coverage)](https://codeclimate.com/github/Lambda-School-Labs/story-squad-be/test_coverage)
 
 # API Documentation
@@ -8,7 +7,7 @@
 
 ## Getting started
 
-Check the wiki for a [![setup guide](https://github.com/Lambda-School-Labs/story-squad-be/wiki/Setup-Guide)]
+Check the wiki for a [setup guide](https://github.com/Lambda-School-Labs/story-squad-be/wiki/Setup-Guide)
 
 ### Backend framework
 
