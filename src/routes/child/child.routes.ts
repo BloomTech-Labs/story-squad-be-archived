@@ -15,7 +15,6 @@ childRoutes.get('/me', Only(Child), async (req, res) => {
         // pass 'progress' into logic that needs to determine {}
         // hui - 3.14.20
         const { parent, submissions, ...me } = req.user as Child;
-        console.log(me.progress);
         res.json({ me });
     } catch (err) {
         res.status(500).json({
