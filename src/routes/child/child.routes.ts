@@ -14,8 +14,9 @@ childRoutes.get('/me', Only(Child), async (req, res) => {
     try {
         // pass 'progress' into logic that needs to determine {}
         // hui - 3.14.20
-        const { progress, parent, submissions, ...me } = req.user as Child;
-        res.json({ me, progress });
+        const { parent, submissions, ...me } = req.user as Child;
+        console.log(me.progress);
+        res.json({ me });
     } catch (err) {
         res.status(500).json({
             message: 'Hmm... That did not work, please try again later.',
@@ -48,8 +49,10 @@ childRoutes.get('/cohort', Only(Child), async (req, res) => {
 childRoutes.get('/progress', Only(Child), async (req, res) => {
     try {
         const { progress } = req.user as Child;
+        console.log(progress);
         res.json({ progress });
     } catch (err) {
+        console.log(err.toString());
         res.status(500).json({
             message: 'Hmm... That did not work, please try again later.',
         });
@@ -58,6 +61,7 @@ childRoutes.get('/progress', Only(Child), async (req, res) => {
 
 childRoutes.post('/progress', Only(Child), async (req, res) => {
     try {
+        console.log('post route');
         const child = req.user as Child;
         const { progress } = await getRepository(Child, connection()).save({
             ...child,

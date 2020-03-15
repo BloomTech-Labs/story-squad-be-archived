@@ -2,7 +2,7 @@ import { Column } from 'typeorm';
 
 import { Activities } from '../../models';
 
-class Progress implements Activities {
+class Progress {
     @Column({ default: false })
     reading: boolean;
 
