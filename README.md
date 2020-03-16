@@ -1,21 +1,13 @@
+[![Maintainability](https://api.codeclimate.com/v1/badges/027a84a375d801c1cbd9/maintainability)](https://codeclimate.com/github/Lambda-School-Labs/story-squad-be/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/027a84a375d801c1cbd9/test_coverage)](https://codeclimate.com/github/Lambda-School-Labs/story-squad-be/test_coverage)  
+
 # API Documentation
 
 #### Backend deployed at [heroku](https://story-squad.herokuapp.com/) <br>
 
 ## Getting started
 
-To get the server running locally:
-
--   Clone this repo
--   **yarn install --production=false** to install all required dependencies (dev environment specified for @types)
--   **pipenv run yarn dev** to start the local server within .py env required for scripts
--   **yarn dev** to start the local server
--   **yarn build** to build production version
--   **yarn start** to start built production version
--   **yarn test** to start server using testing environment
--   **yarn typorm** to use typeorm CLI commands on a staging or production environment
--   **yarn typeorm-dev** to use typeorm CLI commands on the development environment
--   **yarn connection** to output connection information for a staging or production database
+Check the wiki for a [setup guide](https://github.com/Lambda-School-Labs/story-squad-be/wiki/Setup-Guide)
 
 ### Backend framework
 
