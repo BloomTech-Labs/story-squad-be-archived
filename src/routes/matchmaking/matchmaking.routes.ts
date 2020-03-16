@@ -93,21 +93,27 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
     }
 });
 
-
-matchMakingRoutes.delete("/:week", Only(Admin), async (req, res)=> {
+matchMakingRoutes.delete('/:week', Only(Admin), async (req, res) => {
     try {
-        const matchesToDelete = await getRepository(Matches, connection()).find({ select: ["id"], where : { week: parseInt(req.params.week) }})
-        matchesToDelete.map(async (match) => {
-            await getRepository(Matches, connection()).delete({ id: match.id })
-        })
-        res.json(200).json({ message: `All matches in week ${req.params.week} have been deleted` })
-    }
-    catch (err){
-        res.status(500).json({ err })
-    }
-})
+        const matchesToDelete = await getRepository(Matches, connection()).find({
+            select: ['id'],
+            where: { week: parseInt(req.params.week) },
+        });
 
-
+        if (matchesToDelete.length) {
+            for (let match of matchesToDelete) {
+                await getRepository(Matches, connection()).delete({ id: match.id });
+            }
+            return res
+                .status(200)
+                .json({ message: `All matches in week ${req.params.week} have been deleted` });
+        } else {
+            return res.json({ message: `No matches in week ${req.params.week}` });
+        }
+    } catch (err) {
+        return res.status(500).json({ err: err.toString() });
+    }
+});
 
 function match(data: Matchmaking) {
     return runScript('./src/util/scripts/matchmaking.py', data, (out: any) =>
@@ -166,9 +172,6 @@ async function checkTeams(value) {
 
     return existingMatch;
 }
-
-
-
 
 async function persistMatch(matchUp, week) {
     await getRepository(Matches, connection()).save({
