@@ -57,6 +57,7 @@ authRoutes.use('/login', ValidateHash(), async (req, res) => {
         res.json({ token });
     } catch (err) {
         res.status(500).json({
+            err: err.toString(),
             message: 'Hmm... That did not work, please try again later.',
         });
     }
