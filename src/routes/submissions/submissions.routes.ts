@@ -142,32 +142,11 @@ submissionRoutes.delete('/:week', Only(Child), async (req, res) => {
         const { submissions } = req.user as Child;
         const submission = submissions.find(({ week }) => week === reqWeek);
         if (!submission) throw Error('404');
-
+        //how is it only deleting from 1 user
         const { affected } = await getRepository(Submissions, connection()).delete({
             week: reqWeek,
         });
         if (!affected) throw Error();
-        return res.json({ submission });
-    } catch (err) {
-        if (err.toString() === 'Error: 404')
-            return res.status(404).json({ message: `Submission not found` });
-        else res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
-    }
-});
-
-submissionRoutes.delete('/drawing/:week', Only(Child), async (req, res) => {
-    try {
-        const reqWeek = parseInt(req.params.week);
-
-        const { submissions } = req.user as Child;
-        const submission = submissions.find(({ week }) => week === reqWeek);
-        if (!submission) throw Error('404');
-
-        const { affected } = await getRepository(Submissions, connection()).delete({
-            week: reqWeek,
-        });
-        if (!affected) throw Error();
-
         return res.json({ submission });
     } catch (err) {
         if (err.toString() === 'Error: 404')

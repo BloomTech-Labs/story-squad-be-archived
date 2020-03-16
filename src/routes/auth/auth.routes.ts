@@ -28,11 +28,17 @@ authRoutes.post('/register', Hash(), async (req, res) => {
             stripeID,
             name,
         };
+        try {
+            const { id } = await getRepository(Parent, connection()).save(newUser);
+            const token = sign({ parentID: id }, process.env.SECRET_SIGNATURE || 'secret');
 
-        const { id } = await getRepository(Parent, connection()).save(newUser);
-        const token = sign({ parentID: id }, process.env.SECRET_SIGNATURE || 'secret');
-
-        res.status(201).json({ token });
+            res.status(201).json({ token });
+        } catch (err) {
+            res.status(400).json({
+                err: err.toString(),
+                message: 'Account email already registered in system...',
+            });
+        }
     } catch (err) {
         if (err.toString().includes('401'))
             res.status(401).json({
