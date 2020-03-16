@@ -29,9 +29,14 @@ submissionRoutes.get('/', Only(Child), async (req, res) => {
 
 submissionRoutes.get('/:week', Only(Child), async (req, res) => {
     try {
+        // test to see what this is passing back to fe
+        // check if it's passing back both submissions
+        // check if it's passing back the right one when there's only one
+        // hui 3.15.20
         const { submissions } = req.user as Child;
         const submission = submissions.find(({ week }) => week === parseInt(req.params.week));
         if (!submission) throw Error('404');
+        console.log('submission', submission);
         return res.json({ submission });
     } catch (err) {
         if (err.toString() === 'Error: 404')
@@ -131,6 +136,26 @@ submissionRoutes.post('/', Only(Child), async (req, res) => {
 });
 
 submissionRoutes.delete('/:week', Only(Child), async (req, res) => {
+    try {
+        const reqWeek = parseInt(req.params.week);
+
+        const { submissions } = req.user as Child;
+        const submission = submissions.find(({ week }) => week === reqWeek);
+        if (!submission) throw Error('404');
+
+        const { affected } = await getRepository(Submissions, connection()).delete({
+            week: reqWeek,
+        });
+        if (!affected) throw Error();
+        return res.json({ submission });
+    } catch (err) {
+        if (err.toString() === 'Error: 404')
+            return res.status(404).json({ message: `Submission not found` });
+        else res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
+    }
+});
+
+submissionRoutes.delete('/drawing/:week', Only(Child), async (req, res) => {
     try {
         const reqWeek = parseInt(req.params.week);
 
