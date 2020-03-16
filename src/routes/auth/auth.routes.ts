@@ -28,20 +28,27 @@ authRoutes.post('/register', Hash(), async (req, res) => {
             stripeID,
             name,
         };
+        try {
+            const { id } = await getRepository(Parent, connection()).save(newUser);
+            const token = sign({ parentID: id }, process.env.SECRET_SIGNATURE || 'secret');
 
-        const { id } = await getRepository(Parent, connection()).save(newUser);
-        const token = sign({ parentID: id }, process.env.SECRET_SIGNATURE || 'secret');
-
-        res.status(201).json({ token });
+            res.status(201).json({ token });
+        } catch (err) {
+            console.log(err.toString());
+            res.status(400).json({
+                err: err.toString(),
+                message: 'Account email already registered in system...',
+            });
+        }
     } catch (err) {
         if (err.toString().includes('401'))
             res.status(401).json({
                 message: 'Accepting Terms of Service is required...',
             });
-        else
-            res.status(500).json({
-                message: 'Hmm... That did not work, please try again later.',
-            });
+        else console.log(err.toString());
+        res.status(500).json({
+            message: 'Hmm... That did not work, please try again later.',
+        });
     }
 });
 
@@ -50,7 +57,9 @@ authRoutes.use('/login', ValidateHash(), async (req, res) => {
         const token = sign({ parentID: req.user.id }, process.env.SECRET_SIGNATURE || 'secret');
         res.json({ token });
     } catch (err) {
+        console.log(err.toString());
         res.status(500).json({
+            err: err.toString(),
             message: 'Hmm... That did not work, please try again later.',
         });
     }
