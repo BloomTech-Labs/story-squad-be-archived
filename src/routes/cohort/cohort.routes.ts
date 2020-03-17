@@ -88,7 +88,9 @@ cohortRoutes.delete('/list/:id', Only(Admin), async (req, res) => {
         if (!affected) throw new Error();
         res.json({ message: `Successfully deleted cohort ${id}` });
     } catch (err) {
+        console.log(err.toString());
         res.status(500).json({
+            err: err.toString(),
             message: 'Hmm... That did not work, please try again later.',
         });
     }
