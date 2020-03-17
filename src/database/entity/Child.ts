@@ -29,12 +29,16 @@ class Child {
     @Column((type) => Progress)
     progress: Progress;
 
+    @Column()
+    parentId: number;
     @ManyToOne(
         (type) => Parent,
         (parent) => parent.children
     )
     parent: Parent;
 
+    @Column()
+    cohortId: number;
     @ManyToOne(
         (type) => Cohort,
         (cohort) => cohort.children

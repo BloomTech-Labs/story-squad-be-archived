@@ -45,12 +45,13 @@ cohortRoutes.post('/list', Only(Admin), async (req, res) => {
             dueDates: {
                 reading: new Date(),
                 writing: new Date(),
-                submission: new Date(),
+                drawing: new Date(),
             },
         });
 
         res.status(201).json({ cohort });
     } catch (err) {
+        console.log(err.toString());
         res.status(500).json(err.toString());
     }
 });
