@@ -153,8 +153,8 @@ Check the wiki for a [setup guide](https://github.com/Lambda-School-Labs/story-s
   avatar: STRING
   preferences: Preferences { dyslexia: boolean }
   progress: Progress
-  parent: ManyToOne(Parent)
-  cohort: ManyToOne(Cohort)
+  parentId: ManyToOne(Parent)
+  cohortId: ManyToOne(Cohort)
   submissions: OneToMany(ARRAY[Submissions])
 }
 ```
@@ -197,7 +197,7 @@ Check the wiki for a [setup guide](https://github.com/Lambda-School-Labs/story-s
 ```
 {
   id: NUM
-  child: ManyToOne(Child)
+  childId: ManyToOne(Child)
   week: NUM
   story: Pages{ page1: STRING, page2: STRING, page3: STRING, page4: STRING, page5: STRING }
   storyText: STRING
