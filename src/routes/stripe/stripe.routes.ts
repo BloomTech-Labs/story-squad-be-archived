@@ -79,15 +79,29 @@ stripeRoutes.post('/subscribe', Only(Parent), async (req, res) => {
         const { childID, plan } = req.subscribe;
 
         const childToUpdate = user.children.find((child) => child.id === childID);
+
         const child = { ...childToUpdate, subscription: true };
 
-        await stripe.subscriptions.create({
-            customer: user.stripeID,
-            items: [{ plan }],
-            expand: ['latest_invoice.payment_intent'],
-        });
+        try {
+            await stripe.subscriptions.create({
+                customer: user.stripeID,
+                items: [{ plan }],
+                expand: ['latest_invoice.payment_intent'],
+            });
+        } catch (err) {
+            console.log('failed to create stripe subscription');
+            console.log(err.toString());
+            res.json({ err: err.toString() });
+        }
 
-        await getRepository(Child, connection()).update(childID, child);
+        try {
+            await getRepository(Child, connection()).update(childID, child);
+        } catch (err) {
+            console.log('failed to update child entity');
+            console.log(err.toString());
+            res.json({ err: err.toString() });
+        }
+
         res.status(201).json({ message: 'Successfully subscribed' });
     } catch (err) {
         res.status(500).json({ message: 'Could not process subscription' });
