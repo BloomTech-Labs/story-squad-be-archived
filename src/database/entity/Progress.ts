@@ -18,8 +18,8 @@ class Progress {
     @Column({ default: false })
     randomReview: boolean;
 
-    @Column({ default: false })
-    results: boolean;
+    // @Column({ default: false })
+    // results: boolean;
 }
 
 export { Progress };
