@@ -8,6 +8,7 @@ class Submissions {
     @PrimaryGeneratedColumn()
     id: number;
     //making a change so github notices me
+
     @Column()
     childId: number;
     @ManyToOne(
@@ -15,7 +16,7 @@ class Submissions {
         (child) => child.submissions,
         { onDelete: 'CASCADE' }
     )
-    @JoinColumn({ name: 'childId' })
+    @JoinColumn()
     child: Child;
 
     @Column({ nullable: false })

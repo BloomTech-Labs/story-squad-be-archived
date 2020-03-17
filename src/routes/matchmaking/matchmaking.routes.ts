@@ -22,16 +22,38 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
     }
 
     try {
-        const submissions = await getRepository(Submissions, connection()).find({
-            where: { week: req.params.week, type: 'story' },
-        });
+        let submissions;
+        try {
+            submissions = await getRepository(Submissions, connection()).find({
+                where: { week: req.params.week, type: 'story' },
+            });
+        } catch (err) {
+            console.log(err.toString());
+            return res
+                .status(500)
+                .json({ err: err.toString(), message: 'Could not fetch submissions' });
+        }
 
         let submissionObject = {};
 
         for (const submission of submissions) {
-            const { grade } = await getRepository(Child, connection()).findOne({
-                where: { id: submission.childId },
-            });
+            let childusMinimus;
+            try {
+                // const submishun = await getRepository(Submissions, connection()).find({
+                //     where: { id: submission.id }
+                // })
+                childusMinimus = await getRepository(Child, connection()).find({
+                    where: { id: submission.childId },
+                });
+            } catch (err) {
+                console.log(err.toString());
+                return res.status(500).json({
+                    err: err.toString(),
+                    message: 'Could not fetch child within matched submissions',
+                });
+            }
+
+            const { grade } = childusMinimus;
 
             submissionObject = {
                 ...submissionObject,

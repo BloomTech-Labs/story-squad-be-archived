@@ -172,14 +172,20 @@ childRoutes.get('/list/:id', Only(Parent), async (req, res) => {
 });
 
 childRoutes.put('/list/:id', Only(Parent), async (req, res) => {
+    1;
     try {
         const children = (req.user as Parent).children;
         const childToUpdate = children.find((child) => child.id === Number(req.params.id));
         if (!childToUpdate) throw new Error('404');
 
         const child = { ...childToUpdate, ...req.childUpdate };
-        const { affected } = await getRepository(Child, connection()).update(req.params.id, child);
-        if (!affected) throw new Error();
+
+        try {
+            await getRepository(Child, connection()).update(req.params.id, child);
+        } catch (err) {
+            console.log('could not update child', err.toString());
+            res.json({ err: err.toString(), message: 'Could not update child' });
+        }
 
         res.json({ child });
     } catch (err) {
