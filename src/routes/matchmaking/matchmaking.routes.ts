@@ -39,9 +39,6 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
         for (const submission of submissions) {
             let childusMinimus;
             try {
-                // const submishun = await getRepository(Submissions, connection()).find({
-                //     where: { id: submission.id }
-                // })
                 childusMinimus = await getRepository(Child, connection()).find({
                     where: { id: submission.childId },
                 });

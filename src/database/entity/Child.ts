@@ -4,13 +4,14 @@ import { Preferences } from './Preferences';
 import { Progress } from './Progress';
 import { Parent } from './Parent';
 import { Cohort } from './Cohort';
-import { Submissions } from './Submissions';
+import { Illustrations } from './Illustrations';
+import { Stories } from './Stories';
 
 @Entity()
 class Child {
     @PrimaryGeneratedColumn()
     id: number;
-    //making a change so github notices me
+
     @Column()
     username: string;
 
@@ -42,11 +43,16 @@ class Child {
     cohort: Cohort;
 
     @OneToMany(
-        (type) => Submissions,
-        (submissions) => submissions.child
+        (type) => Illustrations,
+        (illustrations) => illustrations.child
     )
-    submissions: Submissions[];
+    illustrations: Illustrations[];
+
+    @OneToMany(
+        (type) => Stories,
+        (stories) => stories.child
+    )
+    stories: Stories[];
 }
 
 export { Child };
-// what about now

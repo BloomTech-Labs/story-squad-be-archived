@@ -11,28 +11,24 @@ import { runScript } from '../../util/scripts/scripting';
 import { attemptJSONParse, onlyTranscription } from '../../util/utils';
 import { connection } from '../../util/typeorm-connection';
 import { Only } from '../../middleware';
-import { Child, Submissions } from '../../database/entity';
+import { Child, Illustrations, Stories } from '../../database/entity';
 import { Pages } from '../../database/entity/Pages';
 
 const submissionRoutes = Router();
-//test
-submissionRoutes.get('/', Only(Child), async (req, res) => {
-    try {
-        const { submissions } = req.user as Child;
-        return res.json({ submissions });
-    } catch (err) {
-        return res
-            .status(500)
-            .json({ message: 'Hmm... That did not work, please try again later.' });
-    }
-});
+
+// submissionRoutes.get('/', Only(Child), async (req, res) => {
+//     try {
+//         const { submissions } = req.user as Child;
+//         return res.json({ submissions });
+//     } catch (err) {
+//         return res
+//             .status(500)
+//             .json({ message: 'Hmm... That did not work, please try again later.' });
+//     }
+// });
 
 submissionRoutes.get('/:week', Only(Child), async (req, res) => {
     try {
-        // test to see what this is passing back to fe
-        // check if it's passing back both submissions
-        // check if it's passing back the right one when there's only one
-        // hui 3.15.20
         const { submissions } = req.user as Child;
         const submission = submissions.find(({ week }) => week === parseInt(req.params.week));
         if (!submission) throw Error('404');
@@ -142,7 +138,8 @@ submissionRoutes.delete('/illustration/:week', Only(Child), async (req, res) => 
     try {
         const reqWeek = parseInt(req.params.week);
 
-        const { submissions } = req.user as Child;
+        const { submissions, username } = req.user as Child;
+        console.log(username);
         const submission = submissions.find(
             ({ week, type }) => week === reqWeek && type === 'illustration'
         );
@@ -163,20 +160,34 @@ submissionRoutes.delete('/illustration/:week', Only(Child), async (req, res) => 
 });
 
 submissionRoutes.delete('/story/:week', Only(Child), async (req, res) => {
+    // need to uncheck progress upon delete
     try {
         const reqWeek = parseInt(req.params.week);
 
-        const { submissions } = req.user as Child;
-        const submission = submissions.find(
-            ({ week, type }) => week === reqWeek && type === 'story'
-        );
-        if (!submission) throw Error('404');
-
-        const { affected } = await getRepository(Submissions, connection()).delete({
-            week: reqWeek,
-            type: 'story',
+        const { submissions, username } = req.user as Child;
+        console.log(submissions);
+        const weekSubmissions = submissions.filter((submission) => {
+            console.log('submission', submission);
+            return reqWeek === submission.week;
         });
-        if (!affected) throw Error();
+        console.log('weekSubmissions', weekSubmissions);
+
+        const submission = weekSubmissions.find(({ type }) => type === 'story');
+        console.log('submission', submission);
+        if (!submission) throw Error('404');
+        try {
+            const { affected } = await getRepository(Submissions, connection()).delete({
+                week: reqWeek,
+                type: 'story',
+            });
+        } catch (err) {
+            console.log(err.toString());
+            return res.status(500).json({
+                err: err.toString(),
+                message: 'Could not resolve delete query',
+            });
+        }
+
         return res.json({ submission });
     } catch (err) {
         if (err.toString() === 'Error: 404') {
