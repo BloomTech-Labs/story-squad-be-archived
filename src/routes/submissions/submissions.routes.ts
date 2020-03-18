@@ -36,7 +36,6 @@ submissionRoutes.get('/:week', Only(Child), async (req, res) => {
         const { submissions } = req.user as Child;
         const submission = submissions.find(({ week }) => week === parseInt(req.params.week));
         if (!submission) throw Error('404');
-        console.log('submission', submission);
         return res.json({ submission });
     } catch (err) {
         if (err.toString() === 'Error: 404')
@@ -181,9 +180,13 @@ submissionRoutes.delete('/story/:week', Only(Child), async (req, res) => {
         if (!affected) throw Error();
         return res.json({ submission });
     } catch (err) {
-        if (err.toString() === 'Error: 404')
+        if (err.toString() === 'Error: 404') {
             return res.status(404).json({ message: `Story not found` });
-        else res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
+        } else {
+            return res
+                .status(500)
+                .json({ message: 'Hmm... That did not work, please try again later.' });
+        }
     }
 });
 
