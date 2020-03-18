@@ -49,6 +49,7 @@ submissionRoutes.get('/:week', Only(Child), async (req, res) => {
 });
 
 submissionRoutes.post('/', Only(Child), async (req, res) => {
+    console.log(req.body, 'body');
     try {
         const { storyText, illustration, story } = res.locals.body as Submissions;
 
@@ -67,6 +68,10 @@ submissionRoutes.post('/', Only(Child), async (req, res) => {
         let transcribed: Transcription | any;
         let readabilityStats: Readability | Transcription | WeekMatches;
         let type: 'story' | 'illustration';
+
+        if (storyText) {
+            type = 'story';
+        }
 
         if (!illustration) {
             type = 'story';
@@ -135,22 +140,49 @@ submissionRoutes.post('/', Only(Child), async (req, res) => {
     }
 });
 
-submissionRoutes.delete('/:week', Only(Child), async (req, res) => {
+submissionRoutes.delete('/illustration/:week', Only(Child), async (req, res) => {
     try {
         const reqWeek = parseInt(req.params.week);
 
         const { submissions } = req.user as Child;
-        const submission = submissions.find(({ week }) => week === reqWeek);
+        const submission = submissions.find(
+            ({ week, type }) => week === reqWeek && type === 'illustration'
+        );
         if (!submission) throw Error('404');
         //how is it only deleting from 1 user
         const { affected } = await getRepository(Submissions, connection()).delete({
+            childId: req.user.id,
             week: reqWeek,
+            type: 'illustration',
         });
         if (!affected) throw Error();
         return res.json({ submission });
     } catch (err) {
         if (err.toString() === 'Error: 404')
-            return res.status(404).json({ message: `Submission not found` });
+            return res.status(404).json({ message: `Illustration not found` });
+        else res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
+    }
+});
+
+submissionRoutes.delete('/story/:week', Only(Child), async (req, res) => {
+    try {
+        const reqWeek = parseInt(req.params.week);
+
+        const { submissions } = req.user as Child;
+        const submission = submissions.find(
+            ({ week, type }) => week === reqWeek && type === 'story'
+        );
+        if (!submission) throw Error('404');
+
+        const { affected } = await getRepository(Submissions, connection()).delete({
+            week: reqWeek,
+            type: 'story',
+        });
+        if (!affected) throw Error();
+        return res.json({ submission });
+    } catch (err) {
+        if (err.toString() === 'Error: 404')
+            return res.status(404).json({ message: `Story not found` });
         else res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
     }
 });
