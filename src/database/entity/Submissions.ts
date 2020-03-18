@@ -7,7 +7,6 @@ import { Pages, Transcribed_Pages } from './Pages';
 class Submissions {
     @PrimaryGeneratedColumn()
     id: number;
-    //making a change so github notices me
 
     @Column()
     childId: number;
