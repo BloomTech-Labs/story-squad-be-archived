@@ -6,7 +6,7 @@ import { matchmaking2 } from './matchmaking2';
 import { attemptJSONParse } from '../../util/utils';
 
 import { Only } from '../../middleware';
-import { Admin, Matches, Submissions, Child } from '../../database/entity';
+import { Admin, Matches, Stories, Illustrations, Child } from '../../database/entity';
 import { Matchmaking, WeekMatches } from '../../models';
 import { connection } from '../../util/typeorm-connection';
 
@@ -25,7 +25,7 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
         let submissions;
         try {
             submissions = await getRepository(Submissions, connection()).find({
-                where: { week: req.params.week, type: 'story' },
+                where: { week: req.params.week },
             });
         } catch (err) {
             console.log(err.toString());
