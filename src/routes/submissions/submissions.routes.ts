@@ -36,7 +36,7 @@ submissionRoutes.get('/:week', Only(Child), async (req, res) => {
         const { submissions } = req.user as Child;
         const submission = submissions.find(({ week }) => week === parseInt(req.params.week));
         if (!submission) throw Error('404');
-        console.log('submission', submission);
+
         return res.json({ submission });
     } catch (err) {
         if (err.toString() === 'Error: 404')
