@@ -48,7 +48,6 @@ submissionRoutes.get('/:week', Only(Child), async (req, res) => {
 });
 
 submissionRoutes.post('/', Only(Child), async (req, res) => {
-    console.log(req.body, 'body');
     try {
         const { storyText, illustration, story } = res.locals.body as Submissions;
 
@@ -190,23 +189,16 @@ submissionRoutes.delete('/story/:week', Only(Child), async (req, res) => {
     }
 });
 
-// Wrapper function that runs a specific script
-// Parameters<typeof runScript>[1] is used to specify the second parameter type of `runScript`
 function transcribe(data: Transcribable) {
-    return runScript(
-        './src/util/scripts/transcription.py', // Specifies the script to use, the path is relative to the directory the application is started from
-        data, // The data to pass into stdin of the script
-        (out: string[]) => out.map(attemptJSONParse).find(onlyTranscription) // A function to take the stdout of the script and find the result
+    return runScript('./src/util/scripts/transcription.py', data, (out: string[]) =>
+        out.map(attemptJSONParse).find(onlyTranscription)
     );
 }
 
 function readable(story: Readable) {
-    return runScript(
-        './src/util/scripts/readability.py', // Specifies the script to use, the path is relative to the directory the application is started from
-        story, // The data to pass into stdin of the script
-        (out: any) => out.map(attemptJSONParse) // A function to take the stdout of the script
+    return runScript('./src/util/scripts/readability.py', story, (out: any) =>
+        out.map(attemptJSONParse)
     );
 }
 
 export { submissionRoutes };
-//test
