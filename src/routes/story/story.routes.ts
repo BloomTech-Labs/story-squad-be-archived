@@ -115,17 +115,17 @@ storyRoutes.post('/', Only(Child), async (req, res) => {
     }
 });
 
-storyRoutes.delete('/story/:week', Only(Child), async (req, res) => {
+storyRoutes.delete('/:week', Only(Child), async (req, res) => {
     // need to uncheck progress upon delete
     try {
         const reqWeek = parseInt(req.params.week);
 
         const { stories } = req.user as Child;
-        const submission = stories.find((submission) => {
+        const story = stories.find((submission) => {
             return reqWeek === submission.week;
         });
 
-        if (!submission) throw Error('404');
+        if (!story) throw Error('404');
         try {
             await getRepository(Stories, connection()).delete({
                 week: reqWeek,
@@ -138,7 +138,7 @@ storyRoutes.delete('/story/:week', Only(Child), async (req, res) => {
             });
         }
 
-        return res.json({ submission });
+        return res.json({ story });
     } catch (err) {
         if (err.toString() === 'Error: 404') {
             return res.status(404).json({ message: `Story not found` });

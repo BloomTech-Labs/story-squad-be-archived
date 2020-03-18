@@ -67,59 +67,23 @@ illustrationRoutes.post('/', Only(Child), async (req, res) => {
     }
 });
 
-illustrationRoutes.delete('/illustration/:week', Only(Child), async (req, res) => {
+illustrationRoutes.delete('/:week', Only(Child), async (req, res) => {
     try {
         const reqWeek = parseInt(req.params.week);
 
-        const { illustrations, username } = req.user as Child;
-        const submission = illustrations.find(({ week }) => week === reqWeek);
-        if (!submission) throw Error('404');
-        //how is it only deleting from 1 user
+        const { illustrations } = req.user as Child;
+        const illustration = illustrations.find(({ week }) => week === reqWeek);
+        if (!illustration) throw Error('404');
         const { affected } = await getRepository(Illustrations, connection()).delete({
             childId: req.user.id,
             week: reqWeek,
         });
         if (!affected) throw Error();
-        return res.json({ submission });
+        return res.json({ illustration });
     } catch (err) {
         if (err.toString() === 'Error: 404')
             return res.status(404).json({ message: `Illustration not found` });
         else res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
-    }
-});
-
-illustrationRoutes.delete('/story/:week', Only(Child), async (req, res) => {
-    // need to uncheck progress upon delete
-    try {
-        const reqWeek = parseInt(req.params.week);
-
-        const { illustrations } = req.user as Child;
-        const illustration = illustrations.find((illustration) => {
-            return reqWeek === illustration.week;
-        });
-
-        if (!illustration) throw Error('404');
-        try {
-            await getRepository(Illustrations, connection()).delete({
-                week: reqWeek,
-            });
-        } catch (err) {
-            console.log(err.toString());
-            return res.status(500).json({
-                err: err.toString(),
-                message: 'Could not resolve delete query',
-            });
-        }
-
-        return res.json({ illustration });
-    } catch (err) {
-        if (err.toString() === 'Error: 404') {
-            return res.status(404).json({ message: `Story not found` });
-        } else {
-            return res
-                .status(500)
-                .json({ message: 'Hmm... That did not work, please try again later.' });
-        }
     }
 });
 

@@ -22,9 +22,9 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
     }
 
     try {
-        let submissions;
+        let illustrations;
         try {
-            submissions = await getRepository(Submissions, connection()).find({
+            illustrations = await getRepository(Illustrations, connection()).find({
                 where: { week: req.params.week },
             });
         } catch (err) {
@@ -36,11 +36,11 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
 
         let submissionObject = {};
 
-        for (const submission of submissions) {
+        for (const illustration of illustrations) {
             let childusMinimus;
             try {
                 childusMinimus = await getRepository(Child, connection()).find({
-                    where: { id: submission.childId },
+                    where: { id: illustration.childId },
                 });
             } catch (err) {
                 console.log(err.toString());
@@ -144,7 +144,7 @@ export { matchMakingRoutes };
 
 async function checkTeams(value) {
     let existingMatch = [];
-    // wrap await check logic within try/catch to resolve an error message 3.12.20
+
     try {
         existingMatch[0] = await getRepository(Matches, connection()).find({
             where: {
