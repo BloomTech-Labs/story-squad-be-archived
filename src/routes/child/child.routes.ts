@@ -187,6 +187,7 @@ childRoutes.put('/list/:id', Only(Parent), async (req, res) => {
             res.json({ err: err.toString(), message: 'Could not update child' });
         }
 
+
         res.json({ child });
     } catch (err) {
         switch (err.toString()) {
