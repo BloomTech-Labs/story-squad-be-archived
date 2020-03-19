@@ -2,6 +2,9 @@ import { Router } from 'express';
 import { getRepository } from 'typeorm';
 import { transcribe, readable } from './storyDSintegration';
 
+import { transformAndValidate } from 'class-transformer-validator';
+import { StoryDTO } from '../../models';
+
 import { Transcription, Readability, WeekMatches } from '../../models/internal/DS';
 import { connection } from '../../util/typeorm-connection';
 import { Only } from '../../middleware';
@@ -29,7 +32,6 @@ storyRoutes.get('/:week', Only(Child), async (req, res) => {
 storyRoutes.post('/', Only(Child), async (req, res) => {
     try {
         const { storyText, story } = res.locals.body as Stories;
-
         const { cohort, stories } = req.user as Child;
         const { week } = cohort;
 
@@ -45,20 +47,30 @@ storyRoutes.post('/', Only(Child), async (req, res) => {
         let transcribed: Transcription | any;
         let readabilityStats: Readability | Transcription | WeekMatches;
 
-        try {
-            transcribed = await transcribe({ images });
-        } catch (err) {
-            console.log(err.toString());
-            res.status(500).json({
-                err: err.toString(),
-                message: 'Could not transcribe story images',
-            });
+        if (!storyText) {
+            try {
+                transcribed = await transcribe({ images });
+            } catch (err) {
+                console.log(err.toString());
+                res.status(500).json({
+                    err: err.toString(),
+                    message: 'Could not transcribe story images',
+                });
+            }
         }
 
         //added WeekMatches as in DS.ts to stop typescript from throwing error
-        readabilityStats = await readable({
-            story: transcribed.images[0],
-        });
+        const storyCont = { images: [storyText] };
+
+        if (!transcribed) console.log('hi');
+        try {
+            readabilityStats = await readable({
+                story: transcribed ? transcribed.images[0] : storyCont,
+            });
+        } catch (err) {
+            console.log(err.toString());
+            return res.json({ err: err.toString(), message: 'Could not determine readability' });
+        }
 
         try {
             const { child, ...stories } = await getRepository(Stories, connection()).save({
@@ -70,7 +82,11 @@ storyRoutes.post('/', Only(Child), async (req, res) => {
                 ...readabilityStats[0],
                 transcribed_text: transcribed
                     ? {
-                          t_page1: transcribed.images[0] ? transcribed.images[0] : '',
+                          t_page1: transcribed.images[0]
+                              ? storyText
+                                  ? storyText
+                                  : transcribed.images[0]
+                              : '',
                           t_page2: transcribed.images[1] ? transcribed.images[1] : '',
                           t_page3: transcribed.images[2] ? transcribed.images[2] : '',
                           t_page4: transcribed.images[3] ? transcribed.images[3] : '',

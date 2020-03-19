@@ -58,7 +58,6 @@ childRoutes.get('/progress', Only(Child), async (req, res) => {
 
 childRoutes.post('/progress', Only(Child), async (req, res) => {
     try {
-        console.log('post route');
         const child = req.user as Child;
         const { progress } = await getRepository(Child, connection()).save({
             ...child,

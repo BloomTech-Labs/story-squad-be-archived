@@ -48,8 +48,9 @@ const Validation: Middleware = () => async (req, res, next) => {
         //         req.body
         //     )) as SubmissionDTO;
 
-        if (req.path === '/storyRoutes' && req.method === 'POST')
+        if (req.path === '/storyRoutes' && req.method === 'POST') {
             res.locals.body = (await transformAndValidate(StoryDTO, req.body)) as StoryDTO;
+        }
 
         if (req.path === '/illustrationRoutes' && req.method === 'POST')
             res.locals.body = (await transformAndValidate(
