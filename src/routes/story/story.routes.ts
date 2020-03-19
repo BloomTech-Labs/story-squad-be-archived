@@ -1,14 +1,8 @@
 import { Router } from 'express';
 import { getRepository } from 'typeorm';
-import {
-    Transcribable,
-    Transcription,
-    Readability,
-    Readable,
-    WeekMatches,
-} from '../../models/internal/DS';
-import { runScript } from '../../util/scripts/scripting';
-import { attemptJSONParse, onlyTranscription } from '../../util/utils';
+import { transcribe, readable } from './storyDSintegration';
+
+import { Transcription, Readability, WeekMatches } from '../../models/internal/DS';
 import { connection } from '../../util/typeorm-connection';
 import { Only } from '../../middleware';
 import { Child, Stories } from '../../database/entity';
@@ -149,17 +143,5 @@ storyRoutes.delete('/:week', Only(Child), async (req, res) => {
         }
     }
 });
-
-function transcribe(data: Transcribable) {
-    return runScript('./src/util/scripts/transcription.py', data, (out: string[]) =>
-        out.map(attemptJSONParse).find(onlyTranscription)
-    );
-}
-
-function readable(story: Readable) {
-    return runScript('./src/util/scripts/readability.py', story, (out: any) =>
-        out.map(attemptJSONParse)
-    );
-}
 
 export { storyRoutes };
