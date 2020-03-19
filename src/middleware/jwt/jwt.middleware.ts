@@ -22,7 +22,7 @@ const CheckJwt: Middleware = () => async (req, res, next) => {
                 break;
             case childID:
                 req.user = await childRepo.findOne(childID, {
-                    relations: ['parent', 'cohort', 'submissions'],
+                    relations: ['parent', 'cohort', 'stories', 'illustrations'],
                 });
                 break;
             case parentID:
