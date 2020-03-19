@@ -6,25 +6,27 @@ import { matchmaking2 } from './matchmaking2';
 import { attemptJSONParse } from '../../util/utils';
 
 import { Only } from '../../middleware';
-import { Admin, Matches, Stories, Illustrations, Child } from '../../database/entity';
+import { Admin, Matches, Stories, Child } from '../../database/entity';
 import { Matchmaking, WeekMatches } from '../../models';
 import { connection } from '../../util/typeorm-connection';
 
 const matchMakingRoutes = Router();
 
 matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
-    const matches = await getRepository(Matches, connection()).find({
+
+    const [ matches ] = await getRepository(Matches, connection()).find({
         where: { week: req.params.week },
     });
-    if (matches[0]) {
+    if (matches) {
         console.log(matches);
         return res.status(200).json({ message: `fetch matches success`, match: matches });
     }
 
+    let stories;
+
     try {
-        let illustrations;
         try {
-            illustrations = await getRepository(Illustrations, connection()).find({
+            stories = await getRepository(Stories, connection()).find({
                 where: { week: req.params.week },
             });
         } catch (err) {
@@ -36,11 +38,11 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
 
         let submissionObject = {};
 
-        for (const illustration of illustrations) {
+        for (const story of (stories)) {
             let childusMinimus;
             try {
                 childusMinimus = await getRepository(Child, connection()).find({
-                    where: { id: illustration.childId },
+                    where: { id: story.childId },
                 });
             } catch (err) {
                 console.log(err.toString());
@@ -54,18 +56,18 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
 
             submissionObject = {
                 ...submissionObject,
-                [submission.childId]: {
-                    flesch_reading_ease: submission.flesch_reading_ease,
-                    smog_index: submission.smog_index,
-                    flesch_kincaid: submission.flesch_kincaid_grade,
-                    coleman_liau_index: submission.coleman_liau_index,
-                    automated_readability_index: submission.automated_readability_index,
-                    dale_chall_readability_score: submission.dale_chall_readability_score,
-                    difficult_words: submission.difficult_words,
-                    linsear_write_formula: submission.linsear_write_formula,
-                    gunning_fog: submission.gunning_fog,
-                    doc_length: submission.doc_length,
-                    quote_count: submission.quote_count,
+                [story.childId]: {
+                    flesch_reading_ease: story.flesch_reading_ease,
+                    smog_index: story.smog_index,
+                    flesch_kincaid: story.flesch_kincaid_grade,
+                    coleman_liau_index: story.coleman_liau_index,
+                    automated_readability_index: story.automated_readability_index,
+                    dale_chall_readability_score: story.dale_chall_readability_score,
+                    difficult_words: story.difficult_words,
+                    linsear_write_formula: story.linsear_write_formula,
+                    gunning_fog: story.gunning_fog,
+                    doc_length: story.doc_length,
+                    quote_count: story.quote_count,
                     grade: grade,
                 },
             };
