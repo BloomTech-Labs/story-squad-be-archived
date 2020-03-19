@@ -18,7 +18,7 @@ storyRoutes.get('/:week', Only(Child), async (req, res) => {
         return res.json({ story });
     } catch (err) {
         if (err.toString() === 'Error: 404')
-            return res.status(404).json({ message: `Submission not found` });
+            return res.status(404).json({ message: `Story not found` });
         else
             return res
                 .status(500)
@@ -60,21 +60,6 @@ storyRoutes.post('/', Only(Child), async (req, res) => {
             story: transcribed.images[0],
         });
 
-        readabilityStats = {
-            flesch_reading_ease: NaN,
-            smog_index: NaN,
-            flesch_kincaid_grade: NaN,
-            coleman_liau_index: NaN,
-            automated_readability_index: NaN,
-            dale_chall_readability_score: NaN,
-            difficult_words: NaN,
-            linsear_write_formula: NaN,
-            gunning_fog: NaN,
-            consolidated_score: 'n/a',
-            doc_length: NaN,
-            quote_count: NaN,
-        };
-
         try {
             const { child, ...stories } = await getRepository(Stories, connection()).save({
                 week,
@@ -110,7 +95,7 @@ storyRoutes.post('/', Only(Child), async (req, res) => {
 });
 
 storyRoutes.delete('/:week', Only(Child), async (req, res) => {
-    // need to uncheck progress upon delete
+    // do I need to uncheck progress on this end upon delete? Or does this happen from a fe req? - 3.18.20
     try {
         const reqWeek = parseInt(req.params.week);
 
