@@ -65,7 +65,7 @@ storyRoutes.post('/', Only(Child), async (req, res) => {
         if (!transcribed) console.log('hi');
         try {
             readabilityStats = await readable({
-                story: transcribed ? transcribed.images[0] : storyCont,
+                story: transcribed ? transcribed.images[0] : storyText,
             });
         } catch (err) {
             console.log(err.toString());
