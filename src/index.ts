@@ -11,7 +11,8 @@ import {
     stripeRoutes,
     canonRoutes,
     adminRoutes,
-    submissionRoutes,
+    storyRoutes,
+    illustrationRoutes,
     cohortRoutes,
     matchMakingRoutes,
     battlesRoutes,
@@ -38,9 +39,11 @@ const main = async () => {
         app.use('/children', CheckJwt(), childRoutes);
         app.use('/parents', CheckJwt(), parentRoutes);
         app.use('/payment', CheckJwt(), UpdateStripeRecords(), stripeRoutes);
-        app.use('/submissions', CheckJwt(), submissionRoutes);
+        // app.use('/submissions', CheckJwt(), submissionRoutes);
         app.use('/matchmaking', CheckJwt(), matchMakingRoutes);
         app.use('/battlesRoutes', CheckJwt(), battlesRoutes);
+        app.use('/storyRoutes', CheckJwt(), storyRoutes);
+        app.use('/illustrationRoutes', CheckJwt(), illustrationRoutes);
 
         const port = process.env.PORT || 4000;
         app.listen(port);

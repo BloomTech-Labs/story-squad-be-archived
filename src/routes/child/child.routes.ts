@@ -12,7 +12,7 @@ const childRoutes = Router();
 
 childRoutes.get('/me', Only(Child), async (req, res) => {
     try {
-        const { parent, submissions, ...me } = req.user as Child;
+        const { parent, stories, illustrations, ...me } = req.user as Child;
         res.json({ me });
     } catch (err) {
         res.status(500).json({
@@ -58,7 +58,6 @@ childRoutes.get('/progress', Only(Child), async (req, res) => {
 
 childRoutes.post('/progress', Only(Child), async (req, res) => {
     try {
-        console.log('post route');
         const child = req.user as Child;
         const { progress } = await getRepository(Child, connection()).save({
             ...child,
@@ -132,7 +131,7 @@ childRoutes.post('/list', Only(Parent), async (req, res) => {
         const cohort = await getRepository(Cohort, connection()).findOne({ order: { id: 'DESC' } });
         if (!cohort) throw new Error('No Cohort');
 
-        const { parent, submissions, ...child } = await getRepository(Child, connection()).save({
+        const { parent, ...child } = await getRepository(Child, connection()).save({
             ...req.childUpdate,
             cohort,
             parent: req.user,
@@ -172,6 +171,7 @@ childRoutes.get('/list/:id', Only(Parent), async (req, res) => {
 });
 
 childRoutes.put('/list/:id', Only(Parent), async (req, res) => {
+    1;
     try {
         const children = (req.user as Parent).children;
         const childToUpdate = children.find((child) => child.id === Number(req.params.id));
@@ -179,13 +179,14 @@ childRoutes.put('/list/:id', Only(Parent), async (req, res) => {
 
         const child = { ...childToUpdate, ...req.childUpdate };
         try {
-            
-        const { affected } = await getRepository(Child, connection()).update(req.params.id, child);
-        } catch(err){
+            const { affected } = await getRepository(Child, connection()).update(
+                req.params.id,
+                child
+            );
+        } catch (err) {
             console.log(err.toString());
-            res.status(500).json({ err: err.toString(), message: 'Could not update child' })
+            res.status(500).json({ err: err.toString(), message: 'Could not update child' });
         }
-        
 
         res.json({ child });
     } catch (err) {

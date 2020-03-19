@@ -5,3 +5,5 @@ export * from './Cohort';
 export * from './Parent';
 export * from './Submissions';
 export * from './Matches';
+export * from './Stories';
+export * from './Illustrations';
