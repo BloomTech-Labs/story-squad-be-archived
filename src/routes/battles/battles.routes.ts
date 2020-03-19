@@ -28,27 +28,17 @@ battlesRoutes.get('/battles', Only(Child), async (req, res) => {
             });
         } else {
             // previous syntax structure commented out below 3.12.20
-            const team1 = await getCustomRepository(
-                MatchInfoRepository,
-                connection()
-            ).findMatchInfo(match.team1_child1_id, match.team1_child2_id, cohort.week);
-            thisMatch.team = team1;
-
-            const team2 = await getCustomRepository(
-                MatchInfoRepository,
-                connection()
-            ).findMatchInfo(match.team2_child1_id, match.team2_child2_id, cohort.week);
-            thisMatch.team = team2;
-
-            console.log(team1, team2, 'the teams');
-            if (team1) {
-                thisMatch.team = team1;
-            } else if (team2) {
-                thisMatch.team = team2;
+            // new syntax structure (yet to be tested) 3.18.20
+            let team;
+            if ((match.team1_child1_id === id) || (match.team1_child2_id === id)) {
+                team = await Promise.all([match.team1_child1_id, match.team1_child2_id].map( 
+                    el => getCustomRepository(MatchInfoRepository, connection()).findStudentInfo(el, cohort.week)))
             } else {
-                console.log('2nd match check fail');
+                team = await Promise.all([match.team2_child1_id, match.team2_child2_id].map( 
+                    el => getCustomRepository(MatchInfoRepository, connection()).findStudentInfo(el, cohort.week)))
             }
-        }
+            thisMatch.team = team
+            }
 
         return res.status(200).json({
             thisMatch,
@@ -61,20 +51,29 @@ battlesRoutes.get('/battles', Only(Child), async (req, res) => {
 
 battlesRoutes.put('/battles', Only(Child), async (req, res) => {
     try {
-        //receive the requestwith point allocation score and put the request to add score
-        // request should consist of
-        // story1id, story1points, story2id, story2points
-        // pic1id, pic1points, pic2id, pic2points
-
-        //destructuring the request
 
         const { id } = req.user as Child;
+        const { 
+            story1id, 
+            story1points, 
+            story2id, 
+            story2points, 
+            drawing1id, 
+            drawing1points,
+            drawing2id,
+            drawing2points
+             } = req.body
 
-        //const result1 = await getRepository(Submission, connection())
-        //.update({ allocation_point: current_point + storypoint })
-        //.where({ id: story1id })
+        const resultOne = getCustomRepository(MatchInfoRepository, connection()).updatePoints(
+            story1id, story1points, drawing1id, drawing1points
+        )
+        const resultTwo = getCustomRepository(MatchInfoRepository, connection()).updatePoints(
+            story2id, story2points, drawing2id, drawing2points
+        )
+        
+        const results = await Promise.all([ resultOne, resultTwo ])
 
-        res.status(200).json({ message: 'success' });
+        res.status(200).json({ message: 'success', info: results });
     } catch (err) {
         res.status(500).json({ message: err.toString() });
     }
