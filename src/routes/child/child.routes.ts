@@ -12,7 +12,7 @@ const childRoutes = Router();
 
 childRoutes.get('/me', Only(Child), async (req, res) => {
     try {
-        const { parent, submissions, ...me } = req.user as Child;
+        const { parent, ...me } = req.user as Child;
         res.json({ me });
     } catch (err) {
         res.status(500).json({
@@ -132,7 +132,7 @@ childRoutes.post('/list', Only(Parent), async (req, res) => {
         const cohort = await getRepository(Cohort, connection()).findOne({ order: { id: 'DESC' } });
         if (!cohort) throw new Error('No Cohort');
 
-        const { parent, submissions, ...child } = await getRepository(Child, connection()).save({
+        const { parent, ...child } = await getRepository(Child, connection()).save({
             ...req.childUpdate,
             cohort,
             parent: req.user,
