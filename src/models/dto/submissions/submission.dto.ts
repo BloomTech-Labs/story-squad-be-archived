@@ -26,3 +26,15 @@ export class SubmissionDTO {
     @IsString()
     illustration: string;
 }
+
+export class StoryDTO {
+    story: Pages;
+
+    @IsString()
+    storyText: string;
+}
+
+export class IllustrationDTO {
+    @IsString()
+    illustration: string;
+}

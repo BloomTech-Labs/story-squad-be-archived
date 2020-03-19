@@ -2,6 +2,9 @@ import { Router } from 'express';
 import { getRepository } from 'typeorm';
 import { transcribe, readable } from './storyDSintegration';
 
+import { transformAndValidate } from 'class-transformer-validator';
+import { StoryDTO } from '../../models';
+
 import { Transcription, Readability, WeekMatches } from '../../models/internal/DS';
 import { connection } from '../../util/typeorm-connection';
 import { Only } from '../../middleware';
@@ -18,7 +21,7 @@ storyRoutes.get('/:week', Only(Child), async (req, res) => {
         return res.json({ story });
     } catch (err) {
         if (err.toString() === 'Error: 404')
-            return res.status(404).json({ message: `Submission not found` });
+            return res.status(404).json({ message: `Story not found` });
         else
             return res
                 .status(500)
@@ -29,7 +32,6 @@ storyRoutes.get('/:week', Only(Child), async (req, res) => {
 storyRoutes.post('/', Only(Child), async (req, res) => {
     try {
         const { storyText, story } = res.locals.body as Stories;
-
         const { cohort, stories } = req.user as Child;
         const { week } = cohort;
 
@@ -45,35 +47,30 @@ storyRoutes.post('/', Only(Child), async (req, res) => {
         let transcribed: Transcription | any;
         let readabilityStats: Readability | Transcription | WeekMatches;
 
-        try {
-            transcribed = await transcribe({ images });
-        } catch (err) {
-            console.log(err.toString());
-            res.status(500).json({
-                err: err.toString(),
-                message: 'Could not transcribe story images',
-            });
+        if (!storyText) {
+            try {
+                transcribed = await transcribe({ images });
+            } catch (err) {
+                console.log(err.toString());
+                res.status(500).json({
+                    err: err.toString(),
+                    message: 'Could not transcribe story images',
+                });
+            }
         }
 
         //added WeekMatches as in DS.ts to stop typescript from throwing error
-        readabilityStats = await readable({
-            story: transcribed.images[0],
-        });
+        const storyCont = { images: [storyText] };
 
-        readabilityStats = {
-            flesch_reading_ease: NaN,
-            smog_index: NaN,
-            flesch_kincaid_grade: NaN,
-            coleman_liau_index: NaN,
-            automated_readability_index: NaN,
-            dale_chall_readability_score: NaN,
-            difficult_words: NaN,
-            linsear_write_formula: NaN,
-            gunning_fog: NaN,
-            consolidated_score: 'n/a',
-            doc_length: NaN,
-            quote_count: NaN,
-        };
+        if (!transcribed) console.log('hi');
+        try {
+            readabilityStats = await readable({
+                story: transcribed ? transcribed.images[0] : storyText,
+            });
+        } catch (err) {
+            console.log(err.toString());
+            return res.json({ err: err.toString(), message: 'Could not determine readability' });
+        }
 
         try {
             const { child, ...stories } = await getRepository(Stories, connection()).save({
@@ -85,7 +82,11 @@ storyRoutes.post('/', Only(Child), async (req, res) => {
                 ...readabilityStats[0],
                 transcribed_text: transcribed
                     ? {
-                          t_page1: transcribed.images[0] ? transcribed.images[0] : '',
+                          t_page1: transcribed.images[0]
+                              ? storyText
+                                  ? storyText
+                                  : transcribed.images[0]
+                              : '',
                           t_page2: transcribed.images[1] ? transcribed.images[1] : '',
                           t_page3: transcribed.images[2] ? transcribed.images[2] : '',
                           t_page4: transcribed.images[3] ? transcribed.images[3] : '',
@@ -110,7 +111,7 @@ storyRoutes.post('/', Only(Child), async (req, res) => {
 });
 
 storyRoutes.delete('/:week', Only(Child), async (req, res) => {
-    // need to uncheck progress upon delete
+    // do I need to uncheck progress on this end upon delete? Or does this happen from a fe req? - 3.18.20
     try {
         const reqWeek = parseInt(req.params.week);
 
