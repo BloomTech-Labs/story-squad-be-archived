@@ -1,112 +1,125 @@
-// import { Router } from 'express';
-// import { getRepository, getCustomRepository } from 'typeorm';
+import { Router } from 'express';
+import { getRepository, getCustomRepository } from 'typeorm';
 
-// import { Child, Matches } from '../../database/entity';
-// import { MatchInfoRepository } from './custom';
+import { Child, Matches } from '../../database/entity';
+import { MatchInfoRepository } from './custom';
 
-// import { Only } from '../../middleware/only/only.middleware';
-// import { connection } from '../../util/typeorm-connection';
+import { Only } from '../../middleware/only/only.middleware';
+import { connection } from '../../util/typeorm-connection';
 
-// const battlesRoutes = Router();
+const battlesRoutes = Router();
 
-// battlesRoutes.get('/battles', Only(Child), async (req, res) => {
-//     try {
-//         const { id, cohort } = req.user as Child;
-//         //first get matchid so we know who this child is up against
+battlesRoutes.get('/battles', Only(Child), async (req, res) => {
+    try {
+        const { id, cohort, username, avatar, stories, illustrations } = req.user as Child;
+        //first get matchid so we know who this child is up against
 
-//         const match = await returnMatch(id, cohort.week);
+        const match = await returnMatch(id, cohort.week);
 
-//         let thisMatch = {
-//             matchId: match.id,
-//             week: cohort.week,
-//             team: null,
-//         };
+        let thisMatch = {
+            matchId: match.id,
+            week: cohort.week,
+            team: {
+                student: {
+                    studentId: id,
+                    username: username,
+                    avatar: avatar,
+                    story: {},
+                    illustration: {}
+                },
+                teammate: {}
+            },
+        };
+        let teammate = null
+        if (!match) {
+            res.json(401).json({
+                message: `Match for Student ID ${id}, for week ${cohort.week} not found`,
+            });
+        } else {
 
-//         if (!match) {
-//             res.json(401).json({
-//                 message: `Match for Student ID ${id}, for week ${cohort.week} not found`,
-//             });
-//         } else {
-//             // previous syntax structure commented out below 3.12.20
-//             const team1 = await getCustomRepository(
-//                 MatchInfoRepository,
-//                 connection()
-//             ).findMatchInfo(match.team1_child1_id, match.team1_child2_id, cohort.week);
-//             thisMatch.team = team1;
+            { 
+                match.team1_child1_id === id ? teammate = match.team1_child2_id :
+                match.team1_child2_id === id ? teammate = match.team1_child1_id :
+                match.team2_child1_id === id ? teammate = match.team2_child2_id : teammate = match.team2_child1_id
+            }
+            console.log(teammate)
+            const [ story ] = stories.filter(el => el.week === cohort.week)
+            const [ illustration ] = illustrations.filter(el => el.week === cohort.week)
 
-//             const team2 = await getCustomRepository(
-//                 MatchInfoRepository,
-//                 connection()
-//             ).findMatchInfo(match.team2_child1_id, match.team2_child2_id, cohort.week);
-//             thisMatch.team = team2;
+            thisMatch.team.student = { ...thisMatch.team.student, story: story, illustration: illustration}
+            thisMatch.team.teammate = await getCustomRepository(MatchInfoRepository, connection()).findStudentInfo(teammate, cohort.week)
+            // thisMatch.team.teammate = await getCustomRepository(MatchInfoRepository,)
+            // previous syntax structure commented out below 3.12.20
+            // new syntax structure (yet to be tested) 3.18.20
+            }
 
-//             console.log(team1, team2, 'the teams');
-//             if (team1) {
-//                 thisMatch.team = team1;
-//             } else if (team2) {
-//                 thisMatch.team = team2;
-//             } else {
-//                 console.log('2nd match check fail');
-//             }
-//         }
+        return res.status(200).json({
+            thisMatch,
+        });
+    } catch (err) {
+        console.log(err.toString());
+        return res.status(500).json({ message: err.toString() });
+    }
+});
 
-//         return res.status(200).json({
-//             thisMatch,
-//         });
-//     } catch (err) {
-//         console.log(err.toString());
-//         return res.status(500).json({ message: err.toString() });
-//     }
-// });
+battlesRoutes.put('/battles', Only(Child), async (req, res) => {
+    try {
+        //we also need to check progress of the child to know whether or not they have submit the points
+        //if the child submitted the points already, they should not be able to submit the points again
+        //03.20.20
+        const { id } = req.user as Child;
+        const { 
+            story1id, 
+            story1points, 
+            story2id, 
+            story2points, 
+            drawing1id, 
+            drawing1points,
+            drawing2id,
+            drawing2points
+             } = req.body
 
-// battlesRoutes.put('/battles', Only(Child), async (req, res) => {
-//     try {
-//         //receive the requestwith point allocation score and put the request to add score
-//         // request should consist of
-//         // story1id, story1points, story2id, story2points
-//         // pic1id, pic1points, pic2id, pic2points
+        const resultOne = getCustomRepository(MatchInfoRepository, connection()).updatePoints(
+            story1id, story1points, drawing1id, drawing1points
+        )
+        const resultTwo = getCustomRepository(MatchInfoRepository, connection()).updatePoints(
+            story2id, story2points, drawing2id, drawing2points
+        )
+        
+        await Promise.all([ resultOne, resultTwo ])
 
-//         //destructuring the request
+        res.status(200).json({ message: 'success' });
+    } catch (err) {
+        res.status(500).json({ message: err.toString() });
+    }
+});
 
-//         const { id } = req.user as Child;
+export { battlesRoutes };
 
-//         //const result1 = await getRepository(Submission, connection())
-//         //.update({ allocation_point: current_point + storypoint })
-//         //.where({ id: story1id })
+async function returnMatch(id: number, week: number) {
+    const match = await getRepository(Matches, connection()).findOne({
+        where: [{ team1_child1_id: id, week: week }],
+    });
 
-//         res.status(200).json({ message: 'success' });
-//     } catch (err) {
-//         res.status(500).json({ message: err.toString() });
-//     }
-// });
-
-// export { battlesRoutes };
-
-// async function returnMatch(id: number, week: number) {
-//     const match = await getRepository(Matches, connection()).findOne({
-//         where: [{ team1_child1_id: id, week: week }],
-//     });
-//     console.log(match);
-//     return match ? match : r2(id, week);
-// }
-// async function r2(id: number, week: number) {
-//     const match = await getRepository(Matches, connection()).findOne({
-//         where: [{ team1_child2_id: id, week: week }],
-//     });
-//     console.log(match);
-//     return match ? match : r3(id, week);
-// }
-// async function r3(id: number, week: number) {
-//     const match = await getRepository(Matches, connection()).findOne({
-//         where: [{ team2_child1_id: id, week: week }],
-//     });
-//     console.log(match);
-//     return match ? match : r4(id, week);
-// }
-// async function r4(id: number, week: number) {
-//     const match = await getRepository(Matches, connection()).findOne({
-//         where: [{ team2_child2_id: id, week: week }],
-//     });
-//     console.log(match);
-//     return match ? match : null;
-// }
+    return match ? match : r2(id, week);
+}
+async function r2(id: number, week: number) {
+    const match = await getRepository(Matches, connection()).findOne({
+        where: [{ team1_child2_id: id, week: week }],
+    });
+    return match ? match : r3(id, week);
+}
+async function r3(id: number, week: number) {
+    const match = await getRepository(Matches, connection()).findOne({
+        where: [{ team2_child1_id: id, week: week }],
+    });
+    console.log(match);
+    return match ? match : r4(id, week);
+}
+async function r4(id: number, week: number) {
+    const match = await getRepository(Matches, connection()).findOne({
+        where: [{ team2_child2_id: id, week: week }],
+    });
+    console.log(match);
+    return match ? match : null;
+}

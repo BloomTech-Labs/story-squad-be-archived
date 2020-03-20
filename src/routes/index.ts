@@ -1,5 +1,6 @@
 export * from './admin/admin.routes';
 export * from './auth/auth.routes';
+export * from './battles/battles.routes'
 export * from './canon/canon.routes';
 export * from './child/child.routes';
 export * from './cohort/cohort.routes';
