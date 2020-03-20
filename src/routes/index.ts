@@ -10,4 +10,4 @@ export * from './story/story.routes';
 export * from './illustration/illustration.routes';
 
 export * from './matchmaking/matchmaking.routes';
-export * from './battles/battles.routes';
+// export * from './battles/battles.routes';
