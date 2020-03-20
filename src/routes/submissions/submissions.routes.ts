@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 // import { Router } from 'express';
 // import { getRepository } from 'typeorm';
 // import {
