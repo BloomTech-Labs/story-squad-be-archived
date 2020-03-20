@@ -11,7 +11,7 @@ const battlesRoutes = Router();
 
 battlesRoutes.get('/battles', Only(Child), async (req, res) => {
     try {
-        const { id, cohort } = req.user as Child;
+        const { id, cohort, username, avatar, stories, illustrations } = req.user as Child;
         //first get matchid so we know who this child is up against
 
         const match = await returnMatch(id, cohort.week);
@@ -19,7 +19,16 @@ battlesRoutes.get('/battles', Only(Child), async (req, res) => {
         let thisMatch = {
             matchId: match.id,
             week: cohort.week,
-            team: null,
+            team: {
+                student: {
+                    studentId: null,
+                    username: username,
+                    avatar: avatar,
+                    story: {},
+                    illustration: {}
+                },
+                teammate: {}
+            },
         };
 
         if (!match) {
@@ -27,17 +36,16 @@ battlesRoutes.get('/battles', Only(Child), async (req, res) => {
                 message: `Match for Student ID ${id}, for week ${cohort.week} not found`,
             });
         } else {
+
+            const [ story ] = stories.filter(el => el.week === cohort.week)
+            const [ illustration ] = illustrations.filter(el => el.week === cohort.week)
+
+            thisMatch.team.student = { ...thisMatch.team.student, story: story, illustration: illustration}
+            // thisMatch.team.teammate = await getCustomRepository(MatchInfoRepository,)
             // previous syntax structure commented out below 3.12.20
             // new syntax structure (yet to be tested) 3.18.20
-            let team;
-            if ((match.team1_child1_id === id) || (match.team1_child2_id === id)) {
-                team = await Promise.all([match.team1_child1_id, match.team1_child2_id].map( 
-                    el => getCustomRepository(MatchInfoRepository, connection()).findStudentInfo(el, cohort.week)))
-            } else {
-                team = await Promise.all([match.team2_child1_id, match.team2_child2_id].map( 
-                    el => getCustomRepository(MatchInfoRepository, connection()).findStudentInfo(el, cohort.week)))
-            }
-            thisMatch.team = team
+
+
             }
 
         return res.status(200).json({
