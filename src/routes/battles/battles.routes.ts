@@ -21,7 +21,7 @@ battlesRoutes.get('/battles', Only(Child), async (req, res) => {
             week: cohort.week,
             team: {
                 student: {
-                    studentId: null,
+                    studentId: id,
                     username: username,
                     avatar: avatar,
                     story: {},
@@ -30,22 +30,27 @@ battlesRoutes.get('/battles', Only(Child), async (req, res) => {
                 teammate: {}
             },
         };
-
+        let teammate = null
         if (!match) {
             res.json(401).json({
                 message: `Match for Student ID ${id}, for week ${cohort.week} not found`,
             });
         } else {
 
+            { 
+                match.team1_child1_id === id ? teammate = match.team1_child2_id :
+                match.team1_child2_id === id ? teammate = match.team1_child1_id :
+                match.team2_child1_id === id ? teammate = match.team2_child2_id : teammate = match.team2_child1_id
+            }
+            console.log(teammate)
             const [ story ] = stories.filter(el => el.week === cohort.week)
             const [ illustration ] = illustrations.filter(el => el.week === cohort.week)
 
             thisMatch.team.student = { ...thisMatch.team.student, story: story, illustration: illustration}
+            thisMatch.team.teammate = await getCustomRepository(MatchInfoRepository, connection()).findStudentInfo(teammate, cohort.week)
             // thisMatch.team.teammate = await getCustomRepository(MatchInfoRepository,)
             // previous syntax structure commented out below 3.12.20
             // new syntax structure (yet to be tested) 3.18.20
-
-
             }
 
         return res.status(200).json({
@@ -79,9 +84,9 @@ battlesRoutes.put('/battles', Only(Child), async (req, res) => {
             story2id, story2points, drawing2id, drawing2points
         )
         
-        const results = await Promise.all([ resultOne, resultTwo ])
+        await Promise.all([ resultOne, resultTwo ])
 
-        res.status(200).json({ message: 'success', info: results });
+        res.status(200).json({ message: 'success' });
     } catch (err) {
         res.status(500).json({ message: err.toString() });
     }
@@ -93,14 +98,13 @@ async function returnMatch(id: number, week: number) {
     const match = await getRepository(Matches, connection()).findOne({
         where: [{ team1_child1_id: id, week: week }],
     });
-    console.log(match);
+
     return match ? match : r2(id, week);
 }
 async function r2(id: number, week: number) {
     const match = await getRepository(Matches, connection()).findOne({
         where: [{ team1_child2_id: id, week: week }],
     });
-    console.log(match);
     return match ? match : r3(id, week);
 }
 async function r3(id: number, week: number) {

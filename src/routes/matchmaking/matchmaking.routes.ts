@@ -43,7 +43,6 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res, next) => {
         let submissionObject = {};
 
         for (const story of (stories)) {
-            let childusMinimus;
             try {
                 const [ childusMinimus ]  = await getRepository(Child, connection()).find({
                     where: { id: story.childId },
@@ -83,7 +82,6 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res, next) => {
         if (Object.keys(submissionObject).length > 1) {
             const competitions = await match(submissionObject);
             competition = JSON.parse(competitions[0].split(`'`).join(`"`));
-            console.log(competition)
         } else {
             return res.json({
                 message: `not enough submissions to generate matchmaking within week: ${req.params.week}`,

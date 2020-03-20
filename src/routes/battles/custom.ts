@@ -11,41 +11,43 @@ export class MatchInfoRepository {
     async findStudentInfo(studentId: number, week: number) {
 
         const thisStudent = this.manager.findOne(Child, {
-            where : { id: studentId}
+            where : { id: studentId }
         })
         const thisStory = this.manager.findOne(Stories, {
-            where: { id: studentId, week: week }
+            where: { childId: studentId, week: week }
         })
         const thisIllustration = this.manager.findOne(Illustrations, {
-            where: { id: studentId, week: week }
+            where: { childId: studentId, week: week }
         })
         //line 13-21 should run concurrently and all the promises should be resolved in line 23
-        const [ info ] = await Promise.all([thisStudent, thisStory, thisIllustration])
+        const [ child, story, illustration] = await Promise.all([thisStudent, thisStory, thisIllustration])
+        
         return  {
-            studentId: info.id,
-            username: info.username,
-            avatar: info.avatar,
-            story: info.stories[0],
-            illustration: info.illustrations[0]
+            studentId: studentId,
+            username: child.username,
+            avatar: child.avatar,
+            story: story,
+            illustration: illustration
         }
     }
 
     async updatePoints(storyId: number, storyPoints: number, drawingId: number, drawingPoints: number){
         
-        const story = this.manager.findOne(Stories, { where: { id: storyId } })
-        const drawing = this.manager.findOne(Illustrations, { where: { id: drawingId } })
-        const getPoints = await Promise.all([story, drawing])
+        const storyPromise = this.manager.findOne(Stories, { where: { id: storyId } })
+        const drawingPromise = this.manager.findOne(Illustrations, { where: { id: drawingId } })
+        const [ story, drawing ] = await Promise.all([storyPromise, drawingPromise])
+        console.log(story, drawing)
 
         const storyUpdate = this.manager.update(
             Stories, 
             { where: {id: storyId }},
-            { points: getPoints[0].points + storyPoints })
-        const illistrationUpdate = this.manager.update(
+            { points: story.points + storyPoints })
+        const illustrationUpdate = this.manager.update(
             Illustrations, 
             { where: {id: drawingId }},
-            { points: getPoints[1].points + drawingPoints })
+            { points: drawing.points + drawingPoints })
 
-            return await Promise.all([storyUpdate, illistrationUpdate])
+            return await Promise.all([storyUpdate, illustrationUpdate])
 
     }
 }
