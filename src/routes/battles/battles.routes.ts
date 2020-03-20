@@ -64,7 +64,9 @@ battlesRoutes.get('/battles', Only(Child), async (req, res) => {
 
 battlesRoutes.put('/battles', Only(Child), async (req, res) => {
     try {
-
+        //we also need to check progress of the child to know whether or not they have submit the points
+        //if the child submitted the points already, they should not be able to submit the points again
+        //03.20.20
         const { id } = req.user as Child;
         const { 
             story1id, 
