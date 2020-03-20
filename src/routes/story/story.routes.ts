@@ -132,7 +132,6 @@ storyRoutes.delete('/:week', Only(Child), async (req, res) => {
                 message: 'Could not resolve delete query',
             });
         }
-
         return res.json({ story });
     } catch (err) {
         if (err.toString() === 'Error: 404') {
