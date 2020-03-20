@@ -11,3 +11,4 @@ export * from './illustration/illustration.routes';
 
 export * from './matchmaking/matchmaking.routes';
 // export * from './battles/battles.routes';
+
