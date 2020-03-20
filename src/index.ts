@@ -39,7 +39,6 @@ const main = async () => {
         app.use('/children', CheckJwt(), childRoutes);
         app.use('/parents', CheckJwt(), parentRoutes);
         app.use('/payment', CheckJwt(), UpdateStripeRecords(), stripeRoutes);
-        // app.use('/submissions', CheckJwt(), submissionRoutes);
         app.use('/matchmaking', CheckJwt(), matchMakingRoutes);
         app.use('/battlesRoutes', CheckJwt(), battlesRoutes);
         app.use('/storyRoutes', CheckJwt(), storyRoutes);

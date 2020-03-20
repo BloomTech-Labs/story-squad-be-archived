@@ -119,14 +119,12 @@ storyRoutes.delete('/:week', Only(Child), async (req, res) => {
         const story = stories.find((submission) => {
             return reqWeek === submission.week;
         });
-        console.log("hello")
 
         if (!story) throw Error('404');
         try {
-            const eek = await getRepository(Stories, connection()).delete({
+            await getRepository(Stories, connection()).delete({
                 week: reqWeek,
             });
-            console.log(eek)
         } catch (err) {
             console.log(err.toString());
             return res.status(500).json({
@@ -134,7 +132,6 @@ storyRoutes.delete('/:week', Only(Child), async (req, res) => {
                 message: 'Could not resolve delete query',
             });
         }
-        console.log("hello", story)
         return res.json({ story });
     } catch (err) {
         if (err.toString() === 'Error: 404') {
