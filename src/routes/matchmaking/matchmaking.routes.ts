@@ -12,13 +12,12 @@ import { connection } from '../../util/typeorm-connection';
 
 const matchMakingRoutes = Router();
 
-matchMakingRoutes.get('/:week', Only(Admin), async (req, res, next) => {
+matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
 
     const thisWeek = req.params.week
     const [ matches ] = await getRepository(Matches, connection()).find({
         where: { week: req.params.week },
     });
-    console.log(matches)
     if (matches) {
         console.log(matches);
         return res.status(200).json({ message: `fetch matches success`, match: matches });
@@ -32,7 +31,6 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res, next) => {
             stories = await getRepository(Stories, connection()).find({
                 where: { week: req.params.week },
             });
-            next();
         } catch (err) {
             console.log(err.toString());
             return res
@@ -90,7 +88,6 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res, next) => {
 
         try {
             for (let [key, value] of Object.entries(competition)) {
-                console.log(key, value)
                 // determines that none of the children in a group already have a group 3.12.20
                 const existingMatch = await checkTeams(value);
                 if (
@@ -100,7 +97,7 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res, next) => {
                     existingMatch[3]
                 ) {
                     // if match not pre-existing, generate a match-up 3.12.20
-                    persistMatch(value, thisWeek);
+                    await persistMatch(value, thisWeek);
                 } else {
                     console.log('matches pre-existing');
                 }
@@ -153,7 +150,6 @@ export { matchMakingRoutes };
 
 async function checkTeams(value) {
     let existingMatch = [];
-    console.log(existingMatch)
     try {
         existingMatch[0] = await getRepository(Matches, connection()).find({
             where: {
@@ -194,7 +190,6 @@ async function checkTeams(value) {
                     parseInt(value['team_2'][1]),
             },
         });
-        console.log(existingMatch)
     } catch (err) {
         console.log(err.toString());
     }
