@@ -100,7 +100,7 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res, next) => {
                     existingMatch[3]
                 ) {
                     // if match not pre-existing, generate a match-up 3.12.20
-                    persistMatch(value, thisWeek);
+                    await persistMatch(value, thisWeek);
                 } else {
                     console.log('matches pre-existing');
                 }
@@ -153,7 +153,6 @@ export { matchMakingRoutes };
 
 async function checkTeams(value) {
     let existingMatch = [];
-    console.log(existingMatch)
     try {
         existingMatch[0] = await getRepository(Matches, connection()).find({
             where: {
