@@ -18,7 +18,6 @@ storyRoutes.get('/:week', Only(Child), async (req, res) => {
         const { stories } = req.user as Child;
         const story = stories.find(({ week }) => week === parseInt(req.params.week));
         if (!story) throw Error('404');
-        console.log('returned body', story);
         return res.json({ story });
     } catch (err) {
         if (err.toString() === 'Error: 404')

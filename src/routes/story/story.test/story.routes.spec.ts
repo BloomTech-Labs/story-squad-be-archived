@@ -65,15 +65,14 @@ const bodyInjection = (req, res, next) => {
 };
 
 const app = express();
-// I build app, then call .json, userInjection, bodyInjection mw before it hits storyRoutes
 app.use('/storyRoutes', express.json(), userInjection, bodyInjection, storyRoutes);
 
 // this route currently doesn't exist within storyRoutes
 
-// describe('GET /stories', () => {
-//     it("should list child's submissions", async () => {
-//         const { body } = await request(app).get('/submissions');
-//         expect(body.submissions).toHaveLength(2);
+// describe('GET /storyRoutes', () => {
+//     it("should list child's stories", async () => {
+//         const { body } = await request(app).get('/storyRoutes');
+//         expect(body.story).toHaveLength(2);
 //     });
 // });
 
