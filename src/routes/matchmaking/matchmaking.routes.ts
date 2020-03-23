@@ -12,7 +12,7 @@ import { connection } from '../../util/typeorm-connection';
 
 const matchMakingRoutes = Router();
 
-matchMakingRoutes.get('/:week', Only(Admin), async (req, res, next) => {
+matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
 
     const thisWeek = req.params.week
     const [ matches ] = await getRepository(Matches, connection()).find({
@@ -32,7 +32,6 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res, next) => {
             stories = await getRepository(Stories, connection()).find({
                 where: { week: req.params.week },
             });
-            next();
         } catch (err) {
             console.log(err.toString());
             return res
