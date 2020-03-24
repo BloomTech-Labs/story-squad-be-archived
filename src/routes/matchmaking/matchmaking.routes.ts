@@ -1,8 +1,6 @@
 import { Router } from 'express';
 import { getRepository } from 'typeorm';
 import { runScript } from '../../util/scripts/scripting';
-import { matchmaking } from './matchmaking_test';
-import { matchmaking2 } from './matchmaking2';
 import { attemptJSONParse } from '../../util/utils';
 
 import { Only } from '../../middleware';
@@ -23,8 +21,6 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
         console.log(matches);
         return res.status(200).json({ message: `fetch matches success`, match: matches });
     }
-
-    
 
     try {
         let stories;
