@@ -13,11 +13,11 @@ const matchMakingRoutes = Router();
 matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
 
     const thisWeek = req.params.week
-    const [ matches ] = await getRepository(Matches, connection()).find({
+    const matches  = await getRepository(Matches, connection()).find({
         where: { week: req.params.week },
     });
     console.log(matches)
-    if (matches) {
+    if (matches.length) {
         console.log(matches);
         return res.status(200).json({ message: `fetch matches success`, match: matches });
     }
@@ -99,11 +99,13 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
                 } else {
                     console.log('matches pre-existing');
                 }
-                const matches = await getRepository(Matches, connection()).find({
-                    where: { week: thisWeek },
-                });
-                res.status(200).json({ message: `saved success`, match: matches });
+
+                
             }
+            const matches = await getRepository(Matches, connection()).find({
+                where: { week: thisWeek },
+            });
+            res.status(200).json({ message: `saved success`, match: matches });
             // await match-ups and responds to FE with match-ups 3.12.20
             // first call to assign match-ups works, but this next await doesn't fully resolve for some reason and generates an empty array
         } catch (err) {
