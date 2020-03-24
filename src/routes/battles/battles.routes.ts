@@ -68,7 +68,7 @@ battlesRoutes.put('/battles', Only(Child), async (req, res) => {
         //if the child submitted the points already, they should not be able to submit the points again
         //03.20.20
         const { id, progress } = req.user as Child;
-
+        console.log(progress)
         //check if the review has been done
         if (progress.teamReview === true) {
             return res.status(400).json({
@@ -96,6 +96,7 @@ battlesRoutes.put('/battles', Only(Child), async (req, res) => {
 
         await Promise.all([ resultOne, resultTwo ])
 
+        await getRepository(Child, connection()).update({ id }, { progress: { teamReview: true } });
         res.status(200).json({ message: 'success' });
     } catch (err) {
         res.status(500).json({ message: err.toString() });
