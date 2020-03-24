@@ -67,26 +67,34 @@ battlesRoutes.put('/battles', Only(Child), async (req, res) => {
         //we also need to check progress of the child to know whether or not they have submit the points
         //if the child submitted the points already, they should not be able to submit the points again
         //03.20.20
-        const { id } = req.user as Child;
+        const { id, progress } = req.user as Child;
+        console.log(progress)
+        //check if the review has been done
+        if (progress.teamReview === true) {
+            return res.status(400).json({
+                message: `Cannot submit points twice`
+            })
+        }
         const { 
             story1id, 
-            story1points, 
+            story1Points, 
             story2id, 
-            story2points, 
-            drawing1id, 
-            drawing1points,
-            drawing2id,
-            drawing2points
+            story2Points, 
+            pic1id, 
+            pic1Points,
+            pic2id,
+            pic2Points
              } = req.body
 
         const resultOne = getCustomRepository(MatchInfoRepository, connection()).updatePoints(
-            story1id, story1points, drawing1id, drawing1points
+            story1id, story1Points, pic1id, pic1Points
         )
         const resultTwo = getCustomRepository(MatchInfoRepository, connection()).updatePoints(
-            story2id, story2points, drawing2id, drawing2points
+            story2id, story2Points, pic2id, pic2Points
         )
         
         await Promise.all([ resultOne, resultTwo ])
+        await getRepository(Child, connection()).update({ id }, { progress: { teamReview: true } });
 
         res.status(200).json({ message: 'success' });
     } catch (err) {

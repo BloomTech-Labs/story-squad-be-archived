@@ -1,8 +1,6 @@
 import { Router } from 'express';
 import { getRepository } from 'typeorm';
 import { runScript } from '../../util/scripts/scripting';
-import { matchmaking } from './matchmaking_test';
-import { matchmaking2 } from './matchmaking2';
 import { attemptJSONParse } from '../../util/utils';
 
 import { Only } from '../../middleware';
@@ -12,19 +10,15 @@ import { connection } from '../../util/typeorm-connection';
 
 const matchMakingRoutes = Router();
 
-matchMakingRoutes.get('/:week', Only(Admin), async (req, res, next) => {
-    const thisWeek = req.params.week;
-    let matches;
-    try {
-        matches = await getRepository(Matches, connection()).find({
-            where: { week: req.params.week },
-        });
-    } catch (err) {
-        return res.json({ message: 'Could not fetch matches', err: err.toString() });
-    }
-    console.log(matches, 'matches');
-    if (matches[0] && Object.keys(matches[0]).length) {
-        console.log(matches, 'matches true');
+matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
+
+    const thisWeek = req.params.week
+    const [ matches ] = await getRepository(Matches, connection()).find({
+        where: { week: req.params.week },
+    });
+    console.log(matches)
+    if (matches) {
+        console.log(matches);
         return res.status(200).json({ message: `fetch matches success`, match: matches });
     } else {
         console.log('matches false');
