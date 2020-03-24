@@ -67,8 +67,6 @@ const bodyInjection = (req, res, next) => {
 const app = express();
 app.use('/storyRoutes', express.json(), userInjection, bodyInjection, storyRoutes);
 
-// this route currently doesn't exist within storyRoutes
-
 // describe('GET /storyRoutes', () => {
 //     it("should list child's stories", async () => {
 //         const { body } = await request(app).get('/storyRoutes');
