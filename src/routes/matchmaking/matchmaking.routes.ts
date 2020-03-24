@@ -20,6 +20,8 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
     if (matches) {
         console.log(matches);
         return res.status(200).json({ message: `fetch matches success`, match: matches });
+    } else {
+        console.log('matches false');
     }
 
     try {
@@ -37,12 +39,12 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
 
         let submissionObject = {};
 
-        for (const story of (stories)) {
+        for (const story of stories) {
             try {
-                const [ childusMinimus ]  = await getRepository(Child, connection()).find({
+                const [childusMinimus] = await getRepository(Child, connection()).find({
                     where: { id: story.childId },
                 });
-                
+
                 submissionObject = {
                     ...submissionObject,
                     [story.childId]: {
@@ -67,9 +69,6 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
                     message: 'Could not fetch child within matched submissions',
                 });
             }
-
-
-            
         }
 
         let competition;
@@ -85,16 +84,8 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
 
         try {
             for (let [key, value] of Object.entries(competition)) {
-                console.log(key, value)
-                // determines that none of the children in a group already have a group 3.12.20
                 const existingMatch = await checkTeams(value);
-                if (
-                    existingMatch[0] &&
-                    existingMatch[1] &&
-                    existingMatch[2] &&
-                    existingMatch[3]
-                ) {
-                    // if match not pre-existing, generate a match-up 3.12.20
+                if (existingMatch[0] && existingMatch[1] && existingMatch[2] && existingMatch[3]) {
                     await persistMatch(value, thisWeek);
                 } else {
                     console.log('matches pre-existing');
@@ -102,17 +93,14 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
                 const matches = await getRepository(Matches, connection()).find({
                     where: { week: thisWeek },
                 });
-                res.status(200).json({ message: `saved success`, match: matches });
+                return res.status(200).json({ message: `saved success`, match: matches });
             }
-            // await match-ups and responds to FE with match-ups 3.12.20
-            // first call to assign match-ups works, but this next await doesn't fully resolve for some reason and generates an empty array
         } catch (err) {
             console.log(err.toString());
-            res.status(500).json({ message: `Saving error, ${err.toString()}` });
+            return res.status(500).json({ message: `Saving error, ${err.toString()}` });
         }
-
     } catch (err) {
-        res.status(500).json({ message: `Matchmaking error, ${err.toString()}` });
+        return res.status(500).json({ message: `Matchmaking error, ${err.toString()}` });
     }
 });
 
@@ -188,7 +176,7 @@ async function checkTeams(value) {
                     parseInt(value['team_2'][1]),
             },
         });
-        console.log(existingMatch)
+        console.log(existingMatch);
     } catch (err) {
         console.log(err.toString());
     }
