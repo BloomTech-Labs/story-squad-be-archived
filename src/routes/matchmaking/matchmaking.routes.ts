@@ -22,7 +22,7 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res, next) => {
     } catch (err) {
         return res.json({ message: 'Could not fetch matches', err: err.toString() });
     }
-    console.log(matches, 'matches');
+
     if (matches[0] && Object.keys(matches[0]).length) {
         console.log(matches, 'matches true');
         return res.status(200).json({ message: `fetch matches success`, match: matches });
