@@ -18,6 +18,7 @@ storyRoutes.get('/:week', Only(Child), async (req, res) => {
         const { stories } = req.user as Child;
         const story = stories.find(({ week }) => week === parseInt(req.params.week));
         if (!story) throw Error('404');
+        console.log('returned body', story);
         return res.json({ story });
     } catch (err) {
         if (err.toString() === 'Error: 404')
@@ -59,10 +60,6 @@ storyRoutes.post('/', Only(Child), async (req, res) => {
             }
         }
 
-        //added WeekMatches as in DS.ts to stop typescript from throwing error
-        const storyCont = { images: [storyText] };
-
-        if (!transcribed) console.log('hi');
         try {
             readabilityStats = await readable({
                 story: transcribed ? transcribed.images[0] : storyText,
