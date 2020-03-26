@@ -11,12 +11,11 @@ import { connection } from '../../util/typeorm-connection';
 const matchMakingRoutes = Router();
 
 matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
-
-    const thisWeek = req.params.week
-    const matches  = await getRepository(Matches, connection()).find({
+    const thisWeek = req.params.week;
+    const matches = await getRepository(Matches, connection()).find({
         where: { week: req.params.week },
     });
-    console.log(matches)
+    console.log(matches);
     if (matches.length) {
         console.log(matches);
         res.status(200).json({ message: `fetch matches success`, match: matches });
@@ -30,9 +29,7 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
             });
         } catch (err) {
             console.log(err.toString());
-            res
-                .status(500)
-                .json({ err: err.toString(), message: 'Could not fetch submissions' });
+            res.status(500).json({ err: err.toString(), message: 'Could not fetch submissions' });
         }
 
         let submissionObject = {};
