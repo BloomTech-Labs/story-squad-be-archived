@@ -36,7 +36,6 @@ export class MatchInfoRepository {
         const storyPromise = this.manager.findOne(Stories, { where: { id: storyId } })
         const drawingPromise = this.manager.findOne(Illustrations, { where: { id: drawingId } })
         const [ story, drawing ] = await Promise.all([storyPromise, drawingPromise])
-        console.log(story, drawing)
 
         const storyUpdate = this.manager.update(
             Stories, 
