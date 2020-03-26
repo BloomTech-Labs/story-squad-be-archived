@@ -1,8 +1,6 @@
 import { Router } from 'express';
 import { getRepository } from 'typeorm';
 import { runScript } from '../../util/scripts/scripting';
-import { matchmaking } from './matchmaking_test';
-import { matchmaking2 } from './matchmaking2';
 import { attemptJSONParse } from '../../util/utils';
 
 import { Only } from '../../middleware';
@@ -12,22 +10,15 @@ import { connection } from '../../util/typeorm-connection';
 
 const matchMakingRoutes = Router();
 
-matchMakingRoutes.get('/:week', Only(Admin), async (req, res, next) => {
+matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
     const thisWeek = req.params.week;
-    let matches;
-    try {
-        matches = await getRepository(Matches, connection()).find({
-            where: { week: req.params.week },
-        });
-    } catch (err) {
-        return res.json({ message: 'Could not fetch matches', err: err.toString() });
-    }
-
-    if (matches[0] && Object.keys(matches[0]).length) {
-        console.log(matches, 'matches true');
-        return res.status(200).json({ message: `fetch matches success`, match: matches });
-    } else {
-        console.log('matches false');
+    const matches = await getRepository(Matches, connection()).find({
+        where: { week: req.params.week },
+    });
+    console.log(matches);
+    if (matches.length) {
+        console.log(matches);
+        res.status(200).json({ message: `fetch matches success`, match: matches });
     }
 
     try {
@@ -38,9 +29,7 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res, next) => {
             });
         } catch (err) {
             console.log(err.toString());
-            return res
-                .status(500)
-                .json({ err: err.toString(), message: 'Could not fetch submissions' });
+            res.status(500).json({ err: err.toString(), message: 'Could not fetch submissions' });
         }
 
         let submissionObject = {};
@@ -70,7 +59,7 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res, next) => {
                 };
             } catch (err) {
                 console.log(err.toString());
-                return res.status(500).json({
+                res.status(500).json({
                     err: err.toString(),
                     message: 'Could not fetch child within matched submissions',
                 });
@@ -83,7 +72,7 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res, next) => {
             const competitions = await match(submissionObject);
             competition = JSON.parse(competitions[0].split(`'`).join(`"`));
         } else {
-            return res.json({
+            res.json({
                 message: `not enough submissions to generate matchmaking within week: ${req.params.week}`,
             });
         }
@@ -96,11 +85,13 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res, next) => {
                 } else {
                     console.log('matches pre-existing');
                 }
-                const matches = await getRepository(Matches, connection()).find({
-                    where: { week: thisWeek },
-                });
-                return res.status(200).json({ message: `saved success`, match: matches });
             }
+            const matches = await getRepository(Matches, connection()).find({
+                where: { week: thisWeek },
+            });
+            res.status(200).json({ message: `saved success`, match: matches });
+            // await match-ups and responds to FE with match-ups 3.12.20
+            // first call to assign match-ups works, but this next await doesn't fully resolve for some reason and generates an empty array
         } catch (err) {
             console.log(err.toString());
             return res.status(500).json({ message: `Saving error, ${err.toString()}` });
