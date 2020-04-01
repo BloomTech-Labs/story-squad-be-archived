@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { getRepository, getCustomRepository } from 'typeorm';
 
-import { Child, Matches } from '../../database/entity';
+import { Child, Matches, Stories, Illustrations } from '../../database/entity';
 import { MatchInfoRepository } from './custom';
 
 import { Only } from '../../middleware/only/only.middleware';
@@ -64,36 +64,46 @@ battlesRoutes.get('/battles', Only(Child), async (req, res) => {
 
 battlesRoutes.put('/battles', Only(Child), async (req, res) => {
     try {
-        //we also need to check progress of the child to know whether or not they have submit the points
-        //if the child submitted the points already, they should not be able to submit the points again
-        //03.20.20
+
         const { id, progress } = req.user as Child;
-        console.log(progress)
-        //check if the review has been done
+
         if (progress.teamReview === true) {
             return res.status(400).json({
                 message: `Cannot submit points twice`
             })
         }
-        const { 
-            story1id, 
-            story1Points, 
-            story2id, 
-            story2Points, 
-            pic1id, 
-            pic1Points,
-            pic2id,
-            pic2Points
-             } = req.body
 
-        const resultOne = getCustomRepository(MatchInfoRepository, connection()).updatePoints(
-            story1id, story1Points, pic1id, pic1Points
-        )
-        const resultTwo = getCustomRepository(MatchInfoRepository, connection()).updatePoints(
-            story2id, story2Points, pic2id, pic2Points
-        )
+        const { stories, illustrations } = req.body
         
-        await Promise.all([ resultOne, resultTwo ])
+        console.log(req.body)
+        console.log(stories)
+        console.log(illustrations)
+        try {
+            await Promise.all(stories.map(el => {
+                getRepository(Stories, connection())
+                .findOne({ id: el.id })
+                .then( async (res) => {
+                    await getRepository(Stories, connection())
+                    .update({ id: el.id}, { points: res.points + el.points})
+                })
+            }))
+        } catch(err) {
+            res.status(400).json({ message: `Story failed`})
+        }
+
+        try {
+            await Promise.all(illustrations.map(el => {
+                getRepository(Illustrations, connection())
+                .findOne({ id: el.id })
+                .then( async (res) => {
+                    await getRepository(Illustrations, connection())
+                    .update({ id: el.id}, { points: res.points + el.points})
+                })
+            }))
+        } catch(err) {
+            res.status(400).json({ message: 'Illustration failed' })
+        }
+
         await getRepository(Child, connection()).update({ id }, { progress: { teamReview: true } });
 
         res.status(200).json({ message: 'success' });
