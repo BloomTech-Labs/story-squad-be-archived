@@ -33,11 +33,17 @@ export class MatchInfoRepository {
 
     async updatePoints(storyId: number, storyPoints: number, drawingId: number, drawingPoints: number){
         
+        // console logs below were left due to a merge conflict from put-battles-fixed branch
         // const story = await this.manager.findOne(Stories, { where: { id: storyId } })
         // const drawing = await this.manager.findOne(Illustrations, { where: { id: drawingId } })
 
         // console.log('story points', story.points)
         // console.log('drawing points', drawing.points)
+
+        const storyPromise = this.manager.findOne(Stories, { where: { id: storyId } })
+        const drawingPromise = this.manager.findOne(Illustrations, { where: { id: drawingId } })
+        const [ story, drawing ] = await Promise.all([storyPromise, drawingPromise])
+
 
         const storyUpdate = this.manager.update(
             Stories, 

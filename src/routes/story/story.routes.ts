@@ -118,9 +118,11 @@ storyRoutes.delete('/:week', Only(Child), async (req, res) => {
         });
 
         if (!story) throw Error('404');
+        let deleted;
         try {
-            await getRepository(Stories, connection()).delete({
+            deleted = await getRepository(Stories, connection()).delete({
                 week: reqWeek,
+                childId: req.user.id,
             });
         } catch (err) {
             console.log(err.toString());
@@ -129,6 +131,8 @@ storyRoutes.delete('/:week', Only(Child), async (req, res) => {
                 message: 'Could not resolve delete query',
             });
         }
+        console.log(req.user.id, 'user id');
+        console.log(deleted, 'deleted stories');
         return res.json({ story });
     } catch (err) {
         if (err.toString() === 'Error: 404') {
