@@ -41,13 +41,6 @@ const Validation: Middleware = () => async (req, res, next) => {
                 req.body
             )) as AdminRegisterDTO;
 
-        //Validates and transforms submissions post res.locals objects prior to routing
-        // if (req.path === '/submissions' && req.method === 'POST')
-        //     res.locals.body = (await transformAndValidate(
-        //         SubmissionDTO,
-        //         req.body
-        //     )) as SubmissionDTO;
-
         if (req.path === '/storyRoutes' && req.method === 'POST') {
             res.locals.body = (await transformAndValidate(StoryDTO, req.body)) as StoryDTO;
         }

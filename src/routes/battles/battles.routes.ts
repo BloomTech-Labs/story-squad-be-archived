@@ -75,9 +75,6 @@ battlesRoutes.put('/battles', Only(Child), async (req, res) => {
 
         const { stories, illustrations } = req.body
         
-        console.log(req.body)
-        console.log(stories)
-        console.log(illustrations)
         try {
             await Promise.all(stories.map(el => {
                 getRepository(Stories, connection())

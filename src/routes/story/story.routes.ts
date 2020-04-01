@@ -18,7 +18,6 @@ storyRoutes.get('/:week', Only(Child), async (req, res) => {
         const { stories } = req.user as Child;
         const story = stories.find(({ week }) => week === parseInt(req.params.week));
         if (!story) throw Error('404');
-        console.log('returned body', story);
         return res.json({ story });
     } catch (err) {
         if (err.toString() === 'Error: 404')
@@ -131,8 +130,6 @@ storyRoutes.delete('/:week', Only(Child), async (req, res) => {
                 message: 'Could not resolve delete query',
             });
         }
-        console.log(req.user.id, 'user id');
-        console.log(deleted, 'deleted stories');
         return res.json({ story });
     } catch (err) {
         if (err.toString() === 'Error: 404') {
