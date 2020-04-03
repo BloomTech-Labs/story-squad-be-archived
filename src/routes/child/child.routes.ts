@@ -12,7 +12,12 @@ const childRoutes = Router();
 
 childRoutes.get('/me', Only(Child), async (req, res) => {
     try {
-        const { parent, ...me } = req.user as Child;
+        const { parent, illustrations, stories, ...rest } = req.user as Child;
+        const me = {
+            ...rest,
+            illustrations: illustrations ? illustrations : null,
+            stories: stories ? stories : null,
+        };
         res.json({ me });
     } catch (err) {
         res.status(500).json({
@@ -46,7 +51,7 @@ childRoutes.get('/cohort', Only(Child), async (req, res) => {
 childRoutes.get('/progress', Only(Child), async (req, res) => {
     try {
         const { progress } = req.user as Child;
-        console.log(progress);
+        console.log(progress, 'within progress fetch');
         res.json({ progress });
     } catch (err) {
         console.log(err.toString());
