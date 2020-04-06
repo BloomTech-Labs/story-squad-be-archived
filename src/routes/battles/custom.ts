@@ -1,68 +1,66 @@
-// import { EntityRepository, EntityManager } from 'typeorm'
+import { EntityRepository, EntityManager } from 'typeorm';
 
-// import { Child } from '../../database/entity';
+import { Child, Stories, Illustrations } from '../../database/entity';
 
-// @EntityRepository()
-// export class MatchInfoRepository {
-//     constructor(private manager: EntityManager) {}
+@EntityRepository()
+export class MatchInfoRepository {
+    constructor(private manager: EntityManager) {}
 
-//     findMatchInfo(student1id: number, student2id: number, week: number) {
-//         let submissions = null;
-//         let student1 = {
-//             id: student1id,
-//             story: {},
-//             illustration: {},
-//             username: "",
-//             avatar: "",
-//         };
-//         let student2 = {
-//             id: student2id,
-//             story: {},
-//             illustration: {},
-//             username: "",
-//             avatar: "",
-//         };
-//         return this.manager
-//             .find(Submissions, {
-//                 where: { week: week },
-//             })
-//             .then((res) => {
-//                 submissions = res;
-//                 console.log(submissions)
-//                 student1.story = submissions.filter(
-//                     (submission) => submission['childId'] === student1id
-//                 );
-//                 student1.illustration = submissions.filter(
-//                     (submission) =>
-//                         submission['childId'] === student1id
-//                 );
-//                 student2.story = submissions.filter(
-//                     (submission) => submission['childId'] === student2id
-//                 );
-//                 student2.illustration = submissions.filter(
-//                     (submission) =>
-//                         submission['childId'] === student2id
-//                 )
+    async findStudentInfo(studentId: number, week: number) {
+        const thisStudent = this.manager.findOne(Child, {
+            where: { id: studentId },
+        });
+        const thisStory = this.manager.findOne(Stories, {
+            where: { childId: studentId, week: week },
+        });
+        const thisIllustration = this.manager.findOne(Illustrations, {
+            where: { childId: studentId, week: week },
+        });
+        //line 13-21 should run concurrently and all the promises should be resolved in line 23
+        const [child, story, illustration] = await Promise.all([
+            thisStudent,
+            thisStory,
+            thisIllustration,
+        ]);
 
-//                 return this.manager.findOne(Child, {
-//                     where: { id: student1id }
-//                 }).then(res => {
-//                     student1.username = res.username
-//                     student1.avatar = res.avatar
+        return {
+            studentId: studentId,
+            username: child.username,
+            avatar: child.avatar,
+            story: story,
+            illustration: illustration,
+        };
+    }
 
-//                     return this.manager.findOne(Child, {
-//                         where: { id: student2id }
-//                     }).then(res => {
-//                             student2.username = res.username
-//                             student2.avatar = res.avatar
+    async updatePoints(
+        storyId: number,
+        storyPoints: number,
+        drawingId: number,
+        drawingPoints: number
+    ) {
+        // console logs below were left due to a merge conflict from put-battles-fixed branch
+        // const story = await this.manager.findOne(Stories, { where: { id: storyId } })
+        // const drawing = await this.manager.findOne(Illustrations, { where: { id: drawingId } })
 
-//                             return { student1, student2 }
-//                     })
+        // console.log('story points', story.points)
+        // console.log('drawing points', drawing.points)
 
-//                 })
+        const storyPromise = this.manager.findOne(Stories, { where: { id: storyId } });
+        const drawingPromise = this.manager.findOne(Illustrations, { where: { id: drawingId } });
+        const [story, drawing] = await Promise.all([storyPromise, drawingPromise]);
 
-//             })
+        // replaced () => points + storyPoints with story.points + storyPoints 4.1.20
+        const storyUpdate = this.manager.update(
+            Stories,
+            { where: { id: storyId } },
+            { points: story.points + storyPoints }
+        );
+        const illustrationUpdate = this.manager.update(
+            Illustrations,
+            { where: { id: drawingId } },
+            { points: drawing.points + drawingPoints }
+        );
 
-//         };
-
-//     }
+        return await Promise.all([storyUpdate, illustrationUpdate]);
+    }
+}

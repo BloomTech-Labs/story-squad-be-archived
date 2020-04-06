@@ -42,11 +42,11 @@ authRoutes.post('/register', Hash(), async (req, res) => {
         }
     } catch (err) {
         if (err.toString().includes('401'))
-            res.status(401).json({
+            return res.status(401).json({
                 message: 'Accepting Terms of Service is required...',
             });
         else console.log(err.toString());
-        res.status(500).json({
+        return res.status(500).json({
             message: 'Hmm... That did not work, please try again later.',
         });
     }

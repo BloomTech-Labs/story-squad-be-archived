@@ -59,10 +59,6 @@ storyRoutes.post('/', Only(Child), async (req, res) => {
             }
         }
 
-        //added WeekMatches as in DS.ts to stop typescript from throwing error
-        const storyCont = { images: [storyText] };
-
-        if (!transcribed) console.log('hi');
         try {
             readabilityStats = await readable({
                 story: transcribed ? transcribed.images[0] : storyText,
@@ -121,9 +117,11 @@ storyRoutes.delete('/:week', Only(Child), async (req, res) => {
         });
 
         if (!story) throw Error('404');
+        let deleted;
         try {
-            await getRepository(Stories, connection()).delete({
+            deleted = await getRepository(Stories, connection()).delete({
                 week: reqWeek,
+                childId: req.user.id,
             });
         } catch (err) {
             console.log(err.toString());
@@ -132,7 +130,6 @@ storyRoutes.delete('/:week', Only(Child), async (req, res) => {
                 message: 'Could not resolve delete query',
             });
         }
-
         return res.json({ story });
     } catch (err) {
         if (err.toString() === 'Error: 404') {
