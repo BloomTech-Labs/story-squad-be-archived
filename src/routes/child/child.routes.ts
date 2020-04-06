@@ -1,11 +1,9 @@
 import { Router } from 'express';
 import { getRepository } from 'typeorm';
 import { sign } from 'jsonwebtoken';
-
 import { Parent, Child } from '../../database/entity';
 import { Only } from '../../middleware';
 import { connection } from '../../util/typeorm-connection';
-
 import { Cohort } from '../../database/entity/Cohort';
 
 const childRoutes = Router();
@@ -114,6 +112,7 @@ childRoutes.post('/:id/login', Only(Parent), async (req, res) => {
     }
 });
 
+// If a parent has multiple children they can see all of their accounts
 childRoutes.get('/list', Only(Parent), async (req, res) => {
     try {
         const children = (req.user as Parent).children;
