@@ -4,7 +4,7 @@ import { runScript } from '../../util/scripts/scripting';
 import { attemptJSONParse } from '../../util/utils';
 
 import { Only } from '../../middleware';
-import { Admin, Matches, Stories, Child } from '../../database/entity';
+import { Admin, Matches, Stories, Child, Illustrations } from '../../database/entity';
 import { Matchmaking, WeekMatches } from '../../models';
 import { connection } from '../../util/typeorm-connection';
 
@@ -15,10 +15,9 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
     const matches = await getRepository(Matches, connection()).find({
         where: { week: req.params.week },
     });
-    console.log(matches);
+    console.log(`GET FIRST MATCHES`, matches);
     if (matches.length) {
-        console.log(matches);
-        res.status(200).json({ message: `fetch matches success`, match: matches });
+        return res.status(200).json({ message: `fetch matches success`, match: matches });
     }
 
     try {
@@ -29,18 +28,25 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
             });
         } catch (err) {
             console.log(err.toString());
-            res.status(500).json({ err: err.toString(), message: 'Could not fetch submissions' });
+            return res.status(500).json({ err: err.toString(), message: 'Could not fetch submissions' });
         }
 
         let submissionObject = {};
 
+        
         for (const story of stories) {
             try {
                 const [childusMinimus] = await getRepository(Child, connection()).find({
                     where: { id: story.childId },
                 });
+                const pictureCheck = await getRepository(Illustrations, connection()).find({
+                    where: { id: childusMinimus.id, week: thisWeek },
+                })
+                console.log(`PICTURE CHECK!`, pictureCheck.length)
 
+                if (pictureCheck.length){
                 submissionObject = {
+
                     ...submissionObject,
                     [story.childId]: {
                         flesch_reading_ease: story.flesch_reading_ease,
@@ -57,9 +63,10 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
                         grade: childusMinimus.grade,
                     },
                 };
+            }
             } catch (err) {
                 console.log(err.toString());
-                res.status(500).json({
+                return res.status(500).json({
                     err: err.toString(),
                     message: 'Could not fetch child within matched submissions',
                 });
@@ -72,7 +79,7 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
             const competitions = await match(submissionObject);
             competition = JSON.parse(competitions[0].split(`'`).join(`"`));
         } else {
-            res.json({
+            return res.json({
                 message: `not enough submissions to generate matchmaking within week: ${req.params.week}`,
             });
         }
@@ -80,7 +87,7 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
         try {
             for (let [key, value] of Object.entries(competition)) {
                 const existingMatch = await checkTeams(value);
-                if (existingMatch[0] && existingMatch[1] && existingMatch[2] && existingMatch[3]) {
+                if (existingMatch[0]) {
                     await persistMatch(value, thisWeek);
                 } else {
                     console.log('matches pre-existing');
@@ -89,7 +96,7 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
             const matches = await getRepository(Matches, connection()).find({
                 where: { week: thisWeek },
             });
-            res.status(200).json({ message: `saved success`, match: matches });
+            return res.status(200).json({ message: `saved success`, match: matches });
             // await match-ups and responds to FE with match-ups 3.12.20
             // first call to assign match-ups works, but this next await doesn't fully resolve for some reason and generates an empty array
         } catch (err) {
@@ -132,6 +139,7 @@ function match(data: Matchmaking) {
 export { matchMakingRoutes };
 
 async function checkTeams(value) {
+    // checking to see individuals aren;t being rematched / duplicated
     let existingMatch = [];
     try {
         existingMatch[0] = await getRepository(Matches, connection()).find({
@@ -177,7 +185,7 @@ async function checkTeams(value) {
     } catch (err) {
         console.log(err.toString());
     }
-
+    console.log(`CHECK TEAMS`, existingMatch)
     return existingMatch;
 }
 
