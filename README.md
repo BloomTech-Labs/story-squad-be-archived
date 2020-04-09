@@ -32,6 +32,7 @@ Check the wiki for a [setup guide](https://github.com/Lambda-School-Labs/story-s
 -   Integration testing
 
 ## Endpoints
+[Postman Documentation](https://documenter.getpostman.com/view/9969236/SzS1UpP9?version=latest)
 
 #### Authorization Routes
 
