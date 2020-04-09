@@ -11,9 +11,10 @@ import { connection } from '../../util/typeorm-connection';
 const matchMakingRoutes = Router();
 
 matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
+    // add delete functionality to this route so deletes matches before repopulating mathes, prevent spamming
     const thisWeek = req.params.week;
     const matches = await getRepository(Matches, connection()).find({
-        where: { week: req.params.week },
+        where: { week: thisWeek },
     });
     console.log(`GET FIRST MATCHES`, matches);
     if (matches.length) {
@@ -24,7 +25,7 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
         let stories;
         try {
             stories = await getRepository(Stories, connection()).find({
-                where: { week: req.params.week },
+                where: { week: thisWeek },
             });
         } catch (err) {
             console.log(err.toString());
@@ -32,18 +33,19 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
         }
 
         let submissionObject = {};
-
         
         for (const story of stories) {
             try {
                 const [childusMinimus] = await getRepository(Child, connection()).find({
                     where: { id: story.childId },
                 });
+                // Checks for presence of picture
                 const pictureCheck = await getRepository(Illustrations, connection()).find({
                     where: { id: childusMinimus.id, week: thisWeek },
-                })
-                console.log(`PICTURE CHECK!`, pictureCheck.length)
+                });
+                console.log(`PICTURE CHECK - id: ${story.childId}`, `length: ${pictureCheck.length}`);
 
+                // if picture is present, perform DS matchmaking
                 if (pictureCheck.length){
                 submissionObject = {
 
@@ -80,7 +82,7 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
             competition = JSON.parse(competitions[0].split(`'`).join(`"`));
         } else {
             return res.json({
-                message: `not enough submissions to generate matchmaking within week: ${req.params.week}`,
+                message: `not enough submissions to generate matchmaking within week: ${thisWeek}`,
             });
         }
 
@@ -109,6 +111,7 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
 });
 
 matchMakingRoutes.delete('/:week', Only(Admin), async (req, res) => {
+    // link this functionality to a button in the admin dashboard, rather than including it in the get reqeust above.
     try {
         const matchesToDelete = await getRepository(Matches, connection()).find({
             select: ['id'],
@@ -139,7 +142,7 @@ function match(data: Matchmaking) {
 export { matchMakingRoutes };
 
 async function checkTeams(value) {
-    // checking to see individuals aren;t being rematched / duplicated
+    // checking to see individuals aren't being reused across matchups, can/should be refactored
     let existingMatch = [];
     try {
         existingMatch[0] = await getRepository(Matches, connection()).find({
