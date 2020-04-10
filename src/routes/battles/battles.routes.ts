@@ -42,7 +42,7 @@ battlesRoutes.get('/battles', Only(Child), async (req, res) => {
                 match.team1_child2_id === id ? teammate = match.team1_child1_id :
                 match.team2_child1_id === id ? teammate = match.team2_child2_id : teammate = match.team2_child1_id
             }
-            console.log(teammate)
+            console.log(`student: ${thisMatch.team.student.studentId}, teammate: ${teammate}`)
             const [ story ] = stories.filter(el => el.week === cohort.week)
             const [ illustration ] = illustrations.filter(el => el.week === cohort.week)
 

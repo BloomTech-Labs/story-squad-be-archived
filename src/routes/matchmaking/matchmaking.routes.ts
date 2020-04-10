@@ -89,7 +89,7 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
         try {
             for (let [key, value] of Object.entries(competition)) {
                 const existingMatch = await checkTeams(value);
-                if (existingMatch[0]) {
+                if (existingMatch[0] && existingMatch[1] && existingMatch[2] && existingMatch[3]) {
                     await persistMatch(value, thisWeek);
                 } else {
                     console.log('matches pre-existing');

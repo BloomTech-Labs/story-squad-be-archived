@@ -4,7 +4,6 @@ import { Child, Stories, Illustrations } from '../../database/entity';
 
 @EntityRepository()
 export class MatchInfoRepository {
-    // finding teamate and providing thir CCS
     constructor(private manager: EntityManager) {}
 
     async findStudentInfo(studentId: number, week: number) {
@@ -51,7 +50,6 @@ export class MatchInfoRepository {
         const [story, drawing] = await Promise.all([storyPromise, drawingPromise]);
 
         // replaced () => points + storyPoints with story.points + storyPoints 4.1.20
-        // needs to be checked? possible removed
         const storyUpdate = this.manager.update(
             Stories,
             { where: { id: storyId } },
