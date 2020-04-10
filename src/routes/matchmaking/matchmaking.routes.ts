@@ -11,9 +11,10 @@ import { connection } from '../../util/typeorm-connection';
 const matchMakingRoutes = Router();
 
 matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
+    // add delete functionality to this route so deletes matches before repopulating mathes, prevent spamming
     const thisWeek = req.params.week;
     const matches = await getRepository(Matches, connection()).find({
-        where: { week: req.params.week },
+        where: { week: thisWeek },
     });
     console.log(`GET FIRST MATCHES`, matches);
     if (matches.length) {
@@ -28,42 +29,47 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
             });
         } catch (err) {
             console.log(err.toString());
-            return res.status(500).json({ err: err.toString(), message: 'Could not fetch submissions' });
+            return res
+                .status(500)
+                .json({ err: err.toString(), message: 'Could not fetch submissions' });
         }
 
         let submissionObject = {};
 
-        
         for (const story of stories) {
             try {
                 const [childusMinimus] = await getRepository(Child, connection()).find({
                     where: { id: story.childId },
                 });
+                // Checks for presence of picture
                 const pictureCheck = await getRepository(Illustrations, connection()).find({
-                    where: { id: childusMinimus.id, week: thisWeek },
-                })
-                console.log(`PICTURE CHECK!`, pictureCheck.length)
+                    where: { id: childusMinimus.id, week: req.params.week },
+                });
+                console.log(
+                    `PICTURE CHECK - id: ${story.childId}`,
+                    `length: ${pictureCheck.length}`
+                );
 
-                if (pictureCheck.length){
-                submissionObject = {
-
-                    ...submissionObject,
-                    [story.childId]: {
-                        flesch_reading_ease: story.flesch_reading_ease,
-                        smog_index: story.smog_index,
-                        flesch_kincaid: story.flesch_kincaid_grade,
-                        coleman_liau_index: story.coleman_liau_index,
-                        automated_readability_index: story.automated_readability_index,
-                        dale_chall_readability_score: story.dale_chall_readability_score,
-                        difficult_words: story.difficult_words,
-                        linsear_write_formula: story.linsear_write_formula,
-                        gunning_fog: story.gunning_fog,
-                        doc_length: story.doc_length,
-                        quote_count: story.quote_count,
-                        grade: childusMinimus.grade,
-                    },
-                };
-            }
+                // if picture is present, perform DS matchmaking
+                if (pictureCheck.length) {
+                    submissionObject = {
+                        ...submissionObject,
+                        [story.childId]: {
+                            flesch_reading_ease: story.flesch_reading_ease,
+                            smog_index: story.smog_index,
+                            flesch_kincaid: story.flesch_kincaid_grade,
+                            coleman_liau_index: story.coleman_liau_index,
+                            automated_readability_index: story.automated_readability_index,
+                            dale_chall_readability_score: story.dale_chall_readability_score,
+                            difficult_words: story.difficult_words,
+                            linsear_write_formula: story.linsear_write_formula,
+                            gunning_fog: story.gunning_fog,
+                            doc_length: story.doc_length,
+                            quote_count: story.quote_count,
+                            grade: childusMinimus.grade,
+                        },
+                    };
+                }
             } catch (err) {
                 console.log(err.toString());
                 return res.status(500).json({
@@ -80,7 +86,7 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
             competition = JSON.parse(competitions[0].split(`'`).join(`"`));
         } else {
             return res.json({
-                message: `not enough submissions to generate matchmaking within week: ${req.params.week}`,
+                message: `not enough submissions to generate matchmaking within week: ${thisWeek}`,
             });
         }
 
@@ -109,6 +115,7 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
 });
 
 matchMakingRoutes.delete('/:week', Only(Admin), async (req, res) => {
+    // link this functionality to a button in the admin dashboard, rather than including it in the get reqeust above.
     try {
         const matchesToDelete = await getRepository(Matches, connection()).find({
             select: ['id'],
@@ -139,7 +146,7 @@ function match(data: Matchmaking) {
 export { matchMakingRoutes };
 
 async function checkTeams(value) {
-    // checking to see individuals aren;t being rematched / duplicated
+    // checking to see individuals aren't being reused across matchups, can/should be refactored
     let existingMatch = [];
     try {
         existingMatch[0] = await getRepository(Matches, connection()).find({
@@ -185,7 +192,7 @@ async function checkTeams(value) {
     } catch (err) {
         console.log(err.toString());
     }
-    console.log(`CHECK TEAMS`, existingMatch)
+    console.log(`CHECK TEAMS`, existingMatch);
     return existingMatch;
 }
 
