@@ -2,40 +2,60 @@ import { Router } from 'express';
 import { getRepository, getCustomRepository } from 'typeorm';
 
 import { Child, Matches, Stories, Illustrations } from '../../database/entity';
-import { MatchInfoRepository } from './custom';
+import { MatchInfoRepository } from '../versus/custom';
 
 import { Only } from '../../middleware/only/only.middleware';
 import { connection } from '../../util/typeorm-connection';
 
-const battlesRoutes = Router();
+const versusRoutes = Router();
 
-battlesRoutes.get('/battles', Only(Child), async (req, res) => {
+versusRoutes.get('/versus', Only(Child), async (req, res) => {
     try {
         const { id, cohort, username, avatar, stories, illustrations } = req.user as Child;
         //first get matchid so we know who this child is up against
 
         const match = await returnMatch(id, cohort.week);
+        console.log(`MATCH loc18`, match)
 
-        let thisMatch = {
+        // populate home team object(s)
+        let student = null;
+        let teammate = null;
+
+        let homeTeam = {
             matchId: match.id,
             week: cohort.week,
-            team: {
-                student: {
-                    studentId: id,
-                    username: username,
-                    avatar: avatar,
-                    story: {},
-                    illustration: {},
+            student: {
+                studentId: id,
+                username: username,
+                avatar: avatar,
+                story: {},
+                storyPoints: null,
+                illustration: {},
+                illustrationPoints: null,
                 },
-                teammate: {},
-            },
-        };
-        let teammate = null;
+            teammate: {},
+        } 
+
+        // populate away team object(s)
+        let opponentA = null;
+        let opponentB = null;
+
+        let awayTeam = {
+            matchId: match.id,
+            week: cohort.week,
+            opponentA: {},
+            opponentB: {}
+        }
+        
+
+        let playersInMatch = [student, teammate, opponentA, opponentB];
+
         if (!match) {
             res.json(401).json({
                 message: `Match for Student ID ${id}, for week ${cohort.week} not found`,
             });
         } else {
+            
             {
                 match.team1_child1_id === id
                     ? (teammate = match.team1_child2_id)
@@ -44,28 +64,58 @@ battlesRoutes.get('/battles', Only(Child), async (req, res) => {
                     : match.team2_child1_id === id
                     ? (teammate = match.team2_child2_id)
                     : (teammate = match.team2_child1_id);
+                
+                match.team2_child1_id === id
+                    ? (opponentA = match.team1_child2_id)
+                    : match.team1_child2_id === id
+                    ? (opponentA = match.team1_child1_id)
+                    : match.team2_child1_id === id
+                    ? (opponentA = match.team2_child2_id)
+                    : (opponentA = match.team2_child1_id);
+
+                match.team2_child2_id === id
+                    ? (opponentB = match.team1_child2_id)
+                    : match.team1_child2_id === id
+                    ? (opponentB = match.team1_child1_id)
+                    : match.team2_child1_id === id
+                    ? (opponentB = match.team2_child2_id)
+                    : (opponentB = match.team2_child1_id);
             }
-            console.log(`student: ${thisMatch.team.student.studentId}, teammate: ${teammate}`);
+            console.log(`student: ${homeTeam.student.studentId}, teammate: ${teammate}`);
+            // find CCS and point values
             const [story] = stories.filter((el) => el.week === cohort.week);
             const [illustration] = illustrations.filter((el) => el.week === cohort.week);
 
-            thisMatch.team.student = {
-                ...thisMatch.team.student,
+            homeTeam.student = {
+                ...homeTeam.student,
                 // replacing story and illustration objects as empty strings to avoid sending base64 04/2020
-                story: story,
-                illustration: illustration,
+                story: "STORY PLACEHOLDER",
+                storyPoints: story.points,
+                illustration: "ILLUSTRATION PLACEHOLDER",
+                illustrationPoints: illustration.points,
             };
-            thisMatch.team.teammate = await getCustomRepository(
+
+            homeTeam.teammate = await getCustomRepository(
                 MatchInfoRepository,
                 connection()
             ).findStudentInfo(teammate, cohort.week);
             // thisMatch.team.teammate = await getCustomRepository(MatchInfoRepository,)
             // previous syntax structure commented out below 3.12.20
             // new syntax structure (yet to be tested) 3.18.20
+
+            awayTeam.opponentA = await getCustomRepository(
+                MatchInfoRepository,
+                connection()
+            ).findStudentInfo(opponentA, cohort.week);
+
+            awayTeam.opponentB = await getCustomRepository(
+                MatchInfoRepository,
+                connection()
+            ).findStudentInfo(opponentB, cohort.week);
         }
 
         return res.status(200).json({
-            thisMatch,
+            homeTeam, awayTeam
         });
     } catch (err) {
         console.log(err.toString());
@@ -73,61 +123,7 @@ battlesRoutes.get('/battles', Only(Child), async (req, res) => {
     }
 });
 
-battlesRoutes.put('/battles', Only(Child), async (req, res) => {
-    try {
-        const { id, progress } = req.user as Child;
-
-        if (progress.teamReview === true) {
-            return res.status(400).json({
-                message: `Cannot submit points twice`,
-            });
-        }
-
-        const { stories, illustrations } = req.body;
-
-        try {
-            await Promise.all(
-                stories.map((el) => {
-                    getRepository(Stories, connection())
-                        .findOne({ id: el.id })
-                        .then(async (res) => {
-                            await getRepository(Stories, connection()).update(
-                                { id: el.id },
-                                { points: res.points + el.points }
-                            );
-                        });
-                })
-            );
-        } catch (err) {
-            res.status(400).json({ message: `Story failed` });
-        }
-
-        try {
-            await Promise.all(
-                illustrations.map((el) => {
-                    getRepository(Illustrations, connection())
-                        .findOne({ id: el.id })
-                        .then(async (res) => {
-                            await getRepository(Illustrations, connection()).update(
-                                { id: el.id },
-                                { points: res.points + el.points }
-                            );
-                        });
-                })
-            );
-        } catch (err) {
-            res.status(400).json({ message: 'Illustration failed' });
-        }
-
-        await getRepository(Child, connection()).update({ id }, { progress: { teamReview: true } });
-
-        res.status(200).json({ message: 'success' });
-    } catch (err) {
-        res.status(500).json({ message: err.toString() });
-    }
-});
-
-export { battlesRoutes };
+export { versusRoutes };
 
 async function returnMatch(id: number, week: number) {
     const match = await getRepository(Matches, connection()).findOne({
