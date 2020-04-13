@@ -1,3 +1,5 @@
+// Testing Versus Routes before comitting to a seperate folder
+
 import { Router } from 'express';
 import { getRepository, getCustomRepository } from 'typeorm';
 
@@ -9,27 +11,105 @@ import { connection } from '../../util/typeorm-connection';
 
 const battlesRoutes = Router();
 
-battlesRoutes.get('/battles', Only(Child), async (req, res) => {
+battlesRoutes.get('/versus', Only(Child), async (req, res) => {
     try {
         const { id, cohort, username, avatar, stories, illustrations } = req.user as Child;
-        //first get matchid so we know who this child is up against
+        // first get matchid so we know who this child is up against
 
         const match = await returnMatch(id, cohort.week);
+        // matchobject provides ids for ALL users/teams
+        // homeTeam awayTeam
+        // 2 stories 2 pictures per team
+        // 1 points score per submission (8 in total)
+        // connect rounds and allocate points correctly to determinefinal scores per round?
+        let player1 = match.team1_child1_id;
+        let player2 = match.team1_child2_id;
+        let player3 = match.team1_child2_id;
+        let player4 = match.team1_child2_id;
 
-        let thisMatch = {
-            matchId: match.id,
-            week: cohort.week,
-            team: {
-                student: {
-                    studentId: id,
-                    username: username,
-                    avatar: avatar,
-                    story: {},
-                    illustration: {},
-                },
-                teammate: {},
+        let players = [player1, player2, player3, player4];
+        // newPlayer accepts pushed student
+        let newPlayers = [];
+
+        const player = {
+            studentId: 'a',
+            teamID: 'a',
+            username: 'a',
+            avatar: 'a',
+            story: {
+                thumbnail: '',
+                file: '',
+                points: '50',
+            },
+            illustration: {
+                thumbnail: '',
+                file: '',
+                points: '50',
             },
         };
+
+        // const populatedMatch = {
+        // function that would map through each player in a match and perform api calls to BE
+        // arrange rounds - who vs who
+        // a function is needed in order to sum the team mates totalPoints
+        //     roundS1: {
+        //         player1: {
+        //             studentId: 'a',
+        //             teamID: 'a',
+        //             username: 'a',
+        //             avatar: 'a',
+        //             story: {
+        //                 thumbnail: '',
+        //                 file: '',
+        //                 points: '50',
+        //             },
+        //         },
+        //         player2: {
+        //             studentId: 'a',
+        //             teamID: 'a',
+        //             username: 'a',
+        //             avatar: 'a',
+        //             story: {
+        //                 thumbnail: '',
+        //                 file: '',
+        //                 points: '50',
+        //             },
+        //         },
+        //         totalPoints: null,
+        //     },
+        //     roundS2: {},
+        //     roundI1: {},
+        //     roundI2: {},
+        // };
+
+        // let thisMatch = {
+        //     matchId: match.id,
+        //     week: cohort.week,
+        //     homeTeam: {
+        //         student: {
+        //             studentId: id,
+        //             username: username,
+        //             avatar: avatar,
+        //             story: {
+        //                 file: '',
+        //                 points: '',
+        //             },
+        //             illustration: '',
+        //         },
+        //         teammate: {},
+        //     },
+        //     awayTeam: {
+        //         student: {
+        //             studentId: '',
+        //             username: '',
+        //             avatar: '',
+        //             story: '',
+        //             illustration: '',
+        //         },
+        //         opponent: {},
+        //     },
+        // };
+
         let teammate = null;
         if (!match) {
             res.json(401).json({
@@ -45,12 +125,12 @@ battlesRoutes.get('/battles', Only(Child), async (req, res) => {
                     ? (teammate = match.team2_child2_id)
                     : (teammate = match.team2_child1_id);
             }
-            console.log(`student: ${thisMatch.team.student.studentId}, teammate: ${teammate}`);
+            console.log(`student: ${thisMatch.homeTeam.student.studentId}, teammate: ${teammate}`);
             const [story] = stories.filter((el) => el.week === cohort.week);
             const [illustration] = illustrations.filter((el) => el.week === cohort.week);
 
-            thisMatch.team.student = {
-                ...thisMatch.team.student,
+            thisMatch.homeTeam.student = {
+                ...thisMatch.homeTeam.student,
                 story: story,
                 illustration: illustration,
             };
