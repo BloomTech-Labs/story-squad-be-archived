@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { getRepository, getCustomRepository } from 'typeorm';
 
 import { Child, Matches, Stories, Illustrations } from '../../database/entity';
-import { MatchInfoRepository } from '../versus/custom';
+import { MatchInfoRepository } from './custom';
 
 import { Only } from '../../middleware/only/only.middleware';
 import { connection } from '../../util/typeorm-connection';
@@ -48,39 +48,34 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
         }
         
 
-        let playersInMatch = [student, teammate, opponentA, opponentB];
+        
 
         if (!match) {
             res.json(401).json({
                 message: `Match for Student ID ${id}, for week ${cohort.week} not found`,
             });
         } else {
-            
             {
-                match.team1_child1_id === id
-                    ? (teammate = match.team1_child2_id)
-                    : match.team1_child2_id === id
-                    ? (teammate = match.team1_child1_id)
-                    : match.team2_child1_id === id
-                    ? (teammate = match.team2_child2_id)
-                    : (teammate = match.team2_child1_id);
+                if (match.team1_child1_id === id) {
+                    teammate = match.team1_child2_id
+                    opponentA = match.team2_child1_id
+                    opponentB = match.team2_child2_id
+                } else if (match.team1_child2_id === id) {
+                        teammate = match.team1_child1_id
+                        opponentA = match.team2_child1_id
+                        opponentB = match.team2_child2_id
+                    } else if (match.team2_child1_id === id) {
+                            teammate = match.team2_child2_id
+                            opponentA = match.team1_child1_id
+                            opponentB = match.team1_child2_id
+                        } else {
+                            teammate = match.team2_child1_id
+                            opponentA = match.team1_child1_id
+                            opponentB = match.team1_child2_id
+                        }
+                    }
                 
-                match.team2_child1_id === id
-                    ? (opponentA = match.team1_child2_id)
-                    : match.team1_child2_id === id
-                    ? (opponentA = match.team1_child1_id)
-                    : match.team2_child1_id === id
-                    ? (opponentA = match.team2_child2_id)
-                    : (opponentA = match.team2_child1_id);
-
-                match.team2_child2_id === id
-                    ? (opponentB = match.team1_child2_id)
-                    : match.team1_child2_id === id
-                    ? (opponentB = match.team1_child1_id)
-                    : match.team2_child1_id === id
-                    ? (opponentB = match.team2_child2_id)
-                    : (opponentB = match.team2_child1_id);
-            }
+            
             console.log(`student: ${homeTeam.student.studentId}, teammate: ${teammate}`);
             // find CCS and point values
             const [story] = stories.filter((el) => el.week === cohort.week);
@@ -113,14 +108,15 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
                 connection()
             ).findStudentInfo(opponentB, cohort.week);
         }
-
-        return res.status(200).json({
+        
+        return res.status(200).json([
             homeTeam, awayTeam
-        });
+        ]);
     } catch (err) {
         console.log(err.toString());
         return res.status(500).json({ message: err.toString() });
     }
+
 });
 
 export { versusRoutes };
