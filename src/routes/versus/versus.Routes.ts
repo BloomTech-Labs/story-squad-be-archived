@@ -15,7 +15,7 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
         //first get matchid so we know who this child is up against
 
         const match = await returnMatch(id, cohort.week);
-        console.log(`MATCH loc18`, match)
+        console.log(`MATCH loc18`, match);
 
         // populate home team object(s)
         let student = null;
@@ -32,9 +32,10 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
                 storyPoints: null,
                 illustration: {},
                 illustrationPoints: null,
-                },
+            },
             teammate: {},
-        } 
+        };
+        console.log('homeTeam', homeTeam);
 
         // populate away team object(s)
         let opponentA = null;
@@ -44,11 +45,8 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
             matchId: match.id,
             week: cohort.week,
             opponentA: {},
-            opponentB: {}
-        }
-        
-
-        
+            opponentB: {},
+        };
 
         if (!match) {
             res.json(401).json({
@@ -57,26 +55,26 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
         } else {
             {
                 if (match.team1_child1_id === id) {
-                    teammate = match.team1_child2_id
-                    opponentA = match.team2_child1_id
-                    opponentB = match.team2_child2_id
+                    teammate = match.team1_child2_id;
+                    opponentA = match.team2_child1_id;
+                    opponentB = match.team2_child2_id;
                 } else if (match.team1_child2_id === id) {
-                        teammate = match.team1_child1_id
-                        opponentA = match.team2_child1_id
-                        opponentB = match.team2_child2_id
-                    } else if (match.team2_child1_id === id) {
-                            teammate = match.team2_child2_id
-                            opponentA = match.team1_child1_id
-                            opponentB = match.team1_child2_id
-                        } else {
-                            teammate = match.team2_child1_id
-                            opponentA = match.team1_child1_id
-                            opponentB = match.team1_child2_id
-                        }
-                    }
-                
-            
+                    teammate = match.team1_child1_id;
+                    opponentA = match.team2_child1_id;
+                    opponentB = match.team2_child2_id;
+                } else if (match.team2_child1_id === id) {
+                    teammate = match.team2_child2_id;
+                    opponentA = match.team1_child1_id;
+                    opponentB = match.team1_child2_id;
+                } else {
+                    teammate = match.team2_child1_id;
+                    opponentA = match.team1_child1_id;
+                    opponentB = match.team1_child2_id;
+                }
+            }
+
             console.log(`student: ${homeTeam.student.studentId}, teammate: ${teammate}`);
+            console.log('teammate', homeTeam.teammate);
             // find CCS and point values
             const [story] = stories.filter((el) => el.week === cohort.week);
             const [illustration] = illustrations.filter((el) => el.week === cohort.week);
@@ -84,9 +82,9 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
             homeTeam.student = {
                 ...homeTeam.student,
                 // replacing story and illustration objects as empty strings to avoid sending base64 04/2020
-                story: "STORY PLACEHOLDER",
+                story: 'STORY PLACEHOLDER',
                 storyPoints: story.points,
-                illustration: "ILLUSTRATION PLACEHOLDER",
+                illustration: 'ILLUSTRATION PLACEHOLDER',
                 illustrationPoints: illustration.points,
             };
 
@@ -108,15 +106,12 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
                 connection()
             ).findStudentInfo(opponentB, cohort.week);
         }
-        
-        return res.status(200).json([
-            homeTeam, awayTeam
-        ]);
+
+        return res.status(200).json([homeTeam, awayTeam]);
     } catch (err) {
         console.log(err.toString());
         return res.status(500).json({ message: err.toString() });
     }
-
 });
 
 export { versusRoutes };
