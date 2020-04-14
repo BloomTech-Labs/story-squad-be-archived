@@ -104,90 +104,33 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
                 connection()
             ).findStudentInfo(opponentB, cohort.week);
         }
-        console.log(`HOME`, homeTeam)
-        // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-        // const myTeam = [
-        //     {
-        //         me: {
-        //             id,
-        //             username: homeTeam.student.username,
-        //             avatar: homeTeam.student.avatar,
-        //             story: homeTeam.student.story,
-        //             storyPoints: homeTeam.student.storyPoints,
-        //             illustration: homeTeam.student.illustration,
-        //             illustrationPoints: homeTeam.student.illustrationPoints,
-        //         },
-        //     },
-        //     {
-        //         teammate: {
-        //             id: homeTeam.teammate.studentId,
-        //             username: homeTeam.teammate.username,
-        //             avatar: homeTeam.teammate.avatar,
-        //             story: homeTeam.teammate.story,
-        //             storyPoints: homeTeam.teammate.storyPoints,
-        //             illustration: homeTeam.teammate.illustration,
-        //             illustrationPoints: homeTeam.teammate.illustrationPoints,
-        //         },
-        //     },
-        // ];
 
-        // const team2 = [
-        //     {
-        //         opponentA: {
-        //             id: awayTeam.opponentA.studentId,
-        //             username: awayTeam.opponentA.username,
-        //             avatar: awayTeam.opponentA.avatar,
-        //             story: awayTeam.opponentA.story,
-        //             storyPoints: awayTeam.opponentA.storyPoints,
-        //             illustration: awayTeam.opponentA.illustration,
-        //             illustrationPoints: awayTeam.opponentA.illustrationPoints,
-        //         },
-        //     },
-        //     {
-        //         opponentB: {
-        //             id: awayTeam.opponentB.studentId,
-        //             username: awayTeam.opponentB.username,
-        //             avatar: awayTeam.opponentB.avatar,
-        //             story: awayTeam.opponentB.story,
-        //             storyPoints: awayTeam.opponentB.storyPoints,
-        //             illustration: awayTeam.opponentB.illustration,
-        //             illustrationPoints: awayTeam.opponentB.illustrationPoints,
-        //         },
-        //     },
-        // ];
-        console.log('ME', homeTeam[2]);
-        console.log('team2', awayTeam);
+        // Round allocation functions below
+
         const higherMyteam = decideHigher(homeTeam.student, homeTeam.teammate);
         // array of objects returned by decideHighter  [[storypoint high, storypoint low], [illustrationpoint high, illustrationpoint low]]
-        console.log('higherMytem', higherMyteam);
 
         const higherTeam2 = decideHigher(awayTeam.opponentA, awayTeam.opponentB);
-        console.log('higherTeam2', higherTeam2);
 
         //storyHigh = [higherMyteam in Story, higherTeam2 in Story, total points]
         const storyHigh = [higherMyteam[0][0], higherTeam2[0][0]];
         storyHigh.push(higherMyteam[0][0].storyPoints + higherTeam2[0][0].storyPoints);
 
-        console.log('storyHigh', storyHigh);
-
         //storyLow = [LowerMyteam in Story, LowerTeam2 in Story, total points]
         const storyLow = [higherMyteam[0][1], higherTeam2[0][1]];
         storyLow.push(higherMyteam[0][1].storyPoints + higherTeam2[0][1].storyPoints);
-        console.log('storyLow', storyLow);
 
         //illustrationHigh = [higherMyteam in illustration, higherTeam2 in illustration, total points]
         const illustrationHigh = [higherMyteam[1][0], higherTeam2[1][0]];
         illustrationHigh.push(
             higherMyteam[1][0].illustrationPoints + higherTeam2[1][0].illustrationPoints
         );
-        console.log('illustrationHigh', illustrationHigh);
 
         //illustrationLow = [lowerMyteam in illustration, lowerTeam2 in illustration, total points]
         const illustrationLow = [higherMyteam[1][1], higherTeam2[1][1]];
         illustrationLow.push(
             higherMyteam[1][1].illustrationPoints + higherTeam2[1][1].illustrationPoints
         );
-        console.log('illustrationLow', illustrationLow);
 
         const thisBattle = {
             storyHigh: [
@@ -269,13 +212,8 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
         };
 
         console.log('thisBattle', thisBattle);
-
-        // const thisMatch = {
-        //     team: homeTeam,
-        //     otherTeam: awayTeam,
-        // };
-        // XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-        return res.status(200).json([thisBattle]);
+        
+        return res.status(200).json(thisBattle);
     } catch (err) {
         console.log(err.toString());
         return res.status(500).json({ message: err.toString() });
