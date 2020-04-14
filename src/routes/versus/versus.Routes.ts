@@ -109,15 +109,15 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
             {
                 me: {
                     id,
-                    storyPoints: homeTeam.student.story.points,
-                    illustrationPoints: homeTeam.student.illustration.points,
+                    storyPoints: homeTeam.student.storyPoints,
+                    illustrationPoints: homeTeam.student.illustrationPoints,
                 },
             },
             {
                 teammate: {
                     id: homeTeam.teammate.studentId,
-                    storyPoints: homeTeam.teammate.story.points,
-                    illustrationPoints: homeTeam.teammate.illustration.points,
+                    storyPoints: homeTeam.teammate.storyPoints,
+                    illustrationPoints: homeTeam.teammate.illustrationPoints,
                 },
             },
         ];
@@ -126,15 +126,15 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
             {
                 opponentA: {
                     id: awayTeam.opponentA.studentId,
-                    storyPoints: awayTeam.opponentA.story.points,
-                    illustrationPoints: awayTeam.opponentA.illustration.points,
+                    storyPoints: awayTeam.opponentA.storyPoints,
+                    illustrationPoints: awayTeam.opponentA.illustrationPoints,
                 },
             },
             {
                 opponentB: {
                     id: awayTeam.opponentB.studentId,
-                    storyPoints: awayTeam.opponentB.story.points,
-                    illustrationPoints: awayTeam.opponentB.illustration.points,
+                    storyPoints: awayTeam.opponentB.storyPoints,
+                    illustrationPoints: awayTeam.opponentB.illustrationPoints,
                 },
             },
         ];
