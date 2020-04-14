@@ -3,7 +3,7 @@ import { getRepository, getCustomRepository } from 'typeorm';
 
 import { Child, Matches, Stories, Illustrations } from '../../database/entity';
 import { MatchInfoRepository } from './custom';
-
+import { storyParse, illustrationParse } from './child.imageParse';
 import { Only } from '../../middleware/only/only.middleware';
 import { connection } from '../../util/typeorm-connection';
 
@@ -66,6 +66,7 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
                     opponentA = match.team1_child1_id;
                     opponentB = match.team1_child2_id;
                 } else {
+                    student = match.team2_child2_id;
                     teammate = match.team2_child1_id;
                     opponentA = match.team1_child1_id;
                     opponentB = match.team1_child2_id;
@@ -80,9 +81,12 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
             homeTeam.student = {
                 ...homeTeam.student,
                 // replacing story (loc77) and illustration loc(78) objects as empty strings to avoid sending base64 04/2020
-                story: 'STORY PLACEHOLDER',
+                story: story.story && storyParse('homeTeam_student', story.story),
                 storyPoints: story.points,
-                illustration: 'ILLUSTRATION PLACEHOLDER',
+                illustration:
+                    illustration.illustration &&
+                    illustrationParse('homeTeam_student', illustration.illustration),
+
                 illustrationPoints: illustration.points,
             };
 
@@ -94,15 +98,40 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
             // previous syntax structure commented out below 3.12.20
             // new syntax structure (yet to be tested) 3.18.20
 
+            homeTeam.teammate = {
+                ...homeTeam.teammate,
+                story: story.story && storyParse('homeTeam_teammate', story.story),
+                illustration:
+                    illustration.illustration &&
+                    illustrationParse('homeTeam_teammate', illustration.illustration),
+            };
+
             awayTeam.opponentA = await getCustomRepository(
                 MatchInfoRepository,
                 connection()
             ).findStudentInfo(opponentA, cohort.week);
 
+            awayTeam.opponentA = {
+                ...awayTeam.opponentA,
+                story: story.story && storyParse('awayTeam_opponentA', story.story),
+                illustration:
+                    illustration.illustration &&
+                    illustrationParse('awayTeam_opponentA', illustration.illustration),
+            };
+
             awayTeam.opponentB = await getCustomRepository(
                 MatchInfoRepository,
                 connection()
             ).findStudentInfo(opponentB, cohort.week);
+            // console.log('opponentB', awayTeam.opponentB.story);
+
+            awayTeam.opponentB = {
+                ...awayTeam.opponentB,
+                story: story.story && storyParse('awayTeam_opponentB', story.story),
+                illustration:
+                    illustration.illustration &&
+                    illustrationParse('awayTeam_opponentB', illustration.illustration),
+            };
         }
 
         // Round allocation functions below
@@ -139,6 +168,7 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
                     username: storyHigh[0].username,
                     avatar: storyHigh[0].avatar,
                     story: storyHigh[0].story,
+                    // && storyParse('story_high1', storyHigh[0].story),
                     storyPoints: storyHigh[0].storyPoints,
                 },
                 {
@@ -176,14 +206,14 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
                     id: illustrationHigh[0].studentId,
                     username: illustrationHigh[0].username,
                     avatar: illustrationHigh[0].avatar,
-                    story: illustrationHigh[0].story,
+                    illustration: illustrationHigh[0].illustration,
                     illustrationPoints: illustrationHigh[0].illustrationPoints,
                 },
                 {
                     id: illustrationHigh[1].studentId,
                     username: illustrationHigh[1].username,
                     avatar: illustrationHigh[1].avatar,
-                    story: illustrationHigh[1].story,
+                    illustration: illustrationHigh[1].illustration,
                     illustrationPoints: illustrationHigh[1].illustrationPoints,
                 },
                 {
@@ -195,14 +225,14 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
                     id: illustrationLow[0].studentId,
                     username: illustrationLow[0].username,
                     avatar: illustrationLow[0].avatar,
-                    story: illustrationLow[0].story,
+                    illustration: illustrationLow[0].illustration,
                     illustrationPoints: illustrationLow[0].illustrationPoints,
                 },
                 {
                     id: illustrationLow[1].studentId,
                     username: illustrationLow[1].username,
                     avatar: illustrationLow[1].avatar,
-                    story: illustrationLow[1].story,
+                    illustration: illustrationLow[1].illustration,
                     illustrationPoints: illustrationLow[1].illustrationPoints,
                 },
                 {
@@ -212,7 +242,7 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
         };
 
         console.log('thisBattle', thisBattle);
-        
+
         return res.status(200).json(thisBattle);
     } catch (err) {
         console.log(err.toString());
