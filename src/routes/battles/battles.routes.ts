@@ -196,7 +196,7 @@ battlesRoutes.get('/battles', Only(Child), async (req, res) => {
         console.log('myTeam', myTeam);
         console.log('team2', team2);
         const higherMyteam = decideHigher(myTeam[0].me, myTeam[1].teammate);
-        // array of objects returned by decideHighter  [[storypoint high, storypoint low], [illustrationpoint high, illustrationpoint low]]
+        // array of arrays returned by decideHighter  [[storypoint high, storypoint low], [illustrationpoint high, illustrationpoint low]]
         console.log('higherMytem', higherMyteam);
 
         const higherTeam2 = decideHigher(team2[0].opponentA, team2[1].opponentB);
