@@ -25,33 +25,44 @@ battlesRoutes.get('/battles', Only(Child), async (req, res) => {
                     username: username,
                     avatar: avatar,
                     story: {},
-                    illustration: {}
+                    illustration: {},
                 },
-                teammate: {}
+                teammate: {},
             },
         };
-        let teammate = null
+        let teammate = null;
         if (!match) {
             res.json(401).json({
                 message: `Match for Student ID ${id}, for week ${cohort.week} not found`,
             });
         } else {
-
-            { 
-                match.team1_child1_id === id ? teammate = match.team1_child2_id :
-                match.team1_child2_id === id ? teammate = match.team1_child1_id :
-                match.team2_child1_id === id ? teammate = match.team2_child2_id : teammate = match.team2_child1_id
+            {
+                match.team1_child1_id === id
+                    ? (teammate = match.team1_child2_id)
+                    : match.team1_child2_id === id
+                    ? (teammate = match.team1_child1_id)
+                    : match.team2_child1_id === id
+                    ? (teammate = match.team2_child2_id)
+                    : (teammate = match.team2_child1_id);
             }
-            console.log(`student: ${thisMatch.team.student.studentId}, teammate: ${teammate}`)
-            const [ story ] = stories.filter(el => el.week === cohort.week)
-            const [ illustration ] = illustrations.filter(el => el.week === cohort.week)
+            console.log(`student: ${thisMatch.team.student.studentId}, teammate: ${teammate}`);
+            const [story] = stories.filter((el) => el.week === cohort.week);
+            const [illustration] = illustrations.filter((el) => el.week === cohort.week);
 
-            thisMatch.team.student = { ...thisMatch.team.student, story: story, illustration: illustration}
-            thisMatch.team.teammate = await getCustomRepository(MatchInfoRepository, connection()).findStudentInfo(teammate, cohort.week)
+            thisMatch.team.student = {
+                ...thisMatch.team.student,
+                // replacing story and illustration objects as empty strings to avoid sending base64 04/2020
+                story: story,
+                illustration: illustration,
+            };
+            thisMatch.team.teammate = await getCustomRepository(
+                MatchInfoRepository,
+                connection()
+            ).findStudentInfo(teammate, cohort.week);
             // thisMatch.team.teammate = await getCustomRepository(MatchInfoRepository,)
             // previous syntax structure commented out below 3.12.20
             // new syntax structure (yet to be tested) 3.18.20
-            }
+        }
 
         return res.status(200).json({
             thisMatch,
@@ -64,41 +75,48 @@ battlesRoutes.get('/battles', Only(Child), async (req, res) => {
 
 battlesRoutes.put('/battles', Only(Child), async (req, res) => {
     try {
-
         const { id, progress } = req.user as Child;
 
         if (progress.teamReview === true) {
             return res.status(400).json({
-                message: `Cannot submit points twice`
-            })
+                message: `Cannot submit points twice`,
+            });
         }
 
-        const { stories, illustrations } = req.body
-        
+        const { stories, illustrations } = req.body;
+
         try {
-            await Promise.all(stories.map(el => {
-                getRepository(Stories, connection())
-                .findOne({ id: el.id })
-                .then( async (res) => {
-                    await getRepository(Stories, connection())
-                    .update({ id: el.id}, { points: res.points + el.points})
+            await Promise.all(
+                stories.map((el) => {
+                    getRepository(Stories, connection())
+                        .findOne({ id: el.id })
+                        .then(async (res) => {
+                            await getRepository(Stories, connection()).update(
+                                { id: el.id },
+                                { points: res.points + el.points }
+                            );
+                        });
                 })
-            }))
-        } catch(err) {
-            res.status(400).json({ message: `Story failed`})
+            );
+        } catch (err) {
+            res.status(400).json({ message: `Story failed` });
         }
 
         try {
-            await Promise.all(illustrations.map(el => {
-                getRepository(Illustrations, connection())
-                .findOne({ id: el.id })
-                .then( async (res) => {
-                    await getRepository(Illustrations, connection())
-                    .update({ id: el.id}, { points: res.points + el.points})
+            await Promise.all(
+                illustrations.map((el) => {
+                    getRepository(Illustrations, connection())
+                        .findOne({ id: el.id })
+                        .then(async (res) => {
+                            await getRepository(Illustrations, connection()).update(
+                                { id: el.id },
+                                { points: res.points + el.points }
+                            );
+                        });
                 })
-            }))
-        } catch(err) {
-            res.status(400).json({ message: 'Illustration failed' })
+            );
+        } catch (err) {
+            res.status(400).json({ message: 'Illustration failed' });
         }
 
         await getRepository(Child, connection()).update({ id }, { progress: { teamReview: true } });
