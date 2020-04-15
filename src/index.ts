@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+const path = require('path');
 import * as express from 'express';
 import * as dotenv from 'dotenv';
 import { createConnection } from 'typeorm';
@@ -32,7 +33,8 @@ const main = async () => {
         const app = express();
 
         globalMiddleware(app);
-
+        app.use(express.static(path.join(__dirname, '../', 'public')));
+        app;
         app.use('/admin', adminRoutes);
         app.use('/auth', authRoutes);
         app.use('/canon', CheckJwt(), canonRoutes);
