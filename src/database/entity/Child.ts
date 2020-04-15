@@ -30,28 +30,25 @@ class Child {
     @Column((type) => Progress)
     progress: Progress;
 
-    @ManyToOne(
-        (type) => Parent,
-        (parent) => parent.children
-    )
+    @Column()
+    total_points: number;
+
+    @Column()
+    wins: number;
+
+    @Column()
+    losses: number;
+
+    @ManyToOne((type) => Parent, (parent) => parent.children)
     parent: Parent;
 
-    @ManyToOne(
-        (type) => Cohort,
-        (cohort) => cohort.children
-    )
+    @ManyToOne((type) => Cohort, (cohort) => cohort.children)
     cohort: Cohort;
 
-    @OneToMany(
-        (type) => Illustrations,
-        (illustrations) => illustrations.child
-    )
+    @OneToMany((type) => Illustrations, (illustrations) => illustrations.child)
     illustrations: Illustrations[];
 
-    @OneToMany(
-        (type) => Stories,
-        (stories) => stories.child
-    )
+    @OneToMany((type) => Stories, (stories) => stories.child)
     stories: Stories[];
 }
 

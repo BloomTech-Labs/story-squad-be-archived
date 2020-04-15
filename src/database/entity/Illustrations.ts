@@ -9,11 +9,7 @@ class Illustrations {
 
     @Column()
     childId: number;
-    @ManyToOne(
-        (type) => Child,
-        (child) => child.illustrations,
-        { onDelete: 'CASCADE' }
-    )
+    @ManyToOne((type) => Child, (child) => child.illustrations, { onDelete: 'CASCADE' })
     @JoinColumn()
     child: Child;
 
@@ -25,6 +21,9 @@ class Illustrations {
 
     @Column({ nullable: true })
     points: number;
+
+    @Column({ nullable: true })
+    votes: number;
 }
 
 export { Illustrations };
