@@ -30,8 +30,10 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
                 username: username,
                 avatar: avatar,
                 story: {},
+                // storyUrl: '',
                 storyPoints: null,
                 illustration: {},
+                // illustrationUrl: '',
                 illustrationPoints: null,
                 role: null,
                 storyRole: null,
@@ -91,7 +93,9 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
                 // replacing story (loc77) and illustration loc(78) objects as empty strings to avoid sending base64 04/2020
                 story: story.story,
                 storyPoints: story.points,
+                // storyUrl: storyParse('homeTeam_student', story.story),
                 illustration: illustration.illustration,
+                // illustrationUrl: illustrationParse('homeTeam_student', illustration.illustration),
                 // illustration.illustration &&
                 // illustrationParse('homeTeam_student', illustration.illustration),
 
@@ -116,6 +120,7 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
             homeTeam.teammate = {
                 ...homeTeam.teammate,
                 story: story.story,
+                // storyUrl: storyParse('homeTeam_teammate', story.story),
                 illustration: illustration.illustration,
 
                 // illustration.illustration &&
@@ -223,112 +228,7 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
                 homeTeam.teammate.illustrationPoints + awayTeam.opponentA.illustrationPoints;
         }
 
-        //storyHigh = [higherMyteam in Story, higherTeam2 in Story, total points]
-        const storyHigh = [higherMyteam[0][0], higherTeam2[0][0]];
-        storyHigh.push(higherMyteam[0][0].storyPoints + higherTeam2[0][0].storyPoints);
-
-        //storyLow = [LowerMyteam in Story, LowerTeam2 in Story, total points]
-        const storyLow = [higherMyteam[0][1], higherTeam2[0][1]];
-        storyLow.push(higherMyteam[0][1].storyPoints + higherTeam2[0][1].storyPoints);
-
-        //illustrationHigh = [higherMyteam in illustration, higherTeam2 in illustration, total points]
-        const illustrationHigh = [higherMyteam[1][0], higherTeam2[1][0]];
-        illustrationHigh.push(
-            higherMyteam[1][0].illustrationPoints + higherTeam2[1][0].illustrationPoints
-        );
-
-        //illustrationLow = [lowerMyteam in illustration, lowerTeam2 in illustration, total points]
-        const illustrationLow = [higherMyteam[1][1], higherTeam2[1][1]];
-        illustrationLow.push(
-            higherMyteam[1][1].illustrationPoints + higherTeam2[1][1].illustrationPoints
-        );
-
         const thisBattle = {
-            storyHigh: [
-                {
-                    id: storyHigh[0].studentId,
-                    username: storyHigh[0].username,
-                    avatar: storyHigh[0].avatar,
-                    story: storyHigh[0].story,
-                    // && storyParse('story_high1', storyHigh[0].story),
-                    storyPoints: storyHigh[0].storyPoints,
-                    role: storyHigh[0].role,
-                },
-                {
-                    id: storyHigh[1].studentId,
-                    username: storyHigh[1].username,
-                    avatar: storyHigh[1].avatar,
-                    story: storyHigh[1].story,
-                    storyPoints: storyHigh[1].storyPoints,
-                    role: storyHigh[1].role,
-                },
-                {
-                    total: storyHigh[2],
-                },
-            ],
-            storyLow: [
-                {
-                    id: storyLow[0].studentId,
-                    username: storyLow[0].username,
-                    avatar: storyLow[0].avatar,
-                    story: storyLow[0].story,
-                    storyPoints: storyLow[0].storyPoints,
-                    role: storyLow[0].role,
-                },
-                {
-                    id: storyLow[1].studentId,
-                    username: storyLow[1].username,
-                    avatar: storyLow[1].avatar,
-                    story: storyLow[1].story,
-                    storyPoints: storyLow[1].storyPoints,
-                    role: storyLow[1].role,
-                },
-                {
-                    total: storyLow[2],
-                },
-            ],
-            illustrationHigh: [
-                {
-                    id: illustrationHigh[0].studentId,
-                    username: illustrationHigh[0].username,
-                    avatar: illustrationHigh[0].avatar,
-                    illustration: illustrationHigh[0].illustration,
-                    illustrationPoints: illustrationHigh[0].illustrationPoints,
-                    role: illustrationHigh[0].role,
-                },
-                {
-                    id: illustrationHigh[1].studentId,
-                    username: illustrationHigh[1].username,
-                    avatar: illustrationHigh[1].avatar,
-                    illustration: illustrationHigh[1].illustration,
-                    illustrationPoints: illustrationHigh[1].illustrationPoints,
-                    role: illustrationHigh[1].role,
-                },
-                {
-                    total: illustrationHigh[2],
-                },
-            ],
-            illustrationLow: [
-                {
-                    id: illustrationLow[0].studentId,
-                    username: illustrationLow[0].username,
-                    avatar: illustrationLow[0].avatar,
-                    illustration: illustrationLow[0].illustration,
-                    illustrationPoints: illustrationLow[0].illustrationPoints,
-                    role: illustrationLow[0].role,
-                },
-                {
-                    id: illustrationLow[1].studentId,
-                    username: illustrationLow[1].username,
-                    avatar: illustrationLow[1].avatar,
-                    illustration: illustrationLow[1].illustration,
-                    illustrationPoints: illustrationLow[1].illustrationPoints,
-                    role: illustrationLow[1].role,
-                },
-                {
-                    total: illustrationLow[2],
-                },
-            ],
             battleInfo: {
                 student: {
                     ...homeTeam.student,
@@ -344,22 +244,6 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
                 },
             },
         };
-        // let storyRole,
-        //     illustrationRole = '';
-        // for (let key in thisBattle) {
-        //     storyHigh.forEach((el) => {
-        //         if (el.role === 'student') s;
-        //     });
-        // }
-
-        // const battleInfo = {
-        //     student: {
-        //         ...homeTeam.student,
-        //     },
-        //     teammate: {},
-        //     oppoenentA: {},
-        //     oppoenentB: {},
-        // };
 
         console.log('thisBattle', thisBattle);
 
