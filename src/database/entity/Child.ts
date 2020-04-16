@@ -39,6 +39,9 @@ class Child {
     @Column()
     losses: number;
 
+    @Column()
+    votes: number;
+
     @ManyToOne((type) => Parent, (parent) => parent.children)
     parent: Parent;
 

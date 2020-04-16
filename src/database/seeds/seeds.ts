@@ -41,6 +41,7 @@ function MakeChild(name, grade, points, wins, losses, dyslexia) {
     Temp.total_points = points;
     Temp.wins = wins;
     Temp.losses = losses;
+    Temp.votes = 0;
 
     return Temp;
 }
