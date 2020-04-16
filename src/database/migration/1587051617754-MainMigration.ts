@@ -5,8 +5,9 @@ import {
     EntityManager,
     EntitySchema,
 } from 'typeorm';
-import { Cohort, Canon } from '../../database/entity';
-import { CohortSeed, CanonSeed } from '../seeds/seeds';
+import { Cohort, Canon, Parent } from '../../database/entity';
+import { CohortSeed, CanonSeed, ParentSeed } from '../seeds/seeds';
+import Stripe from 'stripe';
 
 export class MainMigration1587051617754 implements MigrationInterface {
     name = 'MainMigration1587051617754';
@@ -63,6 +64,16 @@ export class MainMigration1587051617754 implements MigrationInterface {
 
         await queryRunner.manager.getRepository(Cohort).save(CohortSeed);
         await queryRunner.manager.getRepository(Canon).save(CanonSeed);
+
+        //Should match auth exactly
+        let { id: stripeID } = await new Stripe('sk_test_v666XmnGJcP1Oz3GBg2iFmvd004Q3qp4jZ', {
+            apiVersion: '2019-12-03',
+            typescript: true,
+        }).customers.create({
+            email: ParentSeed.email,
+        });
+        ParentSeed.stripeID = stripeID;
+        await queryRunner.manager.getRepository(Parent).save(ParentSeed);
     }
 
     public async down(queryRunner: QueryRunner): Promise<any> {
