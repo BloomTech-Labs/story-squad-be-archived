@@ -5,8 +5,8 @@ import {
     EntityManager,
     EntitySchema,
 } from 'typeorm';
-import { Cohort, Canon, Parent } from '../../database/entity';
-import { CohortSeed, CanonSeed, ParentSeed } from '../seeds/seeds';
+import { Cohort, Canon, Parent, Child } from '../../database/entity';
+import { CohortSeed, CanonSeed, ParentSeed, ChildSeed } from '../seeds/seeds';
 import Stripe from 'stripe';
 
 export class MainMigration1587051617754 implements MigrationInterface {
@@ -74,6 +74,8 @@ export class MainMigration1587051617754 implements MigrationInterface {
         });
         ParentSeed.stripeID = stripeID;
         await queryRunner.manager.getRepository(Parent).save(ParentSeed);
+
+        await queryRunner.manager.getRepository(Child).save(ChildSeed);
     }
 
     public async down(queryRunner: QueryRunner): Promise<any> {

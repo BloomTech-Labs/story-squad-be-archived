@@ -1,6 +1,7 @@
-import { Cohort, Canon, Parent } from '../entity';
+import { Cohort, Canon, Parent, Child } from '../entity';
 import { DueDates } from '../entity/DueDates';
 import { hashSync } from 'bcryptjs';
+import { Preferences } from '../entity/Preferences';
 
 let c1 = new Cohort();
 c1.name = 'Main';
@@ -26,3 +27,27 @@ ParentDefault.name = 'TestFirst TestLast';
 ParentDefault.password = hashSync('testpass', parseInt(process.env.SALT || '3', 10));
 
 export const ParentSeed = ParentDefault;
+
+function MakeChild(name, grade, points, wins, losses, dyslexia) {
+    let Temp = new Child();
+
+    Temp.username = name;
+    Temp.subscription = true;
+    Temp.cohort = c1;
+    Temp.parent = ParentDefault;
+    Temp.preferences = new Preferences();
+    Temp.preferences.dyslexia = dyslexia;
+    Temp.grade = grade;
+    Temp.total_points = points;
+    Temp.wins = wins;
+    Temp.losses = losses;
+
+    return Temp;
+}
+
+export const ChildSeed = [
+    MakeChild('Child1', 4, 0, 0, 0, false),
+    MakeChild('Child2', 5, 0, 0, 0, false),
+    MakeChild('Child3', 5, 0, 0, 0, false),
+    MakeChild('Child4', 6, 0, 0, 0, false),
+];
