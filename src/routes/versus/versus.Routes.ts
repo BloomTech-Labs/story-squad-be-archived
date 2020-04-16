@@ -6,6 +6,7 @@ import { MatchInfoRepository } from './custom';
 import { storyParse, illustrationParse } from './child.imageParse';
 import { Only } from '../../middleware/only/only.middleware';
 import { connection } from '../../util/typeorm-connection';
+import e = require('express');
 
 const versusRoutes = Router();
 
@@ -32,6 +33,13 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
                 storyPoints: null,
                 illustration: {},
                 illustrationPoints: null,
+                role: null,
+                storyRole: null,
+                illustrationRole: null,
+                storyOpponent: null,
+                illustrationOpponent: null,
+                storyTotal: null,
+                illustrationTotal: null,
             },
             teammate: {},
         };
@@ -81,13 +89,20 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
             homeTeam.student = {
                 ...homeTeam.student,
                 // replacing story (loc77) and illustration loc(78) objects as empty strings to avoid sending base64 04/2020
-                story: story.story && storyParse('homeTeam_student', story.story),
+                story: story.story,
                 storyPoints: story.points,
-                illustration:
-                    illustration.illustration &&
-                    illustrationParse('homeTeam_student', illustration.illustration),
+                illustration: illustration.illustration,
+                // illustration.illustration &&
+                // illustrationParse('homeTeam_student', illustration.illustration),
 
                 illustrationPoints: illustration.points,
+                role: 'student',
+                storyRole: '',
+                illustrationRole: '',
+                storyOpponent: null,
+                illustrationOpponent: null,
+                storyTotal: null,
+                illustrationTotal: null,
             };
 
             homeTeam.teammate = await getCustomRepository(
@@ -100,10 +115,18 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
 
             homeTeam.teammate = {
                 ...homeTeam.teammate,
-                story: story.story && storyParse('homeTeam_teammate', story.story),
-                illustration:
-                    illustration.illustration &&
-                    illustrationParse('homeTeam_teammate', illustration.illustration),
+                story: story.story,
+                illustration: illustration.illustration,
+
+                // illustration.illustration &&
+                // illustrationParse('homeTeam_teammate', illustration.illustration),
+                role: 'teammate',
+                storyRole: null,
+                illustrationRole: null,
+                storyOpponent: null,
+                illustrationOpponent: null,
+                storyTotal: null,
+                illustrationTotal: null,
             };
 
             awayTeam.opponentA = await getCustomRepository(
@@ -113,10 +136,11 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
 
             awayTeam.opponentA = {
                 ...awayTeam.opponentA,
-                story: story.story && storyParse('awayTeam_opponentA', story.story),
-                illustration:
-                    illustration.illustration &&
-                    illustrationParse('awayTeam_opponentA', illustration.illustration),
+                story: story.story,
+                illustration: illustration.illustration,
+                role: 'opponentA',
+                storyRole: null,
+                illustrationRole: null,
             };
 
             awayTeam.opponentB = await getCustomRepository(
@@ -127,10 +151,11 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
 
             awayTeam.opponentB = {
                 ...awayTeam.opponentB,
-                story: story.story && storyParse('awayTeam_opponentB', story.story),
-                illustration:
-                    illustration.illustration &&
-                    illustrationParse('awayTeam_opponentB', illustration.illustration),
+                story: story.story,
+                illustration: illustration.illustration,
+                role: 'opponentB',
+                storyRole: null,
+                illustrationRole: null,
             };
         }
 
@@ -138,8 +163,65 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
 
         const higherMyteam = decideHigher(homeTeam.student, homeTeam.teammate);
         // array of objects returned by decideHighter  [[storypoint high, storypoint low], [illustrationpoint high, illustrationpoint low]]
+        if (higherMyteam[0][0].role === 'student' && higherMyteam[1][0].role === 'student') {
+            homeTeam.student.storyRole = 'storyHigh';
+            homeTeam.teammate.storyRole = 'storyLow';
+            homeTeam.student.illustrationRole = 'illustrationHigh';
+            homeTeam.teammate.illustrationRole = 'illustrationLow';
+        } else {
+            homeTeam.student.storyRole = 'storyLow';
+            homeTeam.teammate.storyRole = 'storyHigh';
+            homeTeam.student.illustrationRole = 'illustrationLow';
+            homeTeam.teammate.illustrationRole = 'illustrationHigh';
+        }
+        console.log('higherMyTeam', higherMyteam);
+        console.log('homeTeam.student.storyRole', homeTeam.student.illustrationRole);
 
+        console.log('highmyteam00', higherMyteam[0][0].role);
         const higherTeam2 = decideHigher(awayTeam.opponentA, awayTeam.opponentB);
+
+        if (higherTeam2[0][0].role === 'opponentA' && higherTeam2[1][0].role === 'opponentA') {
+            awayTeam.opponentA.storyRole = 'storyHigh';
+            awayTeam.opponentB.storyRole = 'storyLow';
+            awayTeam.opponentA.illustrationRole = 'illustrationHigh';
+            awayTeam.opponentB.illustrationRole = 'illustrationLow';
+        } else {
+            awayTeam.opponentA.storyRole = 'storyLow';
+            awayTeam.opponentB.storyRole = 'storyHigh';
+            awayTeam.opponentA.illustrationRole = 'illustrationLow';
+            awayTeam.opponentB.illustrationRole = 'illustrationHigh';
+        }
+
+        if (homeTeam.student.storyRole === awayTeam.opponentA.storyRole) {
+            homeTeam.student.storyOpponent = awayTeam.opponentA;
+            homeTeam.teammate.storyOpponent = awayTeam.opponentB;
+            homeTeam.student.storyTotal =
+                homeTeam.student.storyPoints + awayTeam.opponentA.storyPoints;
+            homeTeam.teammate.storyTotal =
+                homeTeam.teammate.storyPoints + awayTeam.opponentB.storyPoints;
+        } else {
+            homeTeam.student.storyOpponent = awayTeam.opponentB;
+            homeTeam.teammate.storyOpponent = awayTeam.opponentA;
+            homeTeam.student.storyTotal =
+                homeTeam.student.storyPoints + awayTeam.opponentB.storyPoints;
+            homeTeam.teammate.storyTotal =
+                homeTeam.teammate.storyPoints + awayTeam.opponentA.storyPoints;
+        }
+        if (homeTeam.student.illustrationRole === awayTeam.opponentA.illustrationRole) {
+            homeTeam.student.illustrationOpponent = awayTeam.opponentA;
+            homeTeam.teammate.illustrationOpponent = awayTeam.opponentB;
+            homeTeam.student.illustrationTotal =
+                homeTeam.student.illustrationPoints + awayTeam.opponentA.illustrationPoints;
+            homeTeam.teammate.illustrationTotal =
+                homeTeam.teammate.illustrationPoints + awayTeam.opponentB.illustrationPoints;
+        } else {
+            homeTeam.student.illustrationOpponent = awayTeam.opponentB;
+            homeTeam.teammate.illustrationOpponent = awayTeam.opponentA;
+            homeTeam.student.illustrationTotal =
+                homeTeam.student.illustrationPoints + awayTeam.opponentB.illustrationPoints;
+            homeTeam.teammate.illustrationTotal =
+                homeTeam.teammate.illustrationPoints + awayTeam.opponentA.illustrationPoints;
+        }
 
         //storyHigh = [higherMyteam in Story, higherTeam2 in Story, total points]
         const storyHigh = [higherMyteam[0][0], higherTeam2[0][0]];
@@ -170,6 +252,7 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
                     story: storyHigh[0].story,
                     // && storyParse('story_high1', storyHigh[0].story),
                     storyPoints: storyHigh[0].storyPoints,
+                    role: storyHigh[0].role,
                 },
                 {
                     id: storyHigh[1].studentId,
@@ -177,6 +260,7 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
                     avatar: storyHigh[1].avatar,
                     story: storyHigh[1].story,
                     storyPoints: storyHigh[1].storyPoints,
+                    role: storyHigh[1].role,
                 },
                 {
                     total: storyHigh[2],
@@ -189,6 +273,7 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
                     avatar: storyLow[0].avatar,
                     story: storyLow[0].story,
                     storyPoints: storyLow[0].storyPoints,
+                    role: storyLow[0].role,
                 },
                 {
                     id: storyLow[1].studentId,
@@ -196,6 +281,7 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
                     avatar: storyLow[1].avatar,
                     story: storyLow[1].story,
                     storyPoints: storyLow[1].storyPoints,
+                    role: storyLow[1].role,
                 },
                 {
                     total: storyLow[2],
@@ -208,6 +294,7 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
                     avatar: illustrationHigh[0].avatar,
                     illustration: illustrationHigh[0].illustration,
                     illustrationPoints: illustrationHigh[0].illustrationPoints,
+                    role: illustrationHigh[0].role,
                 },
                 {
                     id: illustrationHigh[1].studentId,
@@ -215,6 +302,7 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
                     avatar: illustrationHigh[1].avatar,
                     illustration: illustrationHigh[1].illustration,
                     illustrationPoints: illustrationHigh[1].illustrationPoints,
+                    role: illustrationHigh[1].role,
                 },
                 {
                     total: illustrationHigh[2],
@@ -227,6 +315,7 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
                     avatar: illustrationLow[0].avatar,
                     illustration: illustrationLow[0].illustration,
                     illustrationPoints: illustrationLow[0].illustrationPoints,
+                    role: illustrationLow[0].role,
                 },
                 {
                     id: illustrationLow[1].studentId,
@@ -234,12 +323,43 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
                     avatar: illustrationLow[1].avatar,
                     illustration: illustrationLow[1].illustration,
                     illustrationPoints: illustrationLow[1].illustrationPoints,
+                    role: illustrationLow[1].role,
                 },
                 {
                     total: illustrationLow[2],
                 },
             ],
+            battleInfo: {
+                student: {
+                    ...homeTeam.student,
+                },
+                teammate: {
+                    ...homeTeam.teammate,
+                },
+                oppoenentA: {
+                    ...awayTeam.opponentA,
+                },
+                oppoenentB: {
+                    ...awayTeam.opponentB,
+                },
+            },
         };
+        // let storyRole,
+        //     illustrationRole = '';
+        // for (let key in thisBattle) {
+        //     storyHigh.forEach((el) => {
+        //         if (el.role === 'student') s;
+        //     });
+        // }
+
+        // const battleInfo = {
+        //     student: {
+        //         ...homeTeam.student,
+        //     },
+        //     teammate: {},
+        //     oppoenentA: {},
+        //     oppoenentB: {},
+        // };
 
         console.log('thisBattle', thisBattle);
 
