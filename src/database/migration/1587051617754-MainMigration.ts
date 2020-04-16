@@ -7,6 +7,7 @@ export class MainMigration1587051617754 implements MigrationInterface {
     name = 'MainMigration1587051617754';
 
     public async up(queryRunner: QueryRunner): Promise<any> {
+        /* Basic query structure copied from generating a new migration (migration:generate) */
         await queryRunner.query(
             `CREATE TABLE "admin" ("id" SERIAL NOT NULL, "email" character varying NOT NULL, "password" character varying NOT NULL, "temptoken" character varying, "role" character varying NOT NULL, CONSTRAINT "UQ_de87485f6489f5d0995f5841952" UNIQUE ("email"), CONSTRAINT "PK_e032310bcef831fb83101899b10" PRIMARY KEY ("id"))`,
             undefined
@@ -55,7 +56,9 @@ export class MainMigration1587051617754 implements MigrationInterface {
             `ALTER TABLE "child" ADD CONSTRAINT "FK_faecc77a0cf169a4c97f0a8d812" FOREIGN KEY ("cohortId") REFERENCES "cohort"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
             undefined
         );
+        /******************/
 
+        /* SEEDING - Need to use queryRunner's Manager to get the proper connection info */
         await queryRunner.manager.getRepository(Cohort).save(CohortSeed);
         await queryRunner.manager.getRepository(Canon).save(CanonSeed);
 
@@ -70,6 +73,7 @@ export class MainMigration1587051617754 implements MigrationInterface {
         await queryRunner.manager.getRepository(Parent).save(ParentSeed);
 
         await queryRunner.manager.getRepository(Child).save(ChildSeed);
+        /******************/
     }
 
     public async down(queryRunner: QueryRunner): Promise<any> {
