@@ -236,12 +236,6 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
                 teammate: {
                     ...homeTeam.teammate,
                 },
-                oppoenentA: {
-                    ...awayTeam.opponentA,
-                },
-                oppoenentB: {
-                    ...awayTeam.opponentB,
-                },
             },
         };
 
