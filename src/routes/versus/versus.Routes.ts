@@ -149,12 +149,12 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
             homeTeam.teammate = {
                 ...homeTeam.teammate,
                 ...teammate,
-                // story: teammate.story.story,
+                story: teammate.story,
                 // illustration: teammate.illustration.illustration,
                 role: 'teammate',
             };
             console.log('hometeam.student', homeTeam.student);
-            console.log('hometeam.teammate', homeTeam.teammate);
+            console.log('hometeam.teammate', teammate);
             awayTeam.student = await getCustomRepository(
                 MatchInfoRepository,
                 connection()
