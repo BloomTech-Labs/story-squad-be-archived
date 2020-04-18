@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
-import { Cohort, Canon, Parent, Child } from '../../database/entity';
-import { CohortSeed, CanonSeed, ParentSeed, ChildSeed } from '../seeds/seeds';
+import { Cohort, Canon, Parent, Child, Stories } from '../../database/entity';
+import { CohortSeed, CanonSeed, ParentSeed, ChildSeed, StorySeed } from '../seeds/seeds';
 import Stripe from 'stripe';
 
 export class MainMigration1587051617754 implements MigrationInterface {
@@ -73,6 +73,8 @@ export class MainMigration1587051617754 implements MigrationInterface {
         await queryRunner.manager.getRepository(Parent).save(ParentSeed);
 
         await queryRunner.manager.getRepository(Child).save(ChildSeed);
+
+        await queryRunner.manager.getRepository(Stories).save(StorySeed);
         /******************/
     }
 
