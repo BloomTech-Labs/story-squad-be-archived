@@ -17,6 +17,7 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
         const match = await returnMatch(id, cohort.week);
         // populate home team object(s)
 
+        // homeTeam created
         const homeTeam = new Team(match.id, cohort.week);
         homeTeam.student.studentId = id;
         homeTeam.student.username = username;
@@ -24,6 +25,8 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
 
         let student_id = null;
         let teammate_id = null;
+
+        //awayTeam created
         const awayTeam = new Team(match.id, cohort.week);
         let opponentA_id = null;
         let opponentB_id = null;
@@ -100,7 +103,7 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
         // Round allocation functions below
 
         const higherMyteam = decideHigher(homeTeam.student, homeTeam.teammate);
-        // array of objects returned by decideHighter  [[storypoint high, storypoint low], [illustrationpoint high, illustrationpoint low]]
+        // array of arrays returned by decideHighter  [[storypoint high, storypoint low], [illustrationpoint high, illustrationpoint low]]
         if (higherMyteam[0][0].role === 'student' && higherMyteam[1][0].role === 'student') {
             homeTeam.student.storyRole = 'storyHigh';
             homeTeam.teammate.storyRole = 'storyLow';
@@ -142,6 +145,7 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
             homeTeam.teammate.storyTotal =
                 homeTeam.teammate.storyPoints + awayTeam.student.storyPoints;
         }
+
         if (homeTeam.student.illustrationRole === awayTeam.student.illustrationRole) {
             homeTeam.student.illustrationOpponent = awayTeam.student;
             homeTeam.teammate.illustrationOpponent = awayTeam.teammate;
