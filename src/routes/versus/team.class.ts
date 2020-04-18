@@ -15,7 +15,7 @@ interface student {
     illustrationPoints: string | any;
     role?: string;
     storyRole?: string;
-    illustrationRole?: student;
+    illustrationRole?: string;
     storyOpponent?: student;
     illustrationOpponent?: student;
     storyTotal?: number;

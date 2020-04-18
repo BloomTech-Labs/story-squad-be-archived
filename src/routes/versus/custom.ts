@@ -28,9 +28,9 @@ export class MatchInfoRepository {
             username: child.username,
             avatar: child.avatar,
             // replacing story and illustration objects as empty strings to avoid sending base64 4/13/2020
-            story: null,
+            story: story.story,
             storyPoints: story.points,
-            illustration: null,
+            illustration: illustration.illustration,
             illustrationPoints: illustration.points,
         };
     }
