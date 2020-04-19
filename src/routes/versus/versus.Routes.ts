@@ -27,7 +27,7 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
         homeTeam.student.studentId = id;
         homeTeam.student.username = username;
         homeTeam.student.avatar = avatar;
-
+        let student_id = null;
         let teammate_id = null;
 
         //awayTeam created
@@ -93,6 +93,7 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
         }
         // createTeam(awayTeam, opponentB);
         // who is higher in story and illustration points between student and teammate in homeTeam?
+        // array of array returned by decideHighter  [[storypoint high, storypoint low], [illustrationpoint high, illustrationpoint low]]
         const higherMyteam = decideHigher(homeTeam.student, homeTeam.teammate);
         // assign storyRole and illustrationRole to student and teammate in homeTeam
         assignRole(higherMyteam, homeTeam);
