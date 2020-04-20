@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+const path = require('path');
 import * as express from 'express';
 import * as dotenv from 'dotenv';
 import { createConnection } from 'typeorm';
@@ -16,6 +17,7 @@ import {
     cohortRoutes,
     matchMakingRoutes,
     battlesRoutes,
+    versusRoutes,
 } from './routes';
 import { connection } from './util/typeorm-connection';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
@@ -31,7 +33,8 @@ const main = async () => {
         const app = express();
 
         globalMiddleware(app);
-
+        app.use(express.static(path.join(__dirname, '../', 'public')));
+        app;
         app.use('/admin', adminRoutes);
         app.use('/auth', authRoutes);
         app.use('/canon', CheckJwt(), canonRoutes);
@@ -41,6 +44,7 @@ const main = async () => {
         app.use('/payment', CheckJwt(), UpdateStripeRecords(), stripeRoutes);
         app.use('/matchmaking', CheckJwt(), matchMakingRoutes);
         app.use('/battlesRoutes', CheckJwt(), battlesRoutes);
+        app.use('/versusRoutes', CheckJwt(), versusRoutes);
         app.use('/storyRoutes', CheckJwt(), storyRoutes);
         app.use('/illustrationRoutes', CheckJwt(), illustrationRoutes);
 
