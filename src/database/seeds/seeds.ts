@@ -90,7 +90,19 @@ function MakeStory(child, page, transcribe) {
     Temp.story.page1 = page;
     Temp.transcribed_text = new Transcribed_Pages();
     Temp.transcribed_text.t_page1 = transcribe;
-    Temp.flesch_reading_ease = 0.5;
+    Temp.flesch_reading_ease = 36.96;
+    Temp.smog_index = 0;
+    Temp.flesch_kincaid_grade = 10.3;
+    Temp.coleman_liau_index = 11.86;
+    Temp.automated_readability_index = 8.2;
+    Temp.dale_chall_readability_score = 9.35;
+    Temp.difficult_words = 3;
+    Temp.linsear_write_formula = 4.5;
+    Temp.gunning_fog = 8.04;
+    Temp.consolidated_score = '4th and 5th grade';
+    Temp.doc_length = 57;
+    Temp.quote_count = 0;
+
     Temp.week = 1;
 
     return Temp;
