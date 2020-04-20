@@ -90,6 +90,8 @@ function MakeStory(child, page, transcribe) {
     Temp.story.page1 = page;
     Temp.transcribed_text = new Transcribed_Pages();
     Temp.transcribed_text.t_page1 = transcribe;
+
+    //Currently py scripts will crash without this
     Temp.flesch_reading_ease = 36.96;
     Temp.smog_index = 0;
     Temp.flesch_kincaid_grade = 10.3;
