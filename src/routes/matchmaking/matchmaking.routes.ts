@@ -29,11 +29,13 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
             });
         } catch (err) {
             console.log(err.toString());
-            return res.status(500).json({ err: err.toString(), message: 'Could not fetch submissions' });
+            return res
+                .status(500)
+                .json({ err: err.toString(), message: 'Could not fetch submissions' });
         }
 
         let submissionObject = {};
-        
+
         for (const story of stories) {
             try {
                 const [childusMinimus] = await getRepository(Child, connection()).find({
@@ -43,29 +45,31 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
                 const pictureCheck = await getRepository(Illustrations, connection()).find({
                     where: { id: childusMinimus.id, week: req.params.week },
                 });
-                console.log(`PICTURE CHECK - id: ${story.childId}`, `length: ${pictureCheck.length}`);
+                console.log(
+                    `PICTURE CHECK - id: ${story.childId}`,
+                    `length: ${pictureCheck.length}`
+                );
 
                 // if picture is present, perform DS matchmaking
-                if (pictureCheck.length){
-                submissionObject = {
-
-                    ...submissionObject,
-                    [story.childId]: {
-                        flesch_reading_ease: story.flesch_reading_ease,
-                        smog_index: story.smog_index,
-                        flesch_kincaid: story.flesch_kincaid_grade,
-                        coleman_liau_index: story.coleman_liau_index,
-                        automated_readability_index: story.automated_readability_index,
-                        dale_chall_readability_score: story.dale_chall_readability_score,
-                        difficult_words: story.difficult_words,
-                        linsear_write_formula: story.linsear_write_formula,
-                        gunning_fog: story.gunning_fog,
-                        doc_length: story.doc_length,
-                        quote_count: story.quote_count,
-                        grade: childusMinimus.grade,
-                    },
-                };
-            }
+                if (pictureCheck.length) {
+                    submissionObject = {
+                        ...submissionObject,
+                        [story.childId]: {
+                            flesch_reading_ease: story.flesch_reading_ease,
+                            smog_index: story.smog_index,
+                            flesch_kincaid: story.flesch_kincaid_grade,
+                            coleman_liau_index: story.coleman_liau_index,
+                            automated_readability_index: story.automated_readability_index,
+                            dale_chall_readability_score: story.dale_chall_readability_score,
+                            difficult_words: story.difficult_words,
+                            linsear_write_formula: story.linsear_write_formula,
+                            gunning_fog: story.gunning_fog,
+                            doc_length: story.doc_length,
+                            quote_count: story.quote_count,
+                            grade: childusMinimus.grade,
+                        },
+                    };
+                }
             } catch (err) {
                 console.log(err.toString());
                 return res.status(500).json({
@@ -89,7 +93,7 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
         try {
             for (let [key, value] of Object.entries(competition)) {
                 const existingMatch = await checkTeams(value);
-                if (existingMatch[0] && existingMatch[1] && existingMatch[2] && existingMatch[3]) {
+                if (existingMatch[0]) {
                     await persistMatch(value, thisWeek);
                 } else {
                     console.log('matches pre-existing');
@@ -188,7 +192,7 @@ async function checkTeams(value) {
     } catch (err) {
         console.log(err.toString());
     }
-    console.log(`CHECK TEAMS`, existingMatch)
+    console.log(`CHECK TEAMS`, existingMatch);
     return existingMatch;
 }
 
