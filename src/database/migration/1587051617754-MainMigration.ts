@@ -70,7 +70,7 @@ export class MainMigration1587051617754 implements MigrationInterface {
         await queryRunner.manager.getRepository(Canon).save(CanonSeed);
 
         //Should match auth exactly
-        let { id: stripeID } = await new Stripe('sk_test_v666XmnGJcP1Oz3GBg2iFmvd004Q3qp4jZ', {
+        let { id: stripeID } = await new Stripe(process.env.STRIPE_API, {
             apiVersion: '2019-12-03',
             typescript: true,
         }).customers.create({
