@@ -20,10 +20,7 @@ class Cohort {
     @Column((type) => DueDates)
     dueDates: DueDates;
 
-    @OneToMany(
-        (type) => Child,
-        (child) => child.cohort
-    )
+    @OneToMany((type) => Child, (child) => child.cohort)
     children: Child[];
 }
 
