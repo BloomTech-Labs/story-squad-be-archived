@@ -1,6 +1,13 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
-import { Cohort, Canon, Parent, Child, Stories } from '../../database/entity';
-import { CohortSeed, CanonSeed, ParentSeed, ChildSeed, StorySeed } from '../seeds/seeds';
+import { Cohort, Canon, Parent, Child, Stories, Illustrations } from '../../database/entity';
+import {
+    CohortSeed,
+    CanonSeed,
+    ParentSeed,
+    ChildSeed,
+    StorySeed,
+    IllustrationSeed,
+} from '../seeds/seeds';
 import Stripe from 'stripe';
 
 export class MainMigration1587051617754 implements MigrationInterface {
@@ -33,7 +40,7 @@ export class MainMigration1587051617754 implements MigrationInterface {
             undefined
         );
         await queryRunner.query(
-            `CREATE TABLE "child" ("id" SERIAL NOT NULL, "username" character varying NOT NULL, "grade" integer NOT NULL, "subscription" boolean NOT NULL DEFAULT false, "avatar" character varying, "total_points" integer NOT NULL, "wins" integer NOT NULL, "losses" integer NOT NULL, "votes" integer NOT NULL, "parentId" integer, "cohortId" integer, "preferencesDyslexia" boolean NOT NULL DEFAULT false, "progressReading" boolean NOT NULL DEFAULT false, "progressWriting" boolean NOT NULL DEFAULT false, "progressDrawing" boolean NOT NULL DEFAULT false, "progressTeamreview" boolean NOT NULL DEFAULT false, "progressRandomreview" boolean NOT NULL DEFAULT false, CONSTRAINT "PK_4609b9b323ca37c6bc435ec4b6b" PRIMARY KEY ("id"))`,
+            `CREATE TABLE "child" ("id" SERIAL NOT NULL, "username" character varying NOT NULL, "grade" integer NOT NULL, "subscription" boolean NOT NULL DEFAULT false, "avatar" character varying, "total_points" integer, "wins" integer, "losses" integer, "votes" integer, "parentId" integer, "cohortId" integer, "preferencesDyslexia" boolean NOT NULL DEFAULT false, "progressReading" boolean NOT NULL DEFAULT false, "progressWriting" boolean NOT NULL DEFAULT false, "progressDrawing" boolean NOT NULL DEFAULT false, "progressTeamreview" boolean NOT NULL DEFAULT false, "progressRandomreview" boolean NOT NULL DEFAULT false, CONSTRAINT "PK_4609b9b323ca37c6bc435ec4b6b" PRIMARY KEY ("id"))`,
             undefined
         );
         await queryRunner.query(
@@ -75,6 +82,8 @@ export class MainMigration1587051617754 implements MigrationInterface {
         await queryRunner.manager.getRepository(Child).save(ChildSeed);
 
         await queryRunner.manager.getRepository(Stories).save(StorySeed);
+
+        await queryRunner.manager.getRepository(Illustrations).save(IllustrationSeed);
         /******************/
     }
 

@@ -30,16 +30,16 @@ class Child {
     @Column((type) => Progress)
     progress: Progress;
 
-    @Column()
+    @Column({ nullable: true })
     total_points: number;
 
-    @Column()
+    @Column({ nullable: true })
     wins: number;
 
-    @Column()
+    @Column({ nullable: true })
     losses: number;
 
-    @Column()
+    @Column({ nullable: true })
     votes: number;
 
     @ManyToOne((type) => Parent, (parent) => parent.children)
