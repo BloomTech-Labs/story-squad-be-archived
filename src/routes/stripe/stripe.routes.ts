@@ -17,7 +17,7 @@ interface CustomerSourceExtended {
     [key: string]: any;
 }
 
-const stripe = new Stripe(process.env.STRIPE_API || 'sk_test_v666XmnGJcP1Oz3GBg2iFmvd004Q3qp4jZ', {
+const stripe = new Stripe(process.env.STRIPE_API, {
     apiVersion: '2019-12-03',
     typescript: true,
 });
