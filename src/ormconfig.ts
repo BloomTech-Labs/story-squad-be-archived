@@ -17,11 +17,11 @@ module.exports = [
         synchronize: true,
         logging: false,
         entities: [path.resolve(__dirname, 'database/entity/**/*.{ts,js}')],
-        migrations: [path.resolve(__dirname, 'database/migration/**/*.{ts,js}')],
+        migrations: [path.resolve(__dirname, 'database/migration/default/**/*.{ts,js}')],
         subscribers: [path.resolve(__dirname, 'database/subscriber/**/*.{ts,js}')],
         cli: {
             entitiesDir: path.relative('', path.resolve(__dirname, 'database/entity')),
-            migrationsDir: path.relative('', path.resolve(__dirname, 'database/migration')),
+            migrationsDir: path.relative('', path.resolve(__dirname, 'database/migration/default')),
             subscribersDir: path.relative('', path.resolve(__dirname, 'database/subscriber')),
         },
     },
@@ -36,11 +36,14 @@ module.exports = [
         synchronize: true,
         logging: false,
         entities: [path.resolve(__dirname, 'database/entity/**/*.{ts,js}')],
-        migrations: [path.resolve(__dirname, 'database/migration/**/*.{ts,js}')],
+        migrations: [path.resolve(__dirname, 'database/migration/development/**/*.{ts,js}')],
         subscribers: [path.resolve(__dirname, 'database/subscriber/**/*.{ts,js}')],
         cli: {
             entitiesDir: path.relative('', path.resolve(__dirname, 'database/entity')),
-            migrationsDir: path.relative('', path.resolve(__dirname, 'database/migration')),
+            migrationsDir: path.relative(
+                '',
+                path.resolve(__dirname, 'database/migration/development')
+            ),
             subscribersDir: path.relative('', path.resolve(__dirname, 'database/subscriber')),
         },
     },
