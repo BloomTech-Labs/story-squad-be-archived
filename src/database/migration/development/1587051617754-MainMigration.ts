@@ -1,13 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 import { Cohort, Canon, Parent, Child, Stories, Illustrations } from '../../../database/entity';
-import {
-    CohortSeed,
-    CanonSeed,
-    ParentSeed,
-    ChildSeed,
-    StorySeed,
-    IllustrationSeed,
-} from './seeds/seeds';
+import { CohortSeed, CanonSeed, ParentSeed, ChildSeed, StorySeed, IllustrationSeed } from './seeds';
 import Stripe from 'stripe';
 
 export class MainMigration1587051617754 implements MigrationInterface {
