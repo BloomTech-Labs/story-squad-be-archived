@@ -10,11 +10,7 @@ class Stories {
 
     @Column()
     childId: number;
-    @ManyToOne(
-        (type) => Child,
-        (child) => child.stories,
-        { onDelete: 'CASCADE' }
-    )
+    @ManyToOne((type) => Child, (child) => child.stories, { onDelete: 'CASCADE' })
     @JoinColumn()
     child: Child;
 
@@ -29,6 +25,9 @@ class Stories {
 
     @Column({ nullable: true })
     points: number;
+
+    @Column({ nullable: true })
+    votes: number;
 
     @Column({ type: 'double precision', nullable: true })
     flesch_reading_ease: number;

@@ -8,7 +8,7 @@ import { Hash, ValidateHash } from '../../middleware';
 import { connection } from '../../util/typeorm-connection';
 
 const authRoutes = Router();
-const stripe = new Stripe('sk_test_v666XmnGJcP1Oz3GBg2iFmvd004Q3qp4jZ', {
+const stripe = new Stripe(process.env.STRIPE_API, {
     apiVersion: '2019-12-03',
     typescript: true,
 });
