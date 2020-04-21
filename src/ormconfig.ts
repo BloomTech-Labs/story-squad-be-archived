@@ -48,6 +48,12 @@ module.exports = [
         },
     },
     {
+        /*
+            "The idea with the testing configuration for TypeORM was so
+            that the testing could seed a database and integration test
+            with the database."
+                                                               -William
+        */
         name: 'testing',
         type: 'postgres',
         host: 'localhost',
