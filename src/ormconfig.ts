@@ -28,8 +28,8 @@ module.exports = [
     {
         name: 'development',
         type: 'postgres',
-        host: 'localhost',
-        port: 5432,
+        host: connectionOptions.host,
+        port: Number(connectionOptions.port) || 5432,
         username: connectionOptions.user,
         password: connectionOptions.password,
         database: connectionOptions.database,
