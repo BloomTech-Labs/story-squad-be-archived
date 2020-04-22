@@ -1,30 +1,15 @@
 function matchVersusPlayers(teamA, teamB) {
-    if (teamA.student.subjecRole === teamB.student.storyRole) {
-        teamA.student.storyOpponent = teamB.student;
-        teamA.teammate.storyOpponent = teamB.teammate;
-        teamA.student.storyTotal = teamA.student.storyPoints + teamB.student.storyPoints;
-        teamA.teammate.storyTotal = teamA.teammate.storyPoints + teamB.teammate.storyPoints;
-    } else {
-        teamA.student.storyOpponent = teamB.teammate;
-        teamA.teammate.storyOpponent = teamB.student;
-        teamA.student.storyTotal = teamA.student.storyPoints + teamB.teammate.storyPoints;
-        teamA.teammate.storyTotal = teamA.teammate.storyPoints + teamB.student.storyPoints;
-    }
+    matchRole(teamA, teamB, 'story');
+    matchRole(teamA, teamB, 'illustration');
+}
 
-    if (teamA.student.illustrationRole === teamB.student.illustrationRole) {
-        teamA.student.illustrationOpponent = teamB.student;
-        teamA.teammate.illustrationOpponent = teamB.teammate;
-        teamA.student.illustrationTotal =
-            teamA.student.illustrationPoints + teamB.student.illustrationPoints;
-        teamA.teammate.illustrationTotal =
-            teamA.teammate.illustrationPoints + teamB.teammate.illustrationPoints;
+function matchRole(teamA, teamB, subject) {
+    if (teamA.student[`${subject}Role`] === teamB.student[`${subject}Role`]) {
+        teamA.student[`${subject}Opponent`] = teamB.student;
+        teamA.teammate[`${subject}Opponent`] = teamB.teammate;
     } else {
-        teamA.student.illustrationOpponent = teamB.teammate;
-        teamA.teammate.illustrationOpponent = teamB.student;
-        teamA.student.illustrationTotal =
-            teamA.student.illustrationPoints + teamB.teammate.illustrationPoints;
-        teamA.teammate.illustrationTotal =
-            teamA.teammate.illustrationPoints + teamB.student.illustrationPoints;
+        teamA.student[`${subject}Opponent`] = teamB.teammate;
+        teamA.teammate[`${subject}Opponent`] = teamB.student;
     }
 }
 
