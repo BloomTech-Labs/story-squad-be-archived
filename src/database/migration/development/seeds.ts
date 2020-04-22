@@ -1,9 +1,9 @@
-import { Cohort, Canon, Parent, Child, Stories, Illustrations } from '../entity';
-import { DueDates } from '../entity/DueDates';
+import { Cohort, Canon, Parent, Child, Stories, Illustrations } from '../../entity';
+import { DueDates } from '../../entity/DueDates';
 import { hashSync } from 'bcryptjs';
-import { Preferences } from '../entity/Preferences';
-import { Pages, Transcribed_Pages } from '../entity/Pages';
-import { Progress } from '../entity/Progress';
+import { Preferences } from '../../entity/Preferences';
+import { Pages, Transcribed_Pages } from '../../entity/Pages';
+import { Progress } from '../../entity/Progress';
 
 /* Non-Nullable vars and columns with no default function MUST be defined  */
 
