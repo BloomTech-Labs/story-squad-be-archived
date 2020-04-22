@@ -1,0 +1,6 @@
+exclude_patterns:
+    - 'tests/'
+    - 'spec/'
+    - '**/*.spec.tsx'
+    - '**/vendor/'
+    - '**/node_modules/'
