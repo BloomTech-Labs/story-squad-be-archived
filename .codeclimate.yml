@@ -2,5 +2,7 @@ exclude_patterns:
     - 'tests/'
     - 'spec/'
     - '**/*.spec.tsx'
+    - '**/*.spec.ts'
+    - '**/*.spec.js'
     - '**/vendor/'
     - '**/node_modules/'
