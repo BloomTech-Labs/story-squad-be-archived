@@ -73,7 +73,7 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
             ).findStudentInfo(teammate_id, cohort.week);
 
             // creation for homeTeam teammate
-            homeTeam.teammate = createTeam(homeTeam, teammate);
+            homeTeam.teammate = createTeam(teammate, 'teammate');
 
             const opponentA = await getCustomRepository(
                 MatchInfoRepository,
@@ -81,7 +81,7 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
             ).findStudentInfo(opponentA_id, cohort.week);
 
             // creation for awayTeam student
-            awayTeam.student = createTeam(awayTeam, opponentA);
+            awayTeam.student = createTeam(opponentA, 'opponentA');
 
             const opponentB = await getCustomRepository(
                 MatchInfoRepository,
@@ -89,7 +89,7 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
             ).findStudentInfo(opponentB_id, cohort.week);
 
             // creation for awayTeam teammate
-            awayTeam.teammate = createTeam(awayTeam, opponentB);
+            awayTeam.teammate = createTeam(opponentB, 'opponentB');
         }
         // createTeam(awayTeam, opponentB);
         // who is higher in story and illustration points between student and teammate in homeTeam?
@@ -97,7 +97,6 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
         const higherMyteam = decideHigher(homeTeam.student, homeTeam.teammate);
         // assign storyRole and illustrationRole to student and teammate in homeTeam
         assignRole(higherMyteam, homeTeam);
-
         // who is higher in story and illustration points between opponentA and opponentB in awayTeam?
         const higherTeam2 = decideHigher(awayTeam.student, awayTeam.teammate);
         // assign storyRole and illustrationRole to opponentA and opponentB in awayTeam
@@ -105,7 +104,6 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
 
         // matching players for student and teammate with players in opponent team
         matchVersusPlayers(homeTeam, awayTeam);
-
         const thisBattle = {
             battleInfo: {
                 student: {
