@@ -1,24 +1,17 @@
 function assignRole(higherTeam, team) {
-    if (
-        (higherTeam[0][0].role === 'student' && higherTeam[1][0].role === 'student') ||
-        (higherTeam[0][0].role === 'opponentA' && higherTeam[1][0].role === 'opponentA')
-    ) {
+    if (higherTeam[0][0].role === 'student' || 'opponentA') {
         setStudentHigh(team, 'story');
+    }
+
+    if (higherTeam[1][0].role === 'student' || 'opponentA') {
         setStudentHigh(team, 'illustration');
-    } else if (
-        (higherTeam[0][0].role === 'student' && higherTeam[1][0].role === 'teammate') ||
-        (higherTeam[0][0].role === 'opponentA' && higherTeam[1][0].role === 'opponentB')
-    ) {
-        setStudentHigh(team, 'story');
-        setTeammateHigh(team, 'illustration');
-    } else if (
-        (higherTeam[0][0].role === 'teammate' && higherTeam[1][0].role === 'student') ||
-        (higherTeam[0][0].role === 'opponentB' && higherTeam[1][0].role === 'opponentA')
-    ) {
+    }
+
+    if (higherTeam[0][0].role === 'teammate' || 'opponentB') {
         setTeammateHigh(team, 'story');
-        setStudentHigh(team, 'illustration');
-    } else {
-        setTeammateHigh(team, 'story');
+    }
+
+    if (higherTeam[1][0].role === 'teammate' || 'opponentB') {
         setTeammateHigh(team, 'illustration');
     }
 }
