@@ -74,11 +74,6 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
 
             // creation for homeTeam teammate
             homeTeam.teammate = createTeam(teammate, 'teammate');
-            console.log('home.teammate', {
-                ...homeTeam.teammate,
-                story: null,
-                illustration: null,
-            });
 
             const opponentA = await getCustomRepository(
                 MatchInfoRepository,
@@ -102,7 +97,6 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
         const higherMyteam = decideHigher(homeTeam.student, homeTeam.teammate);
         // assign storyRole and illustrationRole to student and teammate in homeTeam
         assignRole(higherMyteam, homeTeam);
-        console.log('awayTeam.role', higherMyteam[0][0].role);
         // who is higher in story and illustration points between opponentA and opponentB in awayTeam?
         const higherTeam2 = decideHigher(awayTeam.student, awayTeam.teammate);
         // assign storyRole and illustrationRole to opponentA and opponentB in awayTeam
@@ -110,7 +104,6 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
 
         // matching players for student and teammate with players in opponent team
         matchVersusPlayers(homeTeam, awayTeam);
-        console.log('awayTeam.role', higherTeam2[0][0].role);
         const thisBattle = {
             battleInfo: {
                 student: {
