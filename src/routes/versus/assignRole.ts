@@ -1,29 +1,24 @@
 function assignRole(higherTeam, team) {
     if (higherTeam[0][0].role === 'student' || 'opponentA') {
-        setStudentHigh(team, 'story');
+        setHigh(team, 'story', 'student', 'teammate');
     }
 
     if (higherTeam[1][0].role === 'student' || 'opponentA') {
-        setStudentHigh(team, 'illustration');
+        setHigh(team, 'illustration', 'student', 'teammate');
     }
 
     if (higherTeam[0][0].role === 'teammate' || 'opponentB') {
-        setTeammateHigh(team, 'story');
+        setHigh(team, 'story', 'teammate', 'student');
     }
 
     if (higherTeam[1][0].role === 'teammate' || 'opponentB') {
-        setTeammateHigh(team, 'illustration');
+        setHigh(team, 'illustration', 'teammate', 'student');
     }
 }
 
-function setStudentHigh(team, subject) {
-    team.student[`${subject}Role`] = `${subject}High`;
-    team.teammate[`${subject}Role`] = `${subject}Low`;
-}
-
-function setTeammateHigh(team, subject) {
-    team.teammate[`${subject}Role`] = `${subject}High`;
-    team.student[`${subject}Role`] = `${subject}Low`;
+function setHigh(team, subject, member1, member2) {
+    team[`${member1}`][`${subject}Role`] = `${subject}High`;
+    team[`${member2}`][`${subject}Role`] = `${subject}Low`;
 }
 
 export { assignRole };
