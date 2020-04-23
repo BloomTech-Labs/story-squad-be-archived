@@ -12,14 +12,12 @@ interface student {
     story: story;
     storyPoints: number;
     illustration: string;
-    illustrationPoints: string | any;
+    illustrationPoints: number;
     role?: string;
     storyRole?: string;
     illustrationRole?: string;
     storyOpponent?: student;
     illustrationOpponent?: student;
-    storyTotal?: number;
-    illustrationTotal?: number;
 }
 
 interface story {
@@ -44,8 +42,6 @@ class Team {
             illustrationRole: null,
             storyOpponent: null,
             illustrationOpponent: null,
-            storyTotal: null,
-            illustrationTotal: null,
         };
         this.teammate = {
             studentId: null,
@@ -60,8 +56,6 @@ class Team {
             illustrationRole: null,
             storyOpponent: null,
             illustrationOpponent: null,
-            storyTotal: null,
-            illustrationTotal: null,
         };
     }
 }

@@ -67,7 +67,7 @@ battlesRoutes.get('/battles', Only(Child), async (req, res) => {
             thisMatch,
         });
     } catch (err) {
-        console.log(err.toString());
+        console.log('error', err.toString());
         return res.status(500).json({ message: err.toString() });
     }
 });
@@ -145,13 +145,13 @@ async function r3(id: number, week: number) {
     const match = await getRepository(Matches, connection()).findOne({
         where: [{ team2_child1_id: id, week: week }],
     });
-    console.log(match);
+    console.log('match1', match);
     return match ? match : r4(id, week);
 }
 async function r4(id: number, week: number) {
     const match = await getRepository(Matches, connection()).findOne({
         where: [{ team2_child2_id: id, week: week }],
     });
-    console.log(match);
+    console.log('match', match);
     return match ? match : null;
 }
