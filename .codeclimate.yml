@@ -1,6 +1,7 @@
 version: "2"
 checks:
   similar-code:
+    enabled: false
     config:
       threshold: 120
 exclude_patterns:
