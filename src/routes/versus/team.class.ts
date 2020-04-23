@@ -12,7 +12,7 @@ interface student {
     story: story;
     storyPoints: number;
     illustration: string;
-    illustrationPoints: string | any;
+    illustrationPoints: number;
     role?: string;
     storyRole?: string;
     illustrationRole?: string;
