@@ -18,14 +18,10 @@ storyRoutes.get('/:week', Only(Child), async (req, res) => {
         const { stories } = req.user as Child;
         const story = stories.find(({ week }) => week === parseInt(req.params.week));
         if (!story) throw Error('404');
-        return res.json({ story });
+        res.json({ story });
     } catch (err) {
-        if (err.toString() === 'Error: 404')
-            return res.status(404).json({ message: `Story not found` });
-        else
-            return res
-                .status(500)
-                .json({ message: 'Hmm... That did not work, please try again later.' });
+        if (err.toString() === 'Error: 404') res.status(404).json({ message: `Story not found` });
+        else res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
     }
 });
 
