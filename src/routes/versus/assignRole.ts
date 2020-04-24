@@ -2,7 +2,6 @@ function assignRole(higherTeam, team) {
     if (higherTeam[0][0].role === 'student' || 'opponentA') {
         setHigh(team, 'story', 'student', 'teammate');
     }
-
     if (higherTeam[1][0].role === 'student' || 'opponentA') {
         setHigh(team, 'illustration', 'student', 'teammate');
     }
