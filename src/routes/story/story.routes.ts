@@ -18,14 +18,10 @@ storyRoutes.get('/:week', Only(Child), async (req, res) => {
         const { stories } = req.user as Child;
         const story = stories.find(({ week }) => week === parseInt(req.params.week));
         if (!story) throw Error('404');
-        return res.json({ story });
+        res.json({ story });
     } catch (err) {
-        if (err.toString() === 'Error: 404')
-            return res.status(404).json({ message: `Story not found` });
-        else
-            return res
-                .status(500)
-                .json({ message: 'Hmm... That did not work, please try again later.' });
+        if (err.toString() === 'Error: 404') res.status(404).json({ message: `Story not found` });
+        else res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
     }
 });
 
@@ -65,7 +61,7 @@ storyRoutes.post('/', Only(Child), async (req, res) => {
             });
         } catch (err) {
             console.log(err.toString());
-            return res.json({ err: err.toString(), message: 'Could not determine readability' });
+            res.json({ err: err.toString(), message: 'Could not determine readability' });
         }
 
         try {
@@ -91,18 +87,15 @@ storyRoutes.post('/', Only(Child), async (req, res) => {
                     : null,
             });
 
-            return res.status(201).json({ transcribed, stories });
+            res.status(201).json({ transcribed, stories });
         } catch (err) {
             console.log(err.toString());
-            return res.status(500).json({ message: err.toString() });
+            res.status(500).json({ message: err.toString() });
         }
     } catch (err) {
         if (err.toString() === 'Error: 400')
-            return res.status(400).json({ message: `Submission already exists` });
-        else
-            return res
-                .status(500)
-                .json({ message: 'Hmm... That did not work, please try again later.' });
+            res.status(400).json({ message: `Submission already exists` });
+        else res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
     }
 });
 
@@ -125,19 +118,17 @@ storyRoutes.delete('/:week', Only(Child), async (req, res) => {
             });
         } catch (err) {
             console.log(err.toString());
-            return res.status(500).json({
+            res.status(500).json({
                 err: err.toString(),
                 message: 'Could not resolve delete query',
             });
         }
-        return res.json({ story });
+        res.json({ story });
     } catch (err) {
         if (err.toString() === 'Error: 404') {
-            return res.status(404).json({ message: `Story not found` });
+            res.status(404).json({ message: `Story not found` });
         } else {
-            return res
-                .status(500)
-                .json({ message: 'Hmm... That did not work, please try again later.' });
+            res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
         }
     }
 });
