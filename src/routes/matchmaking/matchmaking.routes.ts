@@ -29,9 +29,7 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
             });
         } catch (err) {
             console.log(err.toString());
-            return res
-                .status(500)
-                .json({ err: err.toString(), message: 'Could not fetch submissions' });
+            res.status(500).json({ err: err.toString(), message: 'Could not fetch submissions' });
         }
 
         let submissionObject = {};
@@ -72,7 +70,7 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
                 }
             } catch (err) {
                 console.log(err.toString());
-                return res.status(500).json({
+                res.status(500).json({
                     err: err.toString(),
                     message: 'Could not fetch child within matched submissions',
                 });
@@ -85,7 +83,7 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
             const competitions = await match(submissionObject);
             competition = JSON.parse(competitions[0].split(`'`).join(`"`));
         } else {
-            return res.json({
+            res.json({
                 message: `not enough submissions to generate matchmaking within week: ${thisWeek}`,
             });
         }
@@ -102,15 +100,15 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
             const matches = await getRepository(Matches, connection()).find({
                 where: { week: thisWeek },
             });
-            return res.status(200).json({ message: `saved success`, match: matches });
+            res.status(200).json({ message: `saved success`, match: matches });
             // await match-ups and responds to FE with match-ups 3.12.20
             // first call to assign match-ups works, but this next await doesn't fully resolve for some reason and generates an empty array
         } catch (err) {
             console.log(err.toString());
-            return res.status(500).json({ message: `Saving error, ${err.toString()}` });
+            res.status(500).json({ message: `Saving error, ${err.toString()}` });
         }
     } catch (err) {
-        return res.status(500).json({ message: `Matchmaking error, ${err.toString()}` });
+        res.status(500).json({ message: `Matchmaking error, ${err.toString()}` });
     }
 });
 
@@ -126,14 +124,14 @@ matchMakingRoutes.delete('/:week', Only(Admin), async (req, res) => {
             for (let match of matchesToDelete) {
                 await getRepository(Matches, connection()).delete({ id: match.id });
             }
-            return res
-                .status(200)
-                .json({ message: `All matches in week ${req.params.week} have been deleted` });
+            res.status(200).json({
+                message: `All matches in week ${req.params.week} have been deleted`,
+            });
         } else {
-            return res.json({ message: `No matches in week ${req.params.week}` });
+            res.json({ message: `No matches in week ${req.params.week}` });
         }
     } catch (err) {
-        return res.status(500).json({ err: err.toString() });
+        res.status(500).json({ err: err.toString() });
     }
 });
 

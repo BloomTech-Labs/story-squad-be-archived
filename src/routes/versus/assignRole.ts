@@ -1,36 +1,23 @@
 function assignRole(higherTeam, team) {
-    if (
-        (higherTeam[0][0].role === 'student' && higherTeam[1][0].role === 'student') ||
-        (higherTeam[0][0].role === 'opponentA' && higherTeam[1][0].role === 'opponentA')
-    ) {
-        setStudentHigh(team, 'story');
-        setStudentHigh(team, 'illustration');
-    } else if (
-        (higherTeam[0][0].role === 'student' && higherTeam[1][0].role === 'teammate') ||
-        (higherTeam[0][0].role === 'opponentA' && higherTeam[1][0].role === 'opponentB')
-    ) {
-        setStudentHigh(team, 'story');
-        setTeammateHigh(team, 'illustration');
-    } else if (
-        (higherTeam[0][0].role === 'teammate' && higherTeam[1][0].role === 'student') ||
-        (higherTeam[0][0].role === 'opponentB' && higherTeam[1][0].role === 'opponentA')
-    ) {
-        setTeammateHigh(team, 'story');
-        setStudentHigh(team, 'illustration');
-    } else {
-        setTeammateHigh(team, 'story');
-        setTeammateHigh(team, 'illustration');
+    if (higherTeam[0][0].role === 'student' || 'opponentA') {
+        setHigh(team, 'story', 'student', 'teammate');
+    }
+    if (higherTeam[1][0].role === 'student' || 'opponentA') {
+        setHigh(team, 'illustration', 'student', 'teammate');
+    }
+
+    if (higherTeam[0][0].role === 'teammate' || 'opponentB') {
+        setHigh(team, 'story', 'teammate', 'student');
+    }
+
+    if (higherTeam[1][0].role === 'teammate' || 'opponentB') {
+        setHigh(team, 'illustration', 'teammate', 'student');
     }
 }
 
-function setStudentHigh(team, subject) {
-    team.student[`${subject}Role`] = `${subject}High`;
-    team.teammate[`${subject}Role`] = `${subject}Low`;
-}
-
-function setTeammateHigh(team, subject) {
-    team.teammate[`${subject}Role`] = `${subject}High`;
-    team.student[`${subject}Role`] = `${subject}Low`;
+function setHigh(team, subject, member1, member2) {
+    team[`${member1}`][`${subject}Role`] = `${subject}High`;
+    team[`${member2}`][`${subject}Role`] = `${subject}Low`;
 }
 
 export { assignRole };
