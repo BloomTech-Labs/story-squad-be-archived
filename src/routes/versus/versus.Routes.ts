@@ -60,11 +60,14 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
         const team1Stories = sortByPoints(team1, 'stories', cohort.week);
         const team2Stories = sortByPoints(team2, 'stories', cohort.week);
 
+        //Calculate the HighStory matchup [TL]
         let HighStoryMatchup = {
             points: team1Stories[0].points + team2Stories[0].points,
             [LEFT]: TypeCast(StorySend, team1Stories[0]),
             [RIGHT]: TypeCast(StorySend, team2Stories[0]),
         } as any;
+
+        //Calculate the LowStory matchup [TR]
         let LowStoryMatchup = {
             points: team1Stories[1].points + team2Stories[1].points,
             [LEFT]: TypeCast(StorySend, team1Stories[1]),
@@ -75,11 +78,14 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
         const team1Illustrations = sortByPoints(team1, 'illustrations', cohort.week);
         const team2Illustrations = sortByPoints(team2, 'illustrations', cohort.week);
 
+        //Calculate the HighIllustration matchup [BL]
         let HighIllustrationMatchup = {
             points: team1Illustrations[0].points + team2Illustrations[0].points,
             [LEFT]: team1Illustrations[0],
             [RIGHT]: team2Illustrations[0],
         } as any;
+
+        //Calculate the LowIllustration matchup [BR]
         let LowIllustrationMatchup = {
             points: team1Illustrations[1].points + team2Illustrations[1].points,
             [LEFT]: team1Illustrations[1],
@@ -99,6 +105,7 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
         ].illustration = 'DRAWING DRAWING DRAWING DRAWING';
         //////////////////////////////////////////////////
 
+        //Create battle data :)
         let thisBattle = {
             highStory: HighStoryMatchup,
             lowStory: LowStoryMatchup,
