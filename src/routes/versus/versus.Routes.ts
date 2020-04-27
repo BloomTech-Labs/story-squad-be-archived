@@ -28,6 +28,9 @@ class StorySend {
     }
 }
 
+let LEFT = 0;
+let RIGHT = 1;
+
 versusRoutes.get('/versus', Only(Child), async (req, res) => {
     try {
         const { id, cohort, username, avatar, stories, illustrations } = req.user as Child;
@@ -57,27 +60,44 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
         const team1Stories = sortByPoints(team1, 'stories', cohort.week);
         const team2Stories = sortByPoints(team2, 'stories', cohort.week);
 
-        let HighStoryMatchup = [
-            TypeCast(StorySend, team1Stories[0]),
-            TypeCast(StorySend, team2Stories[0]),
-        ] as any;
-        let LowStoryMatchup = [
-            TypeCast(StorySend, team1Stories[1]),
-            TypeCast(StorySend, team2Stories[1]),
-        ] as any;
+        let HighStoryMatchup = {
+            points: team1Stories[0].points + team2Stories[0].points,
+            [LEFT]: TypeCast(StorySend, team1Stories[0]),
+            [RIGHT]: TypeCast(StorySend, team2Stories[0]),
+        } as any;
+        let LowStoryMatchup = {
+            points: team1Stories[1].points + team2Stories[1].points,
+            [LEFT]: TypeCast(StorySend, team1Stories[1]),
+            [RIGHT]: TypeCast(StorySend, team2Stories[1]),
+        } as any;
 
         //Extract illustrations, highest points to lowest
         const team1Illustrations = sortByPoints(team1, 'illustrations', cohort.week);
         const team2Illustrations = sortByPoints(team2, 'illustrations', cohort.week);
 
-        let HighIllustrationMatchup = [team1Illustrations[0], team2Illustrations[0]] as any;
-        let LowIllustrationMatchup = [team1Illustrations[1], team2Illustrations[1]] as any;
+        let HighIllustrationMatchup = {
+            points: team1Illustrations[0].points + team2Illustrations[0].points,
+            [LEFT]: team1Illustrations[0],
+            [RIGHT]: team2Illustrations[0],
+        } as any;
+        let LowIllustrationMatchup = {
+            points: team1Illustrations[1].points + team2Illustrations[1].points,
+            [LEFT]: team1Illustrations[1],
+            [RIGHT]: team2Illustrations[1],
+        } as any;
 
-        HighStoryMatchup[0].story.page1 = HighStoryMatchup[1].story.page1 = LowStoryMatchup[0].story.page1 = LowStoryMatchup[1].story.page1 =
-            'STORY STORY STORY STORY STORY';
+        //////////////////////////////////////////////////
+        //The "don't crash my postman" block - DEV ONLY
+        HighStoryMatchup[LEFT].story.page1 = HighStoryMatchup[RIGHT].story.page1 = LowStoryMatchup[
+            LEFT
+        ].story.page1 = LowStoryMatchup[RIGHT].story.page1 = 'STORY STORY STORY STORY STORY';
 
-        HighIllustrationMatchup[0].illustration = HighIllustrationMatchup[1].illustration = LowIllustrationMatchup[0].illustration = LowIllustrationMatchup[1].illustration =
-            'DRAWING DRAWING DRAWING DRAWING';
+        HighIllustrationMatchup[LEFT].illustration = HighIllustrationMatchup[
+            RIGHT
+        ].illustration = LowIllustrationMatchup[LEFT].illustration = LowIllustrationMatchup[
+            RIGHT
+        ].illustration = 'DRAWING DRAWING DRAWING DRAWING';
+        //////////////////////////////////////////////////
 
         let thisBattle = {
             highStory: HighStoryMatchup,
