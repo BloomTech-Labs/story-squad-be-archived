@@ -20,3 +20,12 @@ export const attemptJSONParse = (data: string): Object | string => {
  */
 export const onlyTranscription = (data: Object | string): data is Transcription =>
     data['images'] && data['metadata'];
+
+/**
+ * @description Gets a random whole number between 0 and a given number (can be negative)
+ * @param {number} maximum Highest value
+ * @returns {number} Random number
+ */
+export const GetRandNumber = (maximum: number): number => {
+    return Math.round(Math.random() * maximum);
+};
