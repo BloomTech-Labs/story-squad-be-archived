@@ -27,8 +27,7 @@ interface story {
 }
 
 class Team {
-    constructor(matchId: Number, cohortWeek: Number) {
-        this.matchId = matchId;
+    constructor(public matchId: Number) {
         this.student = {
             studentId: null,
             username: null,
