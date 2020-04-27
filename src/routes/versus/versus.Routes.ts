@@ -13,6 +13,7 @@ const versusRoutes = Router();
 class StorySend {
     id: Number;
     childId: Number;
+    username: String;
     points: Number;
     doc_length: Number;
     story: Stories;
@@ -21,6 +22,7 @@ class StorySend {
     constructor() {
         this.id = null;
         this.childId = null;
+        this.username = null;
         this.points = null;
         this.doc_length = null;
         this.story = null;
@@ -112,6 +114,15 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
             highIll: HighIllustrationMatchup,
             lowIll: LowIllustrationMatchup,
         };
+
+        //Resolve usernames & any other data we may have lost through the sorting process
+        [team1[0], team1[1], team2[0], team2[1]].forEach((i) => {
+            Object.keys(thisBattle).forEach((e) => {
+                let Resolve = thisBattle[e];
+                if (Resolve[0].id === i.id) Resolve[0].username = i.username;
+                else if (Resolve[1].id === i.id) Resolve[1].username = i.username;
+            });
+        });
 
         return res.status(200).json(thisBattle);
     } catch (err) {
