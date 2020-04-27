@@ -29,3 +29,16 @@ export const onlyTranscription = (data: Object | string): data is Transcription 
 export const GetRandNumber = (maximum: number): number => {
     return Math.round(Math.random() * maximum);
 };
+
+/**
+ * @description Fills a given class from an object
+ */
+export function TypeCast(classmodel: any, object: Object) {
+    let temp = new classmodel();
+
+    Object.keys(temp).forEach((current) => {
+        temp[current] = object[current];
+    });
+
+    return temp;
+}

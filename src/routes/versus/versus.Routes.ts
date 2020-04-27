@@ -1,12 +1,32 @@
 import { Router } from 'express';
 import { getRepository } from 'typeorm';
-import { Child } from '../../database/entity';
+import { Child, Stories } from '../../database/entity';
 import { Only } from '../../middleware/only/only.middleware';
 import { connection } from '../../util/typeorm-connection';
 import e = require('express');
+import { TypeCast } from '../../util/utils';
 import { FindMatchByUID } from '../../util/db-utils';
+import { Transcribable } from '../../models';
 
 const versusRoutes = Router();
+
+class StorySend {
+    id: Number;
+    childId: Number;
+    points: Number;
+    doc_length: Number;
+    story: Stories;
+    transcribed_text: Transcribable;
+
+    constructor() {
+        this.id = null;
+        this.childId = null;
+        this.points = null;
+        this.doc_length = null;
+        this.story = null;
+        this.transcribed_text = null;
+    }
+}
 
 versusRoutes.get('/versus', Only(Child), async (req, res) => {
     try {
@@ -37,8 +57,14 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
         const team1Stories = sortByPoints(team1, 'stories', cohort.week);
         const team2Stories = sortByPoints(team2, 'stories', cohort.week);
 
-        let HighStoryMatchup = [team1Stories[0], team2Stories[0]] as any;
-        let LowStoryMatchup = [team1Stories[1], team2Stories[1]] as any;
+        let HighStoryMatchup = [
+            TypeCast(StorySend, team1Stories[0]),
+            TypeCast(StorySend, team2Stories[0]),
+        ] as any;
+        let LowStoryMatchup = [
+            TypeCast(StorySend, team1Stories[1]),
+            TypeCast(StorySend, team2Stories[1]),
+        ] as any;
 
         //Extract illustrations, highest points to lowest
         const team1Illustrations = sortByPoints(team1, 'illustrations', cohort.week);
