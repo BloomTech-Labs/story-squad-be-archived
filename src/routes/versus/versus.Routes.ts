@@ -23,7 +23,7 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
         // populate home team object(s)
 
         // homeTeam created
-        const homeTeam = new Team(match.id, cohort.week);
+        const homeTeam = new Team(match.id);
         homeTeam.student.studentId = id;
         homeTeam.student.username = username;
         homeTeam.student.avatar = avatar;
@@ -31,7 +31,7 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
         let teammate_id = null;
 
         //awayTeam created
-        const awayTeam = new Team(match.id, cohort.week);
+        const awayTeam = new Team(match.id);
         let opponentA_id = null;
         let opponentB_id = null;
 
