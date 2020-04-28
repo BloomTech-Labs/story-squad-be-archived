@@ -12,7 +12,7 @@ const versusRoutes = Router();
 
 versusRoutes.get('/versus', Only(Child), async (req, res) => {
     try {
-        const { id, cohort, username, avatar, stories, illustrations, votes } = req.user as Child;
+        const { id, cohort, votes } = req.user as Child;
 
         const match = await FindMatchByUID(id, cohort.week);
         let teamID = match.team1_child1_id === id || match.team1_child2_id === id ? 1 : 2;
