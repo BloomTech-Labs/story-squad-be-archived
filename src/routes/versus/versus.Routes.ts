@@ -110,8 +110,8 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
         [team1[0], team1[1], team2[0], team2[1]].forEach((i) => {
             Object.keys(thisBattle).forEach((e) => {
                 let Resolve = thisBattle[e] as StorySend[];
-                if (Resolve[0].id === i.id) Resolve[0].username = i.username;
-                else if (Resolve[1].id === i.id) Resolve[1].username = i.username;
+                if (Resolve[0].childId === i.id) Resolve[0].username = i.username;
+                else if (Resolve[1].childId === i.id) Resolve[1].username = i.username;
             });
         });
 
