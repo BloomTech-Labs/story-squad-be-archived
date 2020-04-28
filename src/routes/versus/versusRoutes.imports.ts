@@ -23,3 +23,13 @@ export class StorySend {
         this.transcribed_text = null;
     }
 }
+
+export class TeamData {
+    id: Number;
+    username: String;
+
+    constructor() {
+        this.id = null;
+        this.username = null;
+    }
+}

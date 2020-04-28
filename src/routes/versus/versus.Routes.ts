@@ -5,7 +5,8 @@ import { Only } from '../../middleware/only/only.middleware';
 import { connection } from '../../util/typeorm-connection';
 import { TypeCast } from '../../util/utils';
 import { FindMatchByUID } from '../../util/db-utils';
-import { StorySend, LEFT, RIGHT } from './versusRoutes.imports';
+import { StorySend, LEFT, RIGHT, TeamData } from './versusRoutes.imports';
+import { sortByPoints } from './versusRoutes.functions';
 
 const versusRoutes = Router();
 
@@ -35,22 +36,27 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
             relations: ['illustrations', 'stories'],
         });
 
+        let hTeam = teamID === 1 ? [team1[0], team1[1]] : [team2[0], team2[1]];
+        let aTeam = teamID === 1 ? [team2[0], team2[1]] : [team1[0], team1[1]];
+
         let matchdata = {
             votes,
+            homeTeam: [TypeCast(TeamData, hTeam[0]), TypeCast(TeamData, hTeam[1])],
+            awayTeam: [TypeCast(TeamData, aTeam[0]), TypeCast(TeamData, aTeam[1])],
         };
 
         //Extract stories, highest points to lowest
         const team1Stories = sortByPoints(team1, 'stories', cohort.week);
         const team2Stories = sortByPoints(team2, 'stories', cohort.week);
 
-        //Calculate the HighStory matchup [TL]
+        //Calculate the HighStory matchup
         let HighStoryMatchup = {
             points: team1Stories[0].points + team2Stories[0].points,
             [LEFT]: TypeCast(StorySend, team1Stories[0]),
             [RIGHT]: TypeCast(StorySend, team2Stories[0]),
         } as any;
 
-        //Calculate the LowStory matchup [TR]
+        //Calculate the LowStory matchup
         let LowStoryMatchup = {
             points: team1Stories[1].points + team2Stories[1].points,
             [LEFT]: TypeCast(StorySend, team1Stories[1]),
@@ -61,14 +67,14 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
         const team1Illustrations = sortByPoints(team1, 'illustrations', cohort.week);
         const team2Illustrations = sortByPoints(team2, 'illustrations', cohort.week);
 
-        //Calculate the HighIllustration matchup [BL]
+        //Calculate the HighIllustration matchup
         let HighIllustrationMatchup = {
             points: team1Illustrations[0].points + team2Illustrations[0].points,
             [LEFT]: team1Illustrations[0],
             [RIGHT]: team2Illustrations[0],
         } as any;
 
-        //Calculate the LowIllustration matchup [BR]
+        //Calculate the LowIllustration matchup
         let LowIllustrationMatchup = {
             points: team1Illustrations[1].points + team2Illustrations[1].points,
             [LEFT]: team1Illustrations[1],
@@ -114,14 +120,5 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
         return res.status(500).json({ message: err.toString() });
     }
 });
-
-function sortByPoints(team: Child[], key: string, week: number) {
-    const [user1, user2] = team;
-    const [submission1] = user1[`${key}`].filter((element) => element.week === week);
-    const [submission2] = user2[`${key}`].filter((element) => element.week === week);
-    return submission1.points > submission2.points
-        ? [submission1, submission2]
-        : [submission2, submission1];
-}
 
 export { versusRoutes };
