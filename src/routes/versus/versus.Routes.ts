@@ -83,15 +83,15 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
 
         //////////////////////////////////////////////////
         //The "don't crash my postman" block - DEV ONLY
-        HighStoryMatchup[LEFT].story.page1 = HighStoryMatchup[RIGHT].story.page1 = LowStoryMatchup[
-            LEFT
-        ].story.page1 = LowStoryMatchup[RIGHT].story.page1 = 'STORY STORY STORY STORY STORY';
+        // HighStoryMatchup[LEFT].story.page1 = HighStoryMatchup[RIGHT].story.page1 = LowStoryMatchup[
+        //     LEFT
+        // ].story.page1 = LowStoryMatchup[RIGHT].story.page1 = 'STORY STORY STORY STORY STORY';
 
-        HighIllustrationMatchup[LEFT].illustration = HighIllustrationMatchup[
-            RIGHT
-        ].illustration = LowIllustrationMatchup[LEFT].illustration = LowIllustrationMatchup[
-            RIGHT
-        ].illustration = 'DRAWING DRAWING DRAWING DRAWING';
+        // HighIllustrationMatchup[LEFT].illustration = HighIllustrationMatchup[
+        //     RIGHT
+        // ].illustration = LowIllustrationMatchup[LEFT].illustration = LowIllustrationMatchup[
+        //     RIGHT
+        // ].illustration = 'DRAWING DRAWING DRAWING DRAWING';
         //////////////////////////////////////////////////
 
         let thisBattle = [

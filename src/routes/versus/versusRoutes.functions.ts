@@ -1,16 +1,5 @@
 import { Child } from '../../database/entity';
 
-export function decideHigher(studentA, studentB) {
-    const high = [];
-    if (studentA.storyPoints > studentB.storyPoints) high.push([studentA, studentB]);
-    else high.push([studentB, studentA]);
-
-    if (studentA.illustrationPoints > studentB.illustrationPoints) high.push([studentA, studentB]);
-    else high.push([studentB, studentA]);
-
-    return high;
-}
-
 export function sortByPoints(team: Child[], key: string, week: number) {
     const [user1, user2] = team;
     const [submission1] = user1[`${key}`].filter((element) => element.week === week);
@@ -20,6 +9,7 @@ export function sortByPoints(team: Child[], key: string, week: number) {
         : [submission2, submission1];
 }
 
+//Used to arrange match objects to have the home team always be match["0"] [LEFT]
 export function MatchSortByTeam(match, home_team) {
     let newRange = {} as any;
     newRange.points = match.points;
