@@ -6,7 +6,7 @@ import { connection } from '../../util/typeorm-connection';
 import { TypeCast } from '../../util/utils';
 import { FindMatchByUID } from '../../util/db-utils';
 import { StorySend, LEFT, RIGHT, TeamData } from './versusRoutes.imports';
-import { sortByPoints } from './versusRoutes.functions';
+import { sortByPoints, MatchSortByTeam } from './versusRoutes.functions';
 
 const versusRoutes = Router();
 
@@ -50,36 +50,48 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
         const team2Stories = sortByPoints(team2, 'stories', cohort.week);
 
         //Calculate the HighStory matchup
-        let HighStoryMatchup = {
-            points: team1Stories[0].points + team2Stories[0].points,
-            [LEFT]: TypeCast(StorySend, team1Stories[0]),
-            [RIGHT]: TypeCast(StorySend, team2Stories[0]),
-        } as any;
+        let HighStoryMatchup = MatchSortByTeam(
+            {
+                points: team1Stories[0].points + team2Stories[0].points,
+                [LEFT]: TypeCast(StorySend, team1Stories[0]),
+                [RIGHT]: TypeCast(StorySend, team2Stories[0]),
+            },
+            matchdata.homeTeam
+        );
 
         //Calculate the LowStory matchup
-        let LowStoryMatchup = {
-            points: team1Stories[1].points + team2Stories[1].points,
-            [LEFT]: TypeCast(StorySend, team1Stories[1]),
-            [RIGHT]: TypeCast(StorySend, team2Stories[1]),
-        } as any;
+        let LowStoryMatchup = MatchSortByTeam(
+            {
+                points: team1Stories[1].points + team2Stories[1].points,
+                [LEFT]: TypeCast(StorySend, team1Stories[1]),
+                [RIGHT]: TypeCast(StorySend, team2Stories[1]),
+            },
+            matchdata.homeTeam
+        );
 
         //Extract illustrations, highest points to lowest
         const team1Illustrations = sortByPoints(team1, 'illustrations', cohort.week);
         const team2Illustrations = sortByPoints(team2, 'illustrations', cohort.week);
 
         //Calculate the HighIllustration matchup
-        let HighIllustrationMatchup = {
-            points: team1Illustrations[0].points + team2Illustrations[0].points,
-            [LEFT]: team1Illustrations[0],
-            [RIGHT]: team2Illustrations[0],
-        } as any;
+        let HighIllustrationMatchup = MatchSortByTeam(
+            {
+                points: team1Illustrations[0].points + team2Illustrations[0].points,
+                [LEFT]: team1Illustrations[0],
+                [RIGHT]: team2Illustrations[0],
+            },
+            matchdata.homeTeam
+        );
 
         //Calculate the LowIllustration matchup
-        let LowIllustrationMatchup = {
-            points: team1Illustrations[1].points + team2Illustrations[1].points,
-            [LEFT]: team1Illustrations[1],
-            [RIGHT]: team2Illustrations[1],
-        } as any;
+        let LowIllustrationMatchup = MatchSortByTeam(
+            {
+                points: team1Illustrations[1].points + team2Illustrations[1].points,
+                [LEFT]: team1Illustrations[1],
+                [RIGHT]: team2Illustrations[1],
+            },
+            matchdata.homeTeam
+        );
 
         //////////////////////////////////////////////////
         //The "don't crash my postman" block - DEV ONLY
