@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { getCustomRepository } from 'typeorm';
-import { Team } from './team.class';
+import { Team, Student } from './team.class';
 import { Child } from '../../database/entity';
 import { MatchInfoRepository } from './custom';
 import { Only } from '../../middleware/only/only.middleware';
@@ -23,15 +23,20 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
         // populate home team object(s)
 
         // homeTeam created
-        const homeTeam = new Team(match.id);
-        homeTeam.student.studentId = id;
-        homeTeam.student.username = username;
-        homeTeam.student.avatar = avatar;
+        const student = new Student();
+        const teammate = new Student();
+        student.studentId = id;
+        student.username = username;
+        student.avatar = avatar;
+        const homeTeam = new Team(match.id, student, teammate);
+
         let student_id = null;
         let teammate_id = null;
 
         //awayTeam created
-        const awayTeam = new Team(match.id);
+        const opponentA = new Student();
+        const opponentB = new Student();
+        const awayTeam = new Team(match.id, opponentA, opponentB);
         let opponentA_id = null;
         let opponentB_id = null;
 

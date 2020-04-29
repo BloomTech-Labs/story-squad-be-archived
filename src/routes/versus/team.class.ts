@@ -1,11 +1,11 @@
 interface Team {
     matchId: Number;
     week: Number;
-    student: student;
-    teammate: student;
+    student: Student;
+    teammate: Student;
 }
 
-interface student {
+interface Student {
     studentId: number;
     username: string;
     avatar: string;
@@ -16,8 +16,8 @@ interface student {
     role?: string;
     storyRole?: string;
     illustrationRole?: string;
-    storyOpponent?: student;
-    illustrationOpponent?: student;
+    storyOpponent?: Student;
+    illustrationOpponent?: Student;
 }
 
 interface story {
@@ -26,37 +26,25 @@ interface story {
     page3?: String;
 }
 
-class Team {
-    constructor(public matchId: Number) {
-        this.student = {
-            studentId: null,
-            username: null,
-            avatar: null,
-            story: null,
-            storyPoints: null,
-            illustration: null,
-            illustrationPoints: null,
-            role: null,
-            storyRole: null,
-            illustrationRole: null,
-            storyOpponent: null,
-            illustrationOpponent: null,
-        };
-        this.teammate = {
-            studentId: null,
-            username: null,
-            avatar: null,
-            story: null,
-            storyPoints: null,
-            illustration: null,
-            illustrationPoints: null,
-            role: null,
-            storyRole: null,
-            illustrationRole: null,
-            storyOpponent: null,
-            illustrationOpponent: null,
-        };
+class Student {
+    constructor() {
+        this.studentId = null;
+        this.username = null;
+        this.avatar = null;
+        this.story = null;
+        this.storyPoints = null;
+        this.illustration = null;
+        this.illustrationPoints = null;
+        this.role = null;
+        this.storyRole = null;
+        this.illustrationRole = null;
+        this.storyOpponent = null;
+        this.illustrationOpponent = null;
     }
 }
 
-export { Team };
+class Team {
+    constructor(public matchId: Number, public student: Student, public teammate: Student) {}
+}
+
+export { Team, Student };
