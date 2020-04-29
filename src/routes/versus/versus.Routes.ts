@@ -1,121 +1,121 @@
 import { Router } from 'express';
-import { getCustomRepository } from 'typeorm';
-import { Team } from './team.class';
+import { getRepository } from 'typeorm';
 import { Child } from '../../database/entity';
-import { MatchInfoRepository } from './custom';
 import { Only } from '../../middleware/only/only.middleware';
 import { connection } from '../../util/typeorm-connection';
-import e = require('express');
-import { decideHigher, returnMatch } from './versusRoutes.functions';
-import { assignRole } from './assignRole';
-import { matchVersusPlayers } from './matchVersusPlayers';
-import { createTeam } from './createTeam';
-import { createStudent } from './createStudent';
+import { TypeCast } from '../../util/utils';
+import { FindMatchByUID } from '../../util/db-utils';
+import { StorySend, LEFT, RIGHT, TeamData } from './versusRoutes.imports';
+import { sortByPoints, MatchSortByTeam } from './versusRoutes.functions';
 
 const versusRoutes = Router();
 
 versusRoutes.get('/versus', Only(Child), async (req, res) => {
     try {
-        const { id, cohort, username, avatar, stories, illustrations } = req.user as Child;
-        //first get matchid so we know who this child is up against
+        const { id, cohort, votes } = req.user as Child;
 
-        const match = await returnMatch(id, cohort.week);
-        // populate home team object(s)
-
-        // homeTeam created
-        const homeTeam = new Team(match.id);
-        homeTeam.student.studentId = id;
-        homeTeam.student.username = username;
-        homeTeam.student.avatar = avatar;
-        let student_id = null;
-        let teammate_id = null;
-
-        //awayTeam created
-        const awayTeam = new Team(match.id);
-        let opponentA_id = null;
-        let opponentB_id = null;
+        const match = await FindMatchByUID(id, cohort.week);
+        let teamID = match.team1_child1_id === id || match.team1_child2_id === id ? 1 : 2;
 
         if (!match) {
             res.json(401).json({
                 message: `Match for Student ID ${id}, for week ${cohort.week} not found`,
             });
-        } else {
-            {
-                if (match.team1_child1_id === id) {
-                    teammate_id = match.team1_child2_id;
-                    opponentA_id = match.team2_child1_id;
-                    opponentB_id = match.team2_child2_id;
-                } else if (match.team1_child2_id === id) {
-                    teammate_id = match.team1_child1_id;
-                    opponentA_id = match.team2_child1_id;
-                    opponentB_id = match.team2_child2_id;
-                } else if (match.team2_child1_id === id) {
-                    teammate_id = match.team2_child2_id;
-                    opponentA_id = match.team1_child1_id;
-                    opponentB_id = match.team1_child2_id;
-                } else {
-                    student_id = match.team2_child2_id;
-                    teammate_id = match.team2_child1_id;
-                    opponentA_id = match.team1_child1_id;
-                    opponentB_id = match.team1_child2_id;
-                }
-            }
-
-            const [story] = stories.filter((el) => el.week === cohort.week);
-            const [illustration] = illustrations.filter((el) => el.week === cohort.week);
-
-            // creation for homeTeam student
-            homeTeam.student = createStudent(homeTeam, story, illustration);
-
-            const teammate = await getCustomRepository(
-                MatchInfoRepository,
-                connection()
-            ).findStudentInfo(teammate_id, cohort.week);
-
-            // creation for homeTeam teammate
-            homeTeam.teammate = createTeam(teammate, 'teammate');
-
-            const opponentA = await getCustomRepository(
-                MatchInfoRepository,
-                connection()
-            ).findStudentInfo(opponentA_id, cohort.week);
-
-            // creation for awayTeam student
-            awayTeam.student = createTeam(opponentA, 'opponentA');
-
-            const opponentB = await getCustomRepository(
-                MatchInfoRepository,
-                connection()
-            ).findStudentInfo(opponentB_id, cohort.week);
-
-            // creation for awayTeam teammate
-            awayTeam.teammate = createTeam(opponentB, 'opponentB');
+            return;
         }
-        // createTeam(awayTeam, opponentB);
-        // who is higher in story and illustration points between student and teammate in homeTeam?
-        // array of array returned by decideHighter  [[storypoint high, storypoint low], [illustrationpoint high, illustrationpoint low]]
-        const higherMyteam = decideHigher(homeTeam.student, homeTeam.teammate);
-        // assign storyRole and illustrationRole to student and teammate in homeTeam
-        assignRole(higherMyteam, homeTeam);
-        // who is higher in story and illustration points between opponentA and opponentB in awayTeam?
-        const higherTeam2 = decideHigher(awayTeam.student, awayTeam.teammate);
-        // assign storyRole and illustrationRole to opponentA and opponentB in awayTeam
-        assignRole(higherTeam2, awayTeam);
 
-        // matching players for student and teammate with players in opponent team
-        matchVersusPlayers(homeTeam, awayTeam);
-        const thisBattle = {
-            battleInfo: {
-                student: {
-                    ...homeTeam.student,
-                },
-                teammate: {
-                    ...homeTeam.teammate,
-                },
-            },
+        let ChildRepo = getRepository(Child, connection());
+
+        let team1: Child[] = await ChildRepo.find({
+            where: [{ id: match.team1_child1_id }, { id: match.team1_child2_id }],
+            relations: ['illustrations', 'stories'],
+        });
+
+        const team2: Child[] = await ChildRepo.find({
+            where: [{ id: match.team2_child1_id }, { id: match.team2_child2_id }],
+            relations: ['illustrations', 'stories'],
+        });
+
+        let hTeam = teamID === 1 ? [team1[0], team1[1]] : [team2[0], team2[1]];
+        let aTeam = teamID === 1 ? [team2[0], team2[1]] : [team1[0], team1[1]];
+
+        let matchdata = {
+            votes,
+            homeTeam: [TypeCast(TeamData, hTeam[0]), TypeCast(TeamData, hTeam[1])],
+            awayTeam: [TypeCast(TeamData, aTeam[0]), TypeCast(TeamData, aTeam[1])],
         };
 
-        return res.status(200).json(thisBattle);
+        //Extract stories, highest points to lowest
+        const team1Stories = sortByPoints(team1, 'stories', cohort.week);
+        const team2Stories = sortByPoints(team2, 'stories', cohort.week);
+
+        //Calculate the HighStory matchup
+        let HighStoryMatchup = {
+            points: team1Stories[0].points + team2Stories[0].points,
+            [LEFT]: TypeCast(StorySend, team1Stories[0]),
+            [RIGHT]: TypeCast(StorySend, team2Stories[0]),
+        };
+
+        //Calculate the LowStory matchup
+        let LowStoryMatchup = {
+            points: team1Stories[1].points + team2Stories[1].points,
+            [LEFT]: TypeCast(StorySend, team1Stories[1]),
+            [RIGHT]: TypeCast(StorySend, team2Stories[1]),
+        };
+
+        //Extract illustrations, highest points to lowest
+        const team1Illustrations = sortByPoints(team1, 'illustrations', cohort.week);
+        const team2Illustrations = sortByPoints(team2, 'illustrations', cohort.week);
+
+        //Calculate the HighIllustration matchup
+        let HighIllustrationMatchup = {
+            points: team1Illustrations[0].points + team2Illustrations[0].points,
+            [LEFT]: team1Illustrations[0],
+            [RIGHT]: team2Illustrations[0],
+        };
+
+        //Calculate the LowIllustration matchup
+        let LowIllustrationMatchup = {
+            points: team1Illustrations[1].points + team2Illustrations[1].points,
+            [LEFT]: team1Illustrations[1],
+            [RIGHT]: team2Illustrations[1],
+        };
+
+        //////////////////////////////////////////////////
+        //The "don't crash my postman" block - DEV ONLY
+        // HighStoryMatchup[LEFT].story.page1 = HighStoryMatchup[RIGHT].story.page1 = LowStoryMatchup[
+        //     LEFT
+        // ].story.page1 = LowStoryMatchup[RIGHT].story.page1 = 'STORY STORY STORY STORY STORY';
+
+        // HighIllustrationMatchup[LEFT].illustration = HighIllustrationMatchup[
+        //     RIGHT
+        // ].illustration = LowIllustrationMatchup[LEFT].illustration = LowIllustrationMatchup[
+        //     RIGHT
+        // ].illustration = 'DRAWING DRAWING DRAWING DRAWING';
+        //////////////////////////////////////////////////
+
+        let thisBattle = [
+            MatchSortByTeam(HighStoryMatchup, matchdata.homeTeam),
+            MatchSortByTeam(LowStoryMatchup, matchdata.homeTeam),
+            MatchSortByTeam(HighIllustrationMatchup, matchdata.homeTeam),
+            MatchSortByTeam(LowIllustrationMatchup, matchdata.homeTeam),
+        ];
+
+        //Sort the battle, high points to low
+        thisBattle.sort(function (a, b) {
+            return b.points - a.points;
+        });
+
+        //Resolve usernames & any other data we may have lost through the sorting process
+        [team1[0], team1[1], team2[0], team2[1]].forEach((i) => {
+            Object.keys(thisBattle).forEach((e) => {
+                let Resolve = thisBattle[e] as StorySend[];
+                if (Resolve[0].childId === i.id) Resolve[0].username = i.username;
+                else if (Resolve[1].childId === i.id) Resolve[1].username = i.username;
+            });
+        });
+
+        return res.status(200).json({ matchdata: matchdata, matchups: thisBattle });
     } catch (err) {
         return res.status(500).json({ message: err.toString() });
     }

@@ -1,44 +1,25 @@
-import { Matches } from '../../database/entity';
-import { getRepository } from 'typeorm';
-import { connection } from '../../util/typeorm-connection';
+import { Child } from '../../database/entity';
 
-function decideHigher(studentA, studentB) {
-    const high = [];
-    if (studentA.storyPoints > studentB.storyPoints) high.push([studentA, studentB]);
-    else high.push([studentB, studentA]);
-
-    if (studentA.illustrationPoints > studentB.illustrationPoints) high.push([studentA, studentB]);
-    else high.push([studentB, studentA]);
-
-    return high;
+export function sortByPoints(team: Child[], key: string, week: number) {
+    const [user1, user2] = team;
+    const [submission1] = user1[`${key}`].filter((element) => element.week === week);
+    const [submission2] = user2[`${key}`].filter((element) => element.week === week);
+    return submission1.points > submission2.points
+        ? [submission1, submission2]
+        : [submission2, submission1];
 }
 
-async function returnMatch(id: number, week: number) {
-    const match = await getRepository(Matches, connection()).findOne({
-        where: [{ team1_child1_id: id, week: week }],
-    });
+//Used to arrange match objects to have the home team always be match["0"] [LEFT]
+export function MatchSortByTeam(match, home_team) {
+    let newRange = {} as any;
+    newRange.points = match.points;
 
-    return match ? match : r2(id, week);
-}
+    if (match[0].id === home_team[0].id || match[0].id === home_team[1].id) {
+        newRange = match;
+    } else {
+        newRange[0] = match[1];
+        newRange[1] = match[0];
+    }
 
-async function r2(id: number, week: number) {
-    const match = await getRepository(Matches, connection()).findOne({
-        where: [{ team1_child2_id: id, week: week }],
-    });
-    return match ? match : r3(id, week);
+    return newRange;
 }
-async function r3(id: number, week: number) {
-    const match = await getRepository(Matches, connection()).findOne({
-        where: [{ team2_child1_id: id, week: week }],
-    });
-    console.log(match);
-    return match ? match : r4(id, week);
-}
-async function r4(id: number, week: number) {
-    const match = await getRepository(Matches, connection()).findOne({
-        where: [{ team2_child2_id: id, week: week }],
-    });
-    console.log(match);
-    return match ? match : null;
-}
-export { decideHigher, returnMatch };
