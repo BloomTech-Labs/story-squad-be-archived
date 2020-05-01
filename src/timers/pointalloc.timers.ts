@@ -26,26 +26,29 @@ async function point_allocation_timer() {
                     //team1: child[], team2: child[]
                     //instead of literal number id's
                     let CohortMatches = [];
-                    TotalMatches.forEach((e) => {
-                        i.children.forEach((x) => {
-                            if (CohortMatches.includes(e)) return;
-                            switch (x.id) {
-                                case e.team1_child1_id:
-                                    CohortMatches.push(e);
+                    TotalMatches.forEach((match) => {
+                        for (let x = 0; x < i.children.length; x++) {
+                            switch (i.children[x].id) {
+                                case match.team1_child1_id:
+                                    CohortMatches.push(match);
+                                    x = i.children.length;
                                     break;
-                                case e.team1_child2_id:
-                                    CohortMatches.push(e);
+                                case match.team1_child2_id:
+                                    CohortMatches.push(match);
+                                    x = i.children.length;
                                     break;
-                                case e.team2_child1_id:
-                                    CohortMatches.push(e);
+                                case match.team2_child1_id:
+                                    CohortMatches.push(match);
+                                    x = i.children.length;
                                     break;
-                                case e.team2_child2_id:
-                                    CohortMatches.push(e);
+                                case match.team2_child2_id:
+                                    CohortMatches.push(match);
+                                    x = i.children.length;
                                     break;
                                 default:
                                     break;
                             }
-                        });
+                        }
                     });
 
                     //Check if children in each match have voted
