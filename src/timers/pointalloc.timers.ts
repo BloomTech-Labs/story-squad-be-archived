@@ -22,34 +22,7 @@ async function point_allocation_timer() {
             if (i.activity === 'teamReview')
                 if (Current > i.dueDates.teamReview) {
                     //Find matches from this cohort
-                    //This can be removed IF the matches get
-                    //team1: child[], team2: child[]
-                    //instead of literal number id's
-                    let CohortMatches = [];
-                    TotalMatches.forEach((match) => {
-                        for (let x = 0; x < i.children.length; x++) {
-                            switch (i.children[x].id) {
-                                case match.team1_child1_id:
-                                    CohortMatches.push(match);
-                                    x = i.children.length;
-                                    break;
-                                case match.team1_child2_id:
-                                    CohortMatches.push(match);
-                                    x = i.children.length;
-                                    break;
-                                case match.team2_child1_id:
-                                    CohortMatches.push(match);
-                                    x = i.children.length;
-                                    break;
-                                case match.team2_child2_id:
-                                    CohortMatches.push(match);
-                                    x = i.children.length;
-                                    break;
-                                default:
-                                    break;
-                            }
-                        }
-                    });
+                    let CohortMatches = FindMatchesByChildren(TotalMatches, i.children);
 
                     //Check if children in each match have voted
 
@@ -64,6 +37,38 @@ async function point_allocation_timer() {
                 }
         });
     }, 300000);
+}
+
+function FindMatchesByChildren(allMatches, children) {
+    //This can be removed IF the matches get
+    //team1: child[], team2: child[]
+    //instead of literal number id's
+    let Matches = [];
+    allMatches.forEach((match) => {
+        for (let x = 0; x < children.length; x++) {
+            switch (children[x].id) {
+                case match.team1_child1_id:
+                    Matches.push(match);
+                    x = children.length;
+                    break;
+                case match.team1_child2_id:
+                    Matches.push(match);
+                    x = children.length;
+                    break;
+                case match.team2_child1_id:
+                    Matches.push(match);
+                    x = children.length;
+                    break;
+                case match.team2_child2_id:
+                    Matches.push(match);
+                    x = children.length;
+                    break;
+                default:
+                    break;
+            }
+        }
+    });
+    return Matches;
 }
 
 export { point_allocation_timer };
