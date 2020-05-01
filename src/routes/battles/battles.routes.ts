@@ -17,6 +17,7 @@ battlesRoutes.get('/battles', Only(Child), async (req, res) => {
         const match = await returnMatch(id, cohort.week);
 
         let thisMatch = {
+            teamReviewEndDate: cohort.dueDates.teamReview.toISOString(),
             matchId: match.id,
             week: cohort.week,
             team: {
