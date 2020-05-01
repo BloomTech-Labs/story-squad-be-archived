@@ -12,6 +12,10 @@ async function point_allocation_timer() {
             (await getMaxByColumn(Cohort, 'id')) as number
         )) as Cohort;
 
+        if (!latestCohort) {
+            return;
+        }
+
         //Get current date
         let Current = new Date();
 

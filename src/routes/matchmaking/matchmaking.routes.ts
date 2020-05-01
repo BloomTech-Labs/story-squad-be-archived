@@ -4,7 +4,7 @@ import { runScript } from '../../util/scripts/scripting';
 import { attemptJSONParse } from '../../util/utils';
 
 import { Only } from '../../middleware';
-import { Admin, Matches, Stories, Child, Illustrations } from '../../database/entity';
+import { Admin, Matches, Stories, Child, Illustrations, Cohort } from '../../database/entity';
 import { Matchmaking, WeekMatches } from '../../models';
 import { connection } from '../../util/typeorm-connection';
 
@@ -100,6 +100,21 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
             const matches = await getRepository(Matches, connection()).find({
                 where: { week: thisWeek },
             });
+
+            //Need to go find every cohort that's in this stories week
+            {
+                let CohortRepo = await getRepository(Cohort, connection());
+                let Cohorts = await CohortRepo.find({
+                    where: { week: thisWeek },
+                });
+                let teamReviewDate = new Date();
+                teamReviewDate.setHours(teamReviewDate.getHours() + 24);
+                Cohorts.forEach((i) => {
+                    i.dueDates.teamReview = teamReviewDate;
+                });
+                await CohortRepo.save(Cohorts);
+            }
+
             res.status(200).json({ message: `saved success`, match: matches });
             // await match-ups and responds to FE with match-ups 3.12.20
             // first call to assign match-ups works, but this next await doesn't fully resolve for some reason and generates an empty array
