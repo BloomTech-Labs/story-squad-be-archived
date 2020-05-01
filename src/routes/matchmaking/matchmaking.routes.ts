@@ -110,6 +110,7 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
                 let teamReviewDate = new Date();
                 teamReviewDate.setHours(teamReviewDate.getHours() + 24);
                 Cohorts.forEach((i) => {
+                    i.activity = 'teamReview';
                     i.dueDates.teamReview = teamReviewDate;
                 });
                 await CohortRepo.save(Cohorts);

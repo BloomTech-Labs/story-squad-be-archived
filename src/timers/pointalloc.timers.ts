@@ -13,12 +13,12 @@ async function point_allocation_timer() {
         let Cohorts = await CohortRepo.find();
 
         await Cohorts.forEach(async (i) => {
-            if (i.activity === 'reading')
+            if (i.activity === 'teamReview')
                 if (Current > i.dueDates.teamReview) {
                     //Do checks on everybody
 
                     //Set teamReview & save
-                    i.activity = 'teamReview';
+                    i.activity = 'randomReview';
                     await CohortRepo.save(i);
                 }
         });
