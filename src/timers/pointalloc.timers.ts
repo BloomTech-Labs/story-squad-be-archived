@@ -24,13 +24,26 @@ async function point_allocation_timer() {
                 let MatchesInWeek = await MatchesRepo.find({
                     where: [{ week: i.week }],
                 });
-                let CohortMatches = FindMatchesByChildren(MatchesInWeek, i.children);
+                let CohortMatches = FindMatchesByChildren(MatchesInWeek, i.children) as Matches[];
 
                 //Check if children in each match have voted
 
                 //For every match
-                CohortMatches.forEach((match) => {
+                await CohortMatches.forEach(async (match) => {
                     //Check children
+                    let T1C1 = (await ChildRepo.findOne(match.team1_child1_id)) as Child;
+                    let T1C2 = (await ChildRepo.findOne(match.team1_child2_id)) as Child;
+                    let T2C1 = (await ChildRepo.findOne(match.team2_child1_id)) as Child;
+                    let T2C2 = (await ChildRepo.findOne(match.team2_child2_id)) as Child;
+
+                    let T1ApplyPoints = 0;
+                    let T2ApplyPoints = 0;
+
+                    //teamReview on child's progress is set to true if they've actually voted
+                    if (!T1C1.progress.teamReview) T1ApplyPoints += 25;
+                    if (!T1C2.progress.teamReview) T1ApplyPoints += 25;
+                    if (!T2C1.progress.teamReview) T2ApplyPoints += 25;
+                    if (!T2C2.progress.teamReview) T2ApplyPoints += 25;
                 });
 
                 //Set teamReview & save
