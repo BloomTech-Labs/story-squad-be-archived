@@ -11,30 +11,32 @@ async function point_allocation_timer() {
         //Get current date
         let Current = new Date();
 
-        //Get matches
-        let TotalMatches = await MatchesRepo.find();
-
         //Get cohorts & their children
-        let Cohorts = await CohortRepo.find({ relations: ['children'] });
+        let Cohorts = await CohortRepo.find({
+            where: [{ activity: 'teamReview' }],
+            relations: ['children'],
+        });
 
         //For every cohort
         await Cohorts.forEach(async (i) => {
-            if (i.activity === 'teamReview')
-                if (Current > i.dueDates.teamReview) {
-                    //Find matches from this cohort
-                    let CohortMatches = FindMatchesByChildren(TotalMatches, i.children);
+            if (Current > i.dueDates.teamReview) {
+                //Find matches from this cohort
+                let MatchesInWeek = await MatchesRepo.find({
+                    where: [{ week: i.week }],
+                });
+                let CohortMatches = FindMatchesByChildren(MatchesInWeek, i.children);
 
-                    //Check if children in each match have voted
+                //Check if children in each match have voted
 
-                    //For every match
-                    CohortMatches.forEach((match) => {
-                        //Check children
-                    });
+                //For every match
+                CohortMatches.forEach((match) => {
+                    //Check children
+                });
 
-                    //Set teamReview & save
-                    i.activity = 'randomReview';
-                    await CohortRepo.save(i);
-                }
+                //Set teamReview & save
+                i.activity = 'randomReview';
+                await CohortRepo.save(i);
+            }
         });
     }, 300000);
 }
