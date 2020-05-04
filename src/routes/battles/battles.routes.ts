@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { getRepository, getCustomRepository } from 'typeorm';
 
-import { Child, Matches, Stories, Illustrations } from '../../database/entity';
+import { Child, Matches, Stories, Illustrations, Cohort } from '../../database/entity';
 import { MatchInfoRepository } from './custom';
 
 import { Only } from '../../middleware/only/only.middleware';
@@ -21,7 +21,14 @@ battlesRoutes.get('/battles', Only(Child), async (req, res) => {
         if (cohort && cohort.dueDates && cohort.dueDates.teamReview)
             teamreviewenddate = cohort.dueDates.teamReview.toISOString();
 
+        let gotomatchmaking = false;
+        let Current = new Date();
+        if (Current > cohort.dueDates.teamReview) {
+            gotomatchmaking = true;
+        }
+
         let thisMatch = {
+            gotoMatchmaking: gotomatchmaking,
             teamReviewEndDate: teamreviewenddate,
             matchId: match.id,
             week: cohort.week,
