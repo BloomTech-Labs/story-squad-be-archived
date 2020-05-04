@@ -93,6 +93,10 @@ async function point_allocation_timer() {
                         illustration.points += T2ApplyPoints;
                         await IllustrationRepo.save(illustration);
                     });
+
+                    T1C1.progress.teamReview = T1C2.progress.teamReview = T2C1.progress.teamReview = T2C2.progress.teamReview = true;
+
+                    await ChildRepo.save([T1C1, T1C2, T2C1, T2C2]);
                 });
 
                 //Set teamReview & save
