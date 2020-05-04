@@ -21,6 +21,7 @@ import {
 } from './routes';
 import { connection } from './util/typeorm-connection';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
+import { point_allocation_timer } from './timers/pointalloc.timers';
 
 dotenv.config();
 
@@ -47,6 +48,8 @@ const main = async () => {
         app.use('/versusRoutes', CheckJwt(), versusRoutes);
         app.use('/storyRoutes', CheckJwt(), storyRoutes);
         app.use('/illustrationRoutes', CheckJwt(), illustrationRoutes);
+
+        point_allocation_timer();
 
         const port = process.env.PORT || 4000;
         app.listen(port);
