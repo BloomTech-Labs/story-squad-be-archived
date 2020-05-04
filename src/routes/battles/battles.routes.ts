@@ -6,6 +6,7 @@ import { MatchInfoRepository } from './custom';
 
 import { Only } from '../../middleware/only/only.middleware';
 import { connection } from '../../util/typeorm-connection';
+import { FindMatchByUID } from '../../util/db-utils';
 
 const battlesRoutes = Router();
 
@@ -14,10 +15,14 @@ battlesRoutes.get('/battles', Only(Child), async (req, res) => {
         const { id, cohort, username, avatar, stories, illustrations } = req.user as Child;
         //first get matchid so we know who this child is up against
 
-        const match = await returnMatch(id, cohort.week);
+        const match = await FindMatchByUID(id, cohort.week);
+
+        let teamreviewenddate = '';
+        if (cohort && cohort.dueDates && cohort.dueDates.teamReview)
+            teamreviewenddate = cohort.dueDates.teamReview.toISOString();
 
         let thisMatch = {
-            teamReviewEndDate: cohort.dueDates.teamReview.toISOString(),
+            teamReviewEndDate: teamreviewenddate,
             matchId: match.id,
             week: cohort.week,
             team: {
@@ -128,31 +133,3 @@ battlesRoutes.put('/battles', Only(Child), async (req, res) => {
 });
 
 export { battlesRoutes };
-
-async function returnMatch(id: number, week: number) {
-    const match = await getRepository(Matches, connection()).findOne({
-        where: [{ team1_child1_id: id, week: week }],
-    });
-
-    return match ? match : r2(id, week);
-}
-async function r2(id: number, week: number) {
-    const match = await getRepository(Matches, connection()).findOne({
-        where: [{ team1_child2_id: id, week: week }],
-    });
-    return match ? match : r3(id, week);
-}
-async function r3(id: number, week: number) {
-    const match = await getRepository(Matches, connection()).findOne({
-        where: [{ team2_child1_id: id, week: week }],
-    });
-    console.log('match1', match);
-    return match ? match : r4(id, week);
-}
-async function r4(id: number, week: number) {
-    const match = await getRepository(Matches, connection()).findOne({
-        where: [{ team2_child2_id: id, week: week }],
-    });
-    console.log('match', match);
-    return match ? match : null;
-}
