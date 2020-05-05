@@ -1,5 +1,5 @@
 import { Child } from './Child';
-import { Column, Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, ManyToOne, ManyToMany } from 'typeorm';
 import { Cohort } from './Cohort';
 
 @Entity()
@@ -10,20 +10,16 @@ class Versus {
     @ManyToOne((type) => Cohort, (cohort) => cohort.versusMatches)
     cohort: Cohort;
 
-    @ManyToOne((type) => Child, (child) => child.versusMatches)
-    child1: Child;
-
-    @ManyToOne((type) => Child, (child) => child.versusMatches)
-    child2: Child;
+    @ManyToMany((type) => Child, (child) => child.versusMatches)
+    children: Child[];
 
     @Column()
     votes: number;
 
-    constructor(cohort: Cohort, child1: Child, child2: Child, votes: number) {
+    constructor(cohort: Cohort, children: Child[], votes: number) {
         this.id = 0;
         this.cohort = cohort;
-        this.child1 = child1;
-        this.child2 = child2;
+        this.children = children;
         this.votes = votes;
     }
 }

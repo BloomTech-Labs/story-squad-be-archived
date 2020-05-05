@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany, ManyToMany } from 'typeorm';
 
 import { Preferences } from './Preferences';
 import { Progress } from './Progress';
@@ -55,7 +55,7 @@ class Child {
     @OneToMany((type) => Stories, (stories) => stories.child)
     stories: Stories[];
 
-    @OneToMany((type) => Versus, (versus) => versus.child1 || versus.child2)
+    @ManyToMany((type) => Versus, (versus) => versus.children)
     versusMatches: Versus[];
 }
 
