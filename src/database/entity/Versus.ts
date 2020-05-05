@@ -18,6 +18,14 @@ class Versus {
 
     @Column()
     votes: number;
+
+    constructor(cohort: Cohort, child1: Child, child2: Child, votes: number) {
+        this.id = 0;
+        this.cohort = cohort;
+        this.child1 = child1;
+        this.child2 = child2;
+        this.votes = votes;
+    }
 }
 
 export { Versus };

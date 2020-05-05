@@ -1,6 +1,8 @@
 import { Cohort, Child, Matches, Stories, Illustrations } from '../database/entity';
 import { getRepository } from 'typeorm';
 import { connection } from '../util/typeorm-connection';
+import { sortByPoints } from '../routes/versus/versusRoutes.functions';
+import { Versus } from '../database/entity/Versus';
 
 async function point_allocation_timer() {
     setInterval(async function () {
@@ -97,6 +99,8 @@ async function point_allocation_timer() {
                     T1C1.progress.teamReview = T1C2.progress.teamReview = T2C1.progress.teamReview = T2C2.progress.teamReview = true;
 
                     await ChildRepo.save([T1C1, T1C2, T2C1, T2C2]);
+
+                    GenerateVersusFromMatch(match, [T1C1, T1C2, T2C1, T2C2]);
                 });
 
                 //Set teamReview & save
@@ -137,6 +141,56 @@ function FindMatchesByChildren(allMatches, children) {
         }
     });
     return Matches;
+}
+
+async function GenerateVersusFromMatch(match: Matches, children: Child[]) {
+    let VersusRepo = await getRepository(Versus, connection());
+
+    let Cohort = children[0].cohort;
+
+    let team1 = [children[0], children[1]];
+    let team2 = [children[2], children[3]];
+
+    const team1Stories = sortByPoints(team1, 'stories', match.week);
+    const team2Stories = sortByPoints(team2, 'stories', match.week);
+
+    const team1Illustrations = sortByPoints(team1, 'illustrations', match.week);
+    const team2Illustrations = sortByPoints(team2, 'illustrations', match.week);
+
+    //Calculate the HighStory matchup
+    let HighStoryMatchup = ([team1Stories[0], team2Stories[0]] as unknown) as Stories[];
+
+    let Temp = new Versus(Cohort, HighStoryMatchup[0].child, HighStoryMatchup[1].child, 0);
+    VersusRepo.save(Temp);
+
+    //Calculate the LowStory matchup
+    let LowStoryMatchup = ([team1Stories[1], team2Stories[1]] as unknown) as Stories[];
+
+    Temp = new Versus(Cohort, LowStoryMatchup[0].child, LowStoryMatchup[1].child, 0);
+    VersusRepo.save(Temp);
+
+    //Calculate the HighIllustration matchup
+    let HighIllustrationMatchup = ([
+        team1Illustrations[0],
+        team2Illustrations[0],
+    ] as unknown) as Illustrations[];
+
+    Temp = new Versus(
+        Cohort,
+        HighIllustrationMatchup[0].child,
+        HighIllustrationMatchup[1].child,
+        0
+    );
+    VersusRepo.save(Temp);
+
+    //Calculate the LowIllustration matchup
+    let LowIllustrationMatchup = ([
+        team1Illustrations[1],
+        team2Illustrations[1],
+    ] as unknown) as Illustrations[];
+
+    Temp = new Versus(Cohort, LowIllustrationMatchup[0].child, LowIllustrationMatchup[1].child, 0);
+    VersusRepo.save(Temp);
 }
 
 export { point_allocation_timer };
