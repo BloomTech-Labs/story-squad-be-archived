@@ -6,6 +6,7 @@ import { Parent } from './Parent';
 import { Cohort } from './Cohort';
 import { Illustrations } from './Illustrations';
 import { Stories } from './Stories';
+import { Versus } from './Versus';
 
 @Entity()
 class Child {
@@ -53,6 +54,9 @@ class Child {
 
     @OneToMany((type) => Stories, (stories) => stories.child)
     stories: Stories[];
+
+    @OneToMany((type) => Versus, (versus) => versus.child1 || versus.child2)
+    versusMatches: Versus[];
 }
 
 export { Child };
