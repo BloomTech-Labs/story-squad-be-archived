@@ -3,8 +3,8 @@ import { Cohort, Canon, Parent, Child, Stories, Illustrations } from '../../../d
 import { CohortSeed, CanonSeed, ParentSeed, ChildSeed, StorySeed, IllustrationSeed } from './seeds';
 import Stripe from 'stripe';
 
-export class MainMigration1587051617754 implements MigrationInterface {
-    name = 'MainMigration1587051617754';
+export class MainMigration1588783556697 implements MigrationInterface {
+    name = 'MainMigration1588783556697';
 
     public async up(queryRunner: QueryRunner): Promise<any> {
         /* Basic query structure copied from generating a new migration (migration:generate) */
@@ -18,6 +18,10 @@ export class MainMigration1587051617754 implements MigrationInterface {
         );
         await queryRunner.query(
             `CREATE TABLE "parent" ("id" SERIAL NOT NULL, "name" character varying, "email" character varying NOT NULL, "password" character varying NOT NULL, "stripeID" character varying, CONSTRAINT "UQ_9158391af7b8ca4911efaad8a73" UNIQUE ("email"), CONSTRAINT "PK_bf93c41ee1ae1649869ebd05617" PRIMARY KEY ("id"))`,
+            undefined
+        );
+        await queryRunner.query(
+            `CREATE TABLE "versus" ("id" SERIAL NOT NULL, "votes" integer NOT NULL, "story" boolean NOT NULL, "cohortId" integer, CONSTRAINT "PK_41d9cf225dd9b71306bf7b2984a" PRIMARY KEY ("id"))`,
             undefined
         );
         await queryRunner.query(
@@ -41,6 +45,22 @@ export class MainMigration1587051617754 implements MigrationInterface {
             undefined
         );
         await queryRunner.query(
+            `CREATE TABLE "versus_children_child" ("versusId" integer NOT NULL, "childId" integer NOT NULL, CONSTRAINT "PK_79c4574732850645b3f67932d97" PRIMARY KEY ("versusId", "childId"))`,
+            undefined
+        );
+        await queryRunner.query(
+            `CREATE INDEX "IDX_e43bc821fbc577e7d9754696cf" ON "versus_children_child" ("versusId") `,
+            undefined
+        );
+        await queryRunner.query(
+            `CREATE INDEX "IDX_e0cd577bce7cbca0562dd892cf" ON "versus_children_child" ("childId") `,
+            undefined
+        );
+        await queryRunner.query(
+            `ALTER TABLE "versus" ADD CONSTRAINT "FK_0ebb3db00101398ef2c6fcf40b5" FOREIGN KEY ("cohortId") REFERENCES "cohort"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
+            undefined
+        );
+        await queryRunner.query(
             `ALTER TABLE "illustrations" ADD CONSTRAINT "FK_2675728b1c00556cd980c77b849" FOREIGN KEY ("childId") REFERENCES "child"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
             undefined
         );
@@ -56,7 +76,14 @@ export class MainMigration1587051617754 implements MigrationInterface {
             `ALTER TABLE "child" ADD CONSTRAINT "FK_faecc77a0cf169a4c97f0a8d812" FOREIGN KEY ("cohortId") REFERENCES "cohort"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
             undefined
         );
-        /******************/
+        await queryRunner.query(
+            `ALTER TABLE "versus_children_child" ADD CONSTRAINT "FK_e43bc821fbc577e7d9754696cfc" FOREIGN KEY ("versusId") REFERENCES "versus"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
+            undefined
+        );
+        await queryRunner.query(
+            `ALTER TABLE "versus_children_child" ADD CONSTRAINT "FK_e0cd577bce7cbca0562dd892cf4" FOREIGN KEY ("childId") REFERENCES "child"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
+            undefined
+        );
 
         /* SEEDING - Need to use queryRunner's Manager to get the proper connection info */
         await queryRunner.manager.getRepository(Cohort).save(CohortSeed);
@@ -82,6 +109,14 @@ export class MainMigration1587051617754 implements MigrationInterface {
 
     public async down(queryRunner: QueryRunner): Promise<any> {
         await queryRunner.query(
+            `ALTER TABLE "versus_children_child" DROP CONSTRAINT "FK_e0cd577bce7cbca0562dd892cf4"`,
+            undefined
+        );
+        await queryRunner.query(
+            `ALTER TABLE "versus_children_child" DROP CONSTRAINT "FK_e43bc821fbc577e7d9754696cfc"`,
+            undefined
+        );
+        await queryRunner.query(
             `ALTER TABLE "child" DROP CONSTRAINT "FK_faecc77a0cf169a4c97f0a8d812"`,
             undefined
         );
@@ -97,11 +132,19 @@ export class MainMigration1587051617754 implements MigrationInterface {
             `ALTER TABLE "illustrations" DROP CONSTRAINT "FK_2675728b1c00556cd980c77b849"`,
             undefined
         );
+        await queryRunner.query(
+            `ALTER TABLE "versus" DROP CONSTRAINT "FK_0ebb3db00101398ef2c6fcf40b5"`,
+            undefined
+        );
+        await queryRunner.query(`DROP INDEX "IDX_e0cd577bce7cbca0562dd892cf"`, undefined);
+        await queryRunner.query(`DROP INDEX "IDX_e43bc821fbc577e7d9754696cf"`, undefined);
+        await queryRunner.query(`DROP TABLE "versus_children_child"`, undefined);
         await queryRunner.query(`DROP TABLE "matches"`, undefined);
         await queryRunner.query(`DROP TABLE "child"`, undefined);
         await queryRunner.query(`DROP TABLE "stories"`, undefined);
         await queryRunner.query(`DROP TABLE "illustrations"`, undefined);
         await queryRunner.query(`DROP TABLE "cohort"`, undefined);
+        await queryRunner.query(`DROP TABLE "versus"`, undefined);
         await queryRunner.query(`DROP TABLE "parent"`, undefined);
         await queryRunner.query(`DROP TABLE "canon"`, undefined);
         await queryRunner.query(`DROP TABLE "admin"`, undefined);
