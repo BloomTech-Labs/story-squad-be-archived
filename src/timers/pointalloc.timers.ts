@@ -6,11 +6,11 @@ import { Versus } from '../database/entity/Versus';
 
 async function point_allocation_timer() {
     setInterval(async function () {
-        let CohortRepo = await getRepository(Cohort, connection());
-        let ChildRepo = await getRepository(Child, connection());
-        let MatchesRepo = await getRepository(Matches, connection());
-        let StoryRepo = await getRepository(Stories, connection());
-        let IllustrationRepo = await getRepository(Illustrations, connection());
+        let CohortRepo = getRepository(Cohort, connection());
+        let ChildRepo = getRepository(Child, connection());
+        let MatchesRepo = getRepository(Matches, connection());
+        let StoryRepo = getRepository(Stories, connection());
+        let IllustrationRepo = getRepository(Illustrations, connection());
 
         //Get current date
         let Current = new Date();
@@ -144,8 +144,6 @@ function FindMatchesByChildren(allMatches, children) {
 }
 
 async function GenerateVersusFromMatch(match: Matches, children: Child[], cohort: Cohort) {
-    let VersusRepo = await getRepository(Versus, connection());
-
     let team1 = [children[0], children[1]];
     let team2 = [children[2], children[3]];
 
@@ -156,42 +154,45 @@ async function GenerateVersusFromMatch(match: Matches, children: Child[], cohort
     const team2Illustrations = sortByPoints(team2, 'illustrations', match.week);
 
     //Calculate the HighStory matchup
-    let HighStoryMatchup = ([team1Stories[0], team2Stories[0]] as unknown) as Stories[];
-
-    //let Temp = new Versus(cohort, HighStoryMatchup[0].child, HighStoryMatchup[1].child, 0);
-    //VersusRepo.save(Temp);
+    let HighStoryMatchup = [team1Stories[0], team2Stories[0]];
+    await BuildAndSaveVersus(
+        HighStoryMatchup[0].childId,
+        HighStoryMatchup[1].childId,
+        cohort,
+        true
+    );
 
     //Calculate the LowStory matchup
-    let LowStoryMatchup = ([team1Stories[1], team2Stories[1]] as unknown) as Stories[];
-
-    //Temp = new Versus(cohort, LowStoryMatchup[0].child, LowStoryMatchup[1].child, 0);
-    //VersusRepo.save(Temp);
+    let LowStoryMatchup = [team1Stories[1], team2Stories[1]];
+    await BuildAndSaveVersus(LowStoryMatchup[0].childId, LowStoryMatchup[1].childId, cohort, true);
 
     //Calculate the HighIllustration matchup
-    let HighIllustrationMatchup = ([
-        team1Illustrations[0],
-        team2Illustrations[0],
-    ] as unknown) as Illustrations[];
-
-    console.log(HighIllustrationMatchup);
-    console.log(cohort);
-
-    let Temp = new Versus(
+    let HighIllustrationMatchup = [team1Illustrations[0], team2Illustrations[0]];
+    await BuildAndSaveVersus(
+        HighIllustrationMatchup[0].childId,
+        HighIllustrationMatchup[1].childId,
         cohort,
-        [HighIllustrationMatchup[0].child, HighIllustrationMatchup[1].child],
-        0
+        false
     );
-    console.log(Temp);
-    VersusRepo.save(Temp);
 
     //Calculate the LowIllustration matchup
-    let LowIllustrationMatchup = ([
-        team1Illustrations[1],
-        team2Illustrations[1],
-    ] as unknown) as Illustrations[];
+    let LowIllustrationMatchup = [team1Illustrations[1], team2Illustrations[1]];
+    await BuildAndSaveVersus(
+        LowIllustrationMatchup[0].childId,
+        LowIllustrationMatchup[1].childId,
+        cohort,
+        false
+    );
+}
 
-    //Temp = new Versus(cohort, LowIllustrationMatchup[0].child, LowIllustrationMatchup[1].child, 0);
-    //VersusRepo.save(Temp);
+async function BuildAndSaveVersus(cid1: number, cid2: number, cohort: Cohort, story: boolean) {
+    let VersusRepo = getRepository(Versus, connection());
+    let ChildRepo = getRepository(Child, connection());
+
+    let child1 = await ChildRepo.findOne(cid1);
+    let child2 = await ChildRepo.findOne(cid2);
+    let Temp = new Versus(cohort, [child1, child2], 0, story);
+    VersusRepo.save(Temp);
 }
 
 export { point_allocation_timer };

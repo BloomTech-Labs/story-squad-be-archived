@@ -1,4 +1,12 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany, ManyToMany } from 'typeorm';
+import {
+    Entity,
+    Column,
+    PrimaryGeneratedColumn,
+    ManyToOne,
+    OneToMany,
+    ManyToMany,
+    JoinTable,
+} from 'typeorm';
 
 import { Preferences } from './Preferences';
 import { Progress } from './Progress';
