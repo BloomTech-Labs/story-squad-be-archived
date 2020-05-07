@@ -100,7 +100,7 @@ async function point_allocation_timer() {
 
                     await ChildRepo.save([T1C1, T1C2, T2C1, T2C2]);
 
-                    GenerateVersusFromMatch(match, [T1C1, T1C2, T2C1, T2C2], i);
+                    await GenerateVersusFromMatch(match, [T1C1, T1C2, T2C1, T2C2], i);
                 });
 
                 //Set teamReview & save
@@ -108,7 +108,7 @@ async function point_allocation_timer() {
                 await CohortRepo.save(i);
             }
         });
-    }, 300000);
+    }, 30000);
 }
 
 function FindMatchesByChildren(allMatches, children) {
@@ -159,12 +159,12 @@ async function GenerateVersusFromMatch(match: Matches, children: Child[], cohort
         HighStoryMatchup[0].childId,
         HighStoryMatchup[1].childId,
         cohort,
-        true
+        false
     );
 
     //Calculate the LowStory matchup
     let LowStoryMatchup = [team1Stories[1], team2Stories[1]];
-    await BuildAndSaveVersus(LowStoryMatchup[0].childId, LowStoryMatchup[1].childId, cohort, true);
+    await BuildAndSaveVersus(LowStoryMatchup[0].childId, LowStoryMatchup[1].childId, cohort, false);
 
     //Calculate the HighIllustration matchup
     let HighIllustrationMatchup = [team1Illustrations[0], team2Illustrations[0]];
@@ -172,7 +172,7 @@ async function GenerateVersusFromMatch(match: Matches, children: Child[], cohort
         HighIllustrationMatchup[0].childId,
         HighIllustrationMatchup[1].childId,
         cohort,
-        false
+        true
     );
 
     //Calculate the LowIllustration matchup
@@ -181,7 +181,7 @@ async function GenerateVersusFromMatch(match: Matches, children: Child[], cohort
         LowIllustrationMatchup[0].childId,
         LowIllustrationMatchup[1].childId,
         cohort,
-        false
+        true
     );
 }
 
