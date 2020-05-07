@@ -1,4 +1,5 @@
-import { Column, PrimaryGeneratedColumn, Entity } from 'typeorm';
+import { Column, PrimaryGeneratedColumn, Entity, OneToMany } from 'typeorm';
+import { Versus } from './Versus';
 
 @Entity()
 class Matches {
@@ -21,6 +22,9 @@ class Matches {
 
     @Column({ nullable: true })
     week: number;
+
+    @OneToMany((type) => Versus, (versus) => versus.match)
+    versusMatches: Versus[];
 }
 
 export { Matches };

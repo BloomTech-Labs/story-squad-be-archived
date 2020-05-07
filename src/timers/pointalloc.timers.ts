@@ -159,12 +159,19 @@ async function GenerateVersusFromMatch(match: Matches, children: Child[], cohort
         HighStoryMatchup[0].childId,
         HighStoryMatchup[1].childId,
         cohort,
-        false
+        false,
+        match
     );
 
     //Calculate the LowStory matchup
     let LowStoryMatchup = [team1Stories[1], team2Stories[1]];
-    await BuildAndSaveVersus(LowStoryMatchup[0].childId, LowStoryMatchup[1].childId, cohort, false);
+    await BuildAndSaveVersus(
+        LowStoryMatchup[0].childId,
+        LowStoryMatchup[1].childId,
+        cohort,
+        false,
+        match
+    );
 
     //Calculate the HighIllustration matchup
     let HighIllustrationMatchup = [team1Illustrations[0], team2Illustrations[0]];
@@ -172,7 +179,8 @@ async function GenerateVersusFromMatch(match: Matches, children: Child[], cohort
         HighIllustrationMatchup[0].childId,
         HighIllustrationMatchup[1].childId,
         cohort,
-        true
+        true,
+        match
     );
 
     //Calculate the LowIllustration matchup
@@ -181,17 +189,24 @@ async function GenerateVersusFromMatch(match: Matches, children: Child[], cohort
         LowIllustrationMatchup[0].childId,
         LowIllustrationMatchup[1].childId,
         cohort,
-        true
+        true,
+        match
     );
 }
 
-async function BuildAndSaveVersus(cid1: number, cid2: number, cohort: Cohort, story: boolean) {
+async function BuildAndSaveVersus(
+    cid1: number,
+    cid2: number,
+    cohort: Cohort,
+    story: boolean,
+    match: Matches
+) {
     let VersusRepo = getRepository(Versus, connection());
     let ChildRepo = getRepository(Child, connection());
 
     let child1 = await ChildRepo.findOne(cid1);
     let child2 = await ChildRepo.findOne(cid2);
-    let Temp = new Versus(cohort, [child1, child2], 0, story);
+    let Temp = new Versus(cohort, [child1, child2], 0, story, match);
     VersusRepo.save(Temp);
 }
 
