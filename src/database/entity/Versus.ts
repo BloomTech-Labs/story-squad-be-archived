@@ -14,7 +14,7 @@ class Versus {
     @ManyToOne((type) => Matches, (match) => match.versusMatches)
     match: Matches;
 
-    @ManyToMany((type) => Child, (child) => child.versusMatches)
+    @ManyToMany((type) => Child, (child) => child.versusMatches, { eager: true })
     @JoinTable()
     children: Child[];
 
