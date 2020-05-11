@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { Only } from '../../middleware';
 import { Child, Matches, Stories, Illustrations } from '../../database/entity';
-import { getManager, Not, getRepository } from 'typeorm';
+import { getManager, Not, getRepository, Connection } from 'typeorm';
 import { connection } from '../../util/typeorm-connection';
 import { Versus } from '../../database/entity/Versus';
 import { FindMatchByUID } from '../../util/db-utils';
@@ -16,9 +16,9 @@ async function randomIgnoring(ignore: Matches) {
 
     try {
         let iter = 0;
-        let LowestNeeded = 15000;
+        let LowestNeeded = 5;
 
-        while (LowestNeeded === 15000) {
+        while (LowestNeeded === 5) {
             let temp = await VersusRepo.findOne({
                 where: { votes: iter, match: Not(ignore.id) },
             });
@@ -81,6 +81,40 @@ votingRoutes.get('/voting', Only(Child), async (req, res) => {
     }
 
     res.status(200).json(Build);
+});
+
+votingRoutes.post('/voting', Only(Child), async (req, res) => {
+    let User = req.user as Child;
+
+    if (User.votes > 2) {
+        res.status(200).json({ msg: "Vote didn't count, but it worked!" });
+        return;
+    }
+
+    let childID = req.body.childID as number;
+    let matchupID = req.body.matchupID as number;
+
+    if (!childID || !matchupID) {
+        res.status(300).json({ msg: 'Invalid match paramaters' });
+    }
+
+    //Verify the given child is in the given matchup
+    let VersusMatchup = await getRepository(Versus, connection()).findOne(matchupID);
+
+    if (
+        !VersusMatchup ||
+        (VersusMatchup.children[0].id !== childID && VersusMatchup.children[1].id !== childID)
+    ) {
+        res.status(300).json({ msg: 'Given match data is invalid..' });
+        return;
+    }
+
+    let Child =
+        VersusMatchup.children[0].id === childID
+            ? VersusMatchup.children[0]
+            : VersusMatchup.children[1];
+
+    console.log(Child);
 });
 
 export { votingRoutes };
