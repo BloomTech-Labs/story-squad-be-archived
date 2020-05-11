@@ -5,6 +5,8 @@ import { getManager, Not, getRepository } from 'typeorm';
 import { connection } from '../../util/typeorm-connection';
 import { Versus } from '../../database/entity/Versus';
 import { FindMatchByUID } from '../../util/db-utils';
+import { TypeCast } from '../../util/utils';
+import { storyReturn, illustrationReturn } from './votingRoutes.imports';
 
 const votingRoutes = Router();
 
@@ -50,20 +52,32 @@ votingRoutes.get('/voting', Only(Child), async (req, res) => {
         //Error?
     }
 
-    console.log(response);
-
     let Build = {} as any;
+
+    Build.matchupID = response.id;
 
     if (response.story) {
         //If story, grab them and relay them back
         let StoryRepo = getRepository(Stories, connection());
-        Build.child1 = await StoryRepo.findOne({ where: { child: response.children[0] } });
-        Build.child2 = await StoryRepo.findOne({ where: { child: response.children[1] } });
+        Build.child1 = TypeCast(
+            storyReturn,
+            await StoryRepo.findOne({ where: { child: response.children[0] } })
+        );
+        Build.child2 = TypeCast(
+            storyReturn,
+            await StoryRepo.findOne({ where: { child: response.children[1] } })
+        );
     } else {
         //If illustration, grab them and relay them back
         let IllustrationRepo = getRepository(Illustrations, connection());
-        Build.child1 = await IllustrationRepo.findOne({ where: { child: response.children[0] } });
-        Build.child2 = await IllustrationRepo.findOne({ where: { child: response.children[1] } });
+        Build.child1 = TypeCast(
+            illustrationReturn,
+            await IllustrationRepo.findOne({ where: { child: response.children[0] } })
+        );
+        Build.child2 = TypeCast(
+            illustrationReturn,
+            await IllustrationRepo.findOne({ where: { child: response.children[1] } })
+        );
     }
 
     res.status(200).json(Build);
