@@ -1,4 +1,12 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'typeorm';
+import {
+    Entity,
+    Column,
+    PrimaryGeneratedColumn,
+    ManyToOne,
+    OneToMany,
+    ManyToMany,
+    JoinTable,
+} from 'typeorm';
 
 import { Preferences } from './Preferences';
 import { Progress } from './Progress';
@@ -6,6 +14,7 @@ import { Parent } from './Parent';
 import { Cohort } from './Cohort';
 import { Illustrations } from './Illustrations';
 import { Stories } from './Stories';
+import { Versus } from './Versus';
 
 @Entity()
 class Child {
@@ -53,6 +62,9 @@ class Child {
 
     @OneToMany((type) => Stories, (stories) => stories.child)
     stories: Stories[];
+
+    @ManyToMany((type) => Versus, (versus) => versus.children)
+    versusMatches: Versus[];
 }
 
 export { Child };

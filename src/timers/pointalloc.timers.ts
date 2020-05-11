@@ -1,14 +1,16 @@
 import { Cohort, Child, Matches, Stories, Illustrations } from '../database/entity';
 import { getRepository } from 'typeorm';
 import { connection } from '../util/typeorm-connection';
+import { sortByPoints } from '../routes/versus/versusRoutes.functions';
+import { Versus } from '../database/entity/Versus';
 
 async function point_allocation_timer() {
     setInterval(async function () {
-        let CohortRepo = await getRepository(Cohort, connection());
-        let ChildRepo = await getRepository(Child, connection());
-        let MatchesRepo = await getRepository(Matches, connection());
-        let StoryRepo = await getRepository(Stories, connection());
-        let IllustrationRepo = await getRepository(Illustrations, connection());
+        let CohortRepo = getRepository(Cohort, connection());
+        let ChildRepo = getRepository(Child, connection());
+        let MatchesRepo = getRepository(Matches, connection());
+        let StoryRepo = getRepository(Stories, connection());
+        let IllustrationRepo = getRepository(Illustrations, connection());
 
         //Get current date
         let Current = new Date();
@@ -97,6 +99,8 @@ async function point_allocation_timer() {
                     T1C1.progress.teamReview = T1C2.progress.teamReview = T2C1.progress.teamReview = T2C2.progress.teamReview = true;
 
                     await ChildRepo.save([T1C1, T1C2, T2C1, T2C2]);
+
+                    await GenerateVersusFromMatch(match, [T1C1, T1C2, T2C1, T2C2], i);
                 });
 
                 //Set teamReview & save
@@ -104,7 +108,7 @@ async function point_allocation_timer() {
                 await CohortRepo.save(i);
             }
         });
-    }, 300000);
+    }, 30000);
 }
 
 function FindMatchesByChildren(allMatches, children) {
@@ -137,6 +141,73 @@ function FindMatchesByChildren(allMatches, children) {
         }
     });
     return Matches;
+}
+
+async function GenerateVersusFromMatch(match: Matches, children: Child[], cohort: Cohort) {
+    let team1 = [children[0], children[1]];
+    let team2 = [children[2], children[3]];
+
+    const team1Stories = sortByPoints(team1, 'stories', match.week);
+    const team2Stories = sortByPoints(team2, 'stories', match.week);
+
+    const team1Illustrations = sortByPoints(team1, 'illustrations', match.week);
+    const team2Illustrations = sortByPoints(team2, 'illustrations', match.week);
+
+    //Calculate the HighStory matchup
+    let HighStoryMatchup = [team1Stories[0], team2Stories[0]];
+    await BuildAndSaveVersus(
+        HighStoryMatchup[0].childId,
+        HighStoryMatchup[1].childId,
+        cohort,
+        false,
+        match
+    );
+
+    //Calculate the LowStory matchup
+    let LowStoryMatchup = [team1Stories[1], team2Stories[1]];
+    await BuildAndSaveVersus(
+        LowStoryMatchup[0].childId,
+        LowStoryMatchup[1].childId,
+        cohort,
+        false,
+        match
+    );
+
+    //Calculate the HighIllustration matchup
+    let HighIllustrationMatchup = [team1Illustrations[0], team2Illustrations[0]];
+    await BuildAndSaveVersus(
+        HighIllustrationMatchup[0].childId,
+        HighIllustrationMatchup[1].childId,
+        cohort,
+        true,
+        match
+    );
+
+    //Calculate the LowIllustration matchup
+    let LowIllustrationMatchup = [team1Illustrations[1], team2Illustrations[1]];
+    await BuildAndSaveVersus(
+        LowIllustrationMatchup[0].childId,
+        LowIllustrationMatchup[1].childId,
+        cohort,
+        true,
+        match
+    );
+}
+
+async function BuildAndSaveVersus(
+    cid1: number,
+    cid2: number,
+    cohort: Cohort,
+    story: boolean,
+    match: Matches
+) {
+    let VersusRepo = getRepository(Versus, connection());
+    let ChildRepo = getRepository(Child, connection());
+
+    let child1 = await ChildRepo.findOne(cid1);
+    let child2 = await ChildRepo.findOne(cid2);
+    let Temp = new Versus(cohort, [child1, child2], 0, story, match);
+    VersusRepo.save(Temp);
 }
 
 export { point_allocation_timer };
