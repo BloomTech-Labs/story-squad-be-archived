@@ -20,6 +20,8 @@ votingRoutes.get('/voting', Only(Child), async (req, res) => {
 
     if (!response) {
         //Error?
+        res.status(300).json({ msg: 'No match could be determined' });
+        return;
     }
 
     let Build = {} as any;
