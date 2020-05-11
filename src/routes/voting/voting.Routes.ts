@@ -7,39 +7,9 @@ import { Versus } from '../../database/entity/Versus';
 import { FindMatchByUID } from '../../util/db-utils';
 import { TypeCast } from '../../util/utils';
 import { storyReturn, illustrationReturn } from './votingRoutes.imports';
+import { randomIgnoring } from './votingRoutes.functions';
 
 const votingRoutes = Router();
-
-async function randomIgnoring(ignore: Matches) {
-    const manager = getManager(connection());
-    const VersusRepo = manager.getRepository(Versus);
-
-    try {
-        let iter = 0;
-        let LowestNeeded = 5;
-
-        while (LowestNeeded === 5) {
-            let temp = await VersusRepo.findOne({
-                where: { votes: iter, match: Not(ignore.id) },
-            });
-
-            if (temp) LowestNeeded = iter;
-
-            iter++;
-        }
-
-        let RandMatch = await manager
-            .createQueryBuilder(Versus, 'versus')
-            .where({ match: Not(ignore.id), votes: LowestNeeded })
-            .orderBy('RANDOM()')
-            .limit(1)
-            .getOne();
-
-        return await manager.getRepository(Versus).findOne({ where: { id: RandMatch.id } });
-    } catch (error) {
-        console.log(error);
-    }
-}
 
 votingRoutes.get('/voting', Only(Child), async (req, res) => {
     let User = req.user as Child;
@@ -84,6 +54,9 @@ votingRoutes.get('/voting', Only(Child), async (req, res) => {
 });
 
 votingRoutes.post('/voting', Only(Child), async (req, res) => {
+    let ChildRepo = getRepository(Child, connection());
+    let VersusRepo = getRepository(Versus, connection());
+
     let User = req.user as Child;
 
     if (User.votes > 2) {
@@ -96,10 +69,11 @@ votingRoutes.post('/voting', Only(Child), async (req, res) => {
 
     if (!childID || !matchupID) {
         res.status(300).json({ msg: 'Invalid match paramaters' });
+        return;
     }
 
     //Verify the given child is in the given matchup
-    let VersusMatchup = await getRepository(Versus, connection()).findOne(matchupID);
+    let VersusMatchup = await VersusRepo.findOne(matchupID);
 
     if (
         !VersusMatchup ||
@@ -109,12 +83,24 @@ votingRoutes.post('/voting', Only(Child), async (req, res) => {
         return;
     }
 
-    let Child =
+    let targetChild =
         VersusMatchup.children[0].id === childID
             ? VersusMatchup.children[0]
             : VersusMatchup.children[1];
 
-    console.log(Child);
+    //Update the voters votes
+    User.votes++;
+    await ChildRepo.save(User);
+
+    //Update the versus matches votes
+    VersusMatchup.votes++;
+    await VersusRepo.save(VersusMatchup);
+
+    if (VersusMatchup.story) {
+        //We need to add 1 vote to the childs tied story
+    } else {
+        //We need to add 1 vote to the childs tied illustration
+    }
 });
 
 export { votingRoutes };
