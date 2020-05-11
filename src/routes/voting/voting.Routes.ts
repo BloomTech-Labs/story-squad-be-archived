@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { Only } from '../../middleware';
-import { Child, Matches, Stories, Illustrations } from '../../database/entity';
-import { getManager, Not, getRepository, Connection } from 'typeorm';
+import { Child, Stories, Illustrations } from '../../database/entity';
+import { getRepository } from 'typeorm';
 import { connection } from '../../util/typeorm-connection';
 import { Versus } from '../../database/entity/Versus';
 import { FindMatchByUID } from '../../util/db-utils';
@@ -98,9 +98,19 @@ votingRoutes.post('/voting', Only(Child), async (req, res) => {
 
     if (VersusMatchup.story) {
         //We need to add 1 vote to the childs tied story
+        let StoryRepo = getRepository(Stories, connection());
+        let Story = await StoryRepo.findOne({ child: targetChild });
+        Story.votes++;
+        StoryRepo.save(Story);
     } else {
         //We need to add 1 vote to the childs tied illustration
+        let IllustrationRepo = getRepository(Illustrations, connection());
+        let Illustration = await IllustrationRepo.findOne({ child: targetChild });
+        Illustration.votes++;
+        IllustrationRepo.save(Illustration);
     }
+
+    res.status(200).json({ msg: 'Good.' });
 });
 
 export { votingRoutes };
