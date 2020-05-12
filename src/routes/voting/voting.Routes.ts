@@ -103,13 +103,13 @@ votingRoutes.post('/voting', Only(Child), async (req, res) => {
         let StoryRepo = getRepository(Stories, connection());
         let Story = await StoryRepo.findOne({ child: targetChild });
         Story.votes++;
-        StoryRepo.save(Story);
+        await StoryRepo.save(Story);
     } else {
         //We need to add 1 vote to the childs tied illustration
         let IllustrationRepo = getRepository(Illustrations, connection());
         let Illustration = await IllustrationRepo.findOne({ child: targetChild });
         Illustration.votes++;
-        IllustrationRepo.save(Illustration);
+        await IllustrationRepo.save(Illustration);
     }
 
     res.status(200).json({ msg: 'Good.' });
