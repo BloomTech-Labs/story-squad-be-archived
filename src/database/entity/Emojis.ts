@@ -1,12 +1,4 @@
-import {
-    Entity,
-    OneToMany,
-    Column,
-    PrimaryGeneratedColumn,
-    PrimaryColumn,
-    OneToOne,
-    ManyToOne,
-} from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { Stories } from './Stories';
 import { Illustrations } from './Illustrations';
 

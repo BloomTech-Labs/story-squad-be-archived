@@ -82,8 +82,6 @@ votingRoutes.post('/voting', Only(Child), async (req, res) => {
             return;
         }
 
-        console.log(Emoji);
-
         //Verify the given child is in the given matchup
         let VersusMatchup = await VersusRepo.findOne(matchupID);
 
@@ -125,14 +123,32 @@ votingRoutes.post('/voting', Only(Child), async (req, res) => {
             let Story = await StoryRepo.findOne({ child: targetChild });
             Story.votes++;
             await StoryRepo.save(Story);
+
             await EmojisRepo.save(new Emojis(Story, null, Emoji[targetChild.id]));
+
+            await EmojisRepo.save(
+                new Emojis(
+                    await StoryRepo.findOne({ child: opposingChild }),
+                    null,
+                    Emoji[targetChild.id]
+                )
+            );
         } else {
             //We need to add 1 vote to the childs tied illustration
             let IllustrationRepo = getRepository(Illustrations, connection());
             let Illustration = await IllustrationRepo.findOne({ child: targetChild });
             Illustration.votes++;
             await IllustrationRepo.save(Illustration);
+
             await EmojisRepo.save(new Emojis(null, Illustration, Emoji[targetChild.id]));
+
+            await EmojisRepo.save(
+                new Emojis(
+                    null,
+                    await IllustrationRepo.findOne({ child: opposingChild }),
+                    Emoji[targetChild.id]
+                )
+            );
         }
 
         res.status(200).json({ msg: 'Good.' });
