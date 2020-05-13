@@ -2,6 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 't
 
 import { Child } from './Child';
 import { Pages, Transcribed_Pages } from './Pages';
+import { Emojis } from './Emojis';
 
 @Entity()
 class Stories {
@@ -67,6 +68,9 @@ class Stories {
 
     @Column(() => Transcribed_Pages)
     transcribed_text: Transcribed_Pages;
+
+    @ManyToOne((type) => Emojis, (emoji) => emoji.story)
+    emojis: Emojis;
 }
 
 export { Stories };
