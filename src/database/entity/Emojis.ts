@@ -9,10 +9,17 @@ class Emojis {
     story: Stories;
 
     @OneToMany((type) => Illustrations, (illustration) => illustration.emojis, { nullable: true })
-    illustrations: Stories;
+    @PrimaryGeneratedColumn()
+    illustration: Illustrations;
 
     @Column()
     emoji: String;
+
+    constructor(story: Stories, illustrations: Illustrations, emoji: String) {
+        this.story = story;
+        this.illustration = illustrations;
+        this.emoji = emoji;
+    }
 }
 
 export { Emojis };

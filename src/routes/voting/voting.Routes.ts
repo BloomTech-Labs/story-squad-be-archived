@@ -8,6 +8,7 @@ import { FindMatchByUID } from '../../util/db-utils';
 import { TypeCast } from '../../util/utils';
 import { storyReturn, illustrationReturn } from './votingRoutes.imports';
 import { randomIgnoring } from './votingRoutes.functions';
+import { Emojis } from '../../database/entity/Emojis';
 
 const votingRoutes = Router();
 
@@ -63,6 +64,7 @@ votingRoutes.post('/voting', Only(Child), async (req, res) => {
     try {
         let ChildRepo = getRepository(Child, connection());
         let VersusRepo = getRepository(Versus, connection());
+        let EmojisRepo = getRepository(Emojis, connection());
 
         let User = req.user as Child;
 
@@ -73,8 +75,11 @@ votingRoutes.post('/voting', Only(Child), async (req, res) => {
 
         let childID = req.body.childID as number;
         let matchupID = req.body.matchupID as number;
+        let Emoji = req.body.emojiObj as any;
 
-        if (!childID || !matchupID) {
+        console.log(Emoji);
+
+        if (!childID || !matchupID || !Emoji) {
             res.status(300).json({ msg: 'Invalid match paramaters' });
             return;
         }
@@ -90,10 +95,21 @@ votingRoutes.post('/voting', Only(Child), async (req, res) => {
             return;
         }
 
-        let targetChild =
-            VersusMatchup.children[0].id === childID
-                ? VersusMatchup.children[0]
-                : VersusMatchup.children[1];
+        let targetChild = null as Child,
+            opposingChild = null as Child;
+
+        if (VersusMatchup.children[0].id === childID) {
+            targetChild = VersusMatchup.children[0];
+            opposingChild = VersusMatchup.children[1];
+        } else {
+            targetChild = VersusMatchup.children[1];
+            opposingChild = VersusMatchup.children[0];
+        }
+
+        if (!targetChild || !opposingChild) {
+            res.status(300).json({ msg: 'Invalid children in match..' });
+            return;
+        }
 
         //Update the voters votes
         User.votes++;
@@ -109,12 +125,14 @@ votingRoutes.post('/voting', Only(Child), async (req, res) => {
             let Story = await StoryRepo.findOne({ child: targetChild });
             Story.votes++;
             await StoryRepo.save(Story);
+            await EmojisRepo.save(new Emojis(Story, null, Emoji[targetChild.id]));
         } else {
             //We need to add 1 vote to the childs tied illustration
             let IllustrationRepo = getRepository(Illustrations, connection());
             let Illustration = await IllustrationRepo.findOne({ child: targetChild });
             Illustration.votes++;
             await IllustrationRepo.save(Illustration);
+            await EmojisRepo.save(new Emojis(null, Illustration, Emoji[targetChild.id]));
         }
 
         res.status(200).json({ msg: 'Good.' });
