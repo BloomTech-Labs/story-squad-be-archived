@@ -2,11 +2,11 @@ import { Stories } from '../../database/entity';
 import { Transcribed_Pages } from '../../database/entity/Pages';
 
 export class illustrationReturn {
-    id: number;
+    childId: number;
     illustration: string;
 
     constructor() {
-        this.id = null;
+        this.childId = null;
         this.illustration = null;
     }
 }
