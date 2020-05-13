@@ -11,7 +11,7 @@ export async function randomIgnoring(ignore: Matches) {
         let iter = 0;
         let LowestNeeded = 6;
 
-        while (LowestNeeded === 5) {
+        while (LowestNeeded === 6) {
             let temp = await VersusRepo.findOne({
                 where: { votes: iter, match: Not(ignore.id) },
             });
@@ -20,7 +20,7 @@ export async function randomIgnoring(ignore: Matches) {
 
             iter++;
 
-            if (iter === 5) break;
+            if (iter === 6) break;
         }
 
         let RandMatch = await manager
@@ -29,6 +29,8 @@ export async function randomIgnoring(ignore: Matches) {
             .orderBy('RANDOM()')
             .limit(1)
             .getOne();
+
+        if (!RandMatch) return undefined;
 
         return await manager.getRepository(Versus).findOne({ where: { id: RandMatch.id } });
     } catch (error) {
