@@ -9,7 +9,7 @@ export async function randomIgnoring(ignore: Matches) {
 
     try {
         let iter = 0;
-        let LowestNeeded = 5;
+        let LowestNeeded = 6;
 
         while (LowestNeeded === 5) {
             let temp = await VersusRepo.findOne({
@@ -19,6 +19,8 @@ export async function randomIgnoring(ignore: Matches) {
             if (temp) LowestNeeded = iter;
 
             iter++;
+
+            if (iter === 5) break;
         }
 
         let RandMatch = await manager
