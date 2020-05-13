@@ -77,12 +77,12 @@ votingRoutes.post('/voting', Only(Child), async (req, res) => {
         let matchupID = req.body.matchupID as number;
         let Emoji = req.body.emojiObj as any;
 
-        console.log(Emoji);
-
         if (!childID || !matchupID || !Emoji) {
             res.status(300).json({ msg: 'Invalid match paramaters' });
             return;
         }
+
+        console.log(Emoji);
 
         //Verify the given child is in the given matchup
         let VersusMatchup = await VersusRepo.findOne(matchupID);

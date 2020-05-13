@@ -1,4 +1,12 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
+import {
+    Entity,
+    Column,
+    PrimaryGeneratedColumn,
+    ManyToOne,
+    JoinColumn,
+    OneToOne,
+    OneToMany,
+} from 'typeorm';
 
 import { Child } from './Child';
 import { Pages, Transcribed_Pages } from './Pages';
@@ -69,8 +77,8 @@ class Stories {
     @Column(() => Transcribed_Pages)
     transcribed_text: Transcribed_Pages;
 
-    @ManyToOne((type) => Emojis, (emoji) => emoji.story)
-    emojis: Emojis;
+    @OneToMany((type) => Emojis, (emoji) => emoji.story)
+    emojis: Emojis[];
 }
 
 export { Stories };

@@ -1,23 +1,32 @@
-import { Entity, OneToMany, Column, PrimaryGeneratedColumn } from 'typeorm';
+import {
+    Entity,
+    OneToMany,
+    Column,
+    PrimaryGeneratedColumn,
+    PrimaryColumn,
+    OneToOne,
+    ManyToOne,
+} from 'typeorm';
 import { Stories } from './Stories';
 import { Illustrations } from './Illustrations';
 
 @Entity()
 class Emojis {
-    @OneToMany((type) => Stories, (story) => story.emojis, { nullable: true })
     @PrimaryGeneratedColumn()
+    id: number;
+
+    @ManyToOne((type) => Stories, (story) => story.emojis, { nullable: true })
     story: Stories;
 
-    @OneToMany((type) => Illustrations, (illustration) => illustration.emojis, { nullable: true })
-    @PrimaryGeneratedColumn()
+    @ManyToOne((type) => Illustrations, (illustration) => illustration.emojis, { nullable: true })
     illustration: Illustrations;
 
     @Column()
     emoji: String;
 
-    constructor(story: Stories, illustrations: Illustrations, emoji: String) {
+    constructor(story: Stories, illustration: Illustrations, emoji: String) {
         this.story = story;
-        this.illustration = illustrations;
+        this.illustration = illustration;
         this.emoji = emoji;
     }
 }

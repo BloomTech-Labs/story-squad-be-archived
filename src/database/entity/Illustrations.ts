@@ -1,4 +1,12 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
+import {
+    Entity,
+    Column,
+    PrimaryGeneratedColumn,
+    ManyToOne,
+    JoinColumn,
+    OneToOne,
+    OneToMany,
+} from 'typeorm';
 
 import { Child } from './Child';
 import { Emojis } from './Emojis';
@@ -26,8 +34,8 @@ class Illustrations {
     @Column({ nullable: true })
     votes: number;
 
-    @ManyToOne((type) => Emojis, (emoji) => emoji.story)
-    emojis: Emojis;
+    @OneToMany((type) => Emojis, (emoji) => emoji.illustration)
+    emojis: Emojis[];
 }
 
 export { Illustrations };
