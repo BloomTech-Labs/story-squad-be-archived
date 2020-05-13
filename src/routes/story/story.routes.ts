@@ -70,6 +70,7 @@ storyRoutes.post('/', Only(Child), async (req, res) => {
                 story,
                 storyText,
                 child: req.user,
+                votes: 0,
 
                 ...readabilityStats[0],
                 transcribed_text: transcribed
