@@ -17,6 +17,8 @@ votingRoutes.get('/voting', Only(Child), async (req, res) => {
         let User = req.user as Child;
         let ChildMatch = await FindMatchByUID(User.id, User.cohort.week);
 
+        console.log(ChildMatch);
+
         //Get a random versus matchup that is NOT from this childs match
         let response = await randomIgnoring(ChildMatch);
 
