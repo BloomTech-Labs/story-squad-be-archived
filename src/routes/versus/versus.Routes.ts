@@ -5,7 +5,7 @@ import { Only } from '../../middleware/only/only.middleware';
 import { connection } from '../../util/typeorm-connection';
 import { TypeCast } from '../../util/utils';
 import { FindMatchByUID } from '../../util/db-utils';
-import { StorySend, LEFT, RIGHT, TeamData } from './versusRoutes.imports';
+import { StorySend, LEFT, RIGHT, TeamData, IllustrationSend } from './versusRoutes.imports';
 import { sortByPoints, MatchSortByTeam } from './versusRoutes.functions';
 
 const versusRoutes = Router();
@@ -70,15 +70,15 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
         //Calculate the HighIllustration matchup
         let HighIllustrationMatchup = {
             points: team1Illustrations[0].points + team2Illustrations[0].points,
-            [LEFT]: team1Illustrations[0],
-            [RIGHT]: team2Illustrations[0],
+            [LEFT]: TypeCast(IllustrationSend, team1Illustrations[0]),
+            [RIGHT]: TypeCast(IllustrationSend, team2Illustrations[0]),
         };
 
         //Calculate the LowIllustration matchup
         let LowIllustrationMatchup = {
             points: team1Illustrations[1].points + team2Illustrations[1].points,
-            [LEFT]: team1Illustrations[1],
-            [RIGHT]: team2Illustrations[1],
+            [LEFT]: TypeCast(IllustrationSend, team1Illustrations[1]),
+            [RIGHT]: TypeCast(IllustrationSend, team2Illustrations[1]),
         };
 
         //////////////////////////////////////////////////
@@ -113,6 +113,13 @@ versusRoutes.get('/versus', Only(Child), async (req, res) => {
                 if (Resolve[0].childId === i.id) Resolve[0].username = i.username;
                 else if (Resolve[1].childId === i.id) Resolve[1].username = i.username;
             });
+        });
+
+        //Remove emojis from anything that isn't the logged in child
+        Object.keys(thisBattle).forEach((e) => {
+            let Resolve = thisBattle[e] as any;
+            if (Resolve[0].childId !== id) delete Resolve[0].emojis;
+            if (Resolve[1].childId !== id) delete Resolve[1].emojis;
         });
 
         return res.status(200).json({ matchdata: matchdata, matchups: thisBattle });

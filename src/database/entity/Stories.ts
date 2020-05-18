@@ -69,7 +69,7 @@ class Stories {
     @Column(() => Transcribed_Pages)
     transcribed_text: Transcribed_Pages;
 
-    @OneToMany((type) => Emojis, (emoji) => emoji.story)
+    @OneToMany((type) => Emojis, (emoji) => emoji.story, { eager: true })
     emojis: Emojis[];
 }
 
