@@ -38,6 +38,21 @@ storyRoutes.get('/children/:id', Only(Admin), async (req, res) => {
     }
 });
 
+
+storyRoutes.get('/children/:id/week/:week', Only(Admin), async (req, res) => {
+    try {
+        const { id } = req.params;
+        const stories = await getRepository(Stories, connection()).find({ where: { childId: id } });
+        const story = stories.find(({ week }) => week === parseInt(req.params.week));
+        if (!story) throw Error('404');
+        res.json({ story });
+    } catch (err) {
+        if (err.toString() === 'Error: 404') res.status(404).json({ message: `No stories not found` });
+        else res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
+    }
+});
+
+
 storyRoutes.post('/', Only(Child), async (req, res) => {
     try {
         const { storyText, story } = res.locals.body as Stories;
