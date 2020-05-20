@@ -153,7 +153,7 @@ votingRoutes.post('/voting', Only(Child), async (req, res) => {
 
         res.status(200).json({ msg: 'Good.' });
     } catch (ex) {
-        return res.status(500).json({ message: ex.toString() });
+        res.status(500).json({ message: ex.toString() });
     }
 });
 
