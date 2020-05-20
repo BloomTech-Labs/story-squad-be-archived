@@ -42,9 +42,7 @@ export async function randomIgnoring(ignore: Matches) {
 export function validEmojiArray(array: string[]) {
     if (array.length < 4 || array.length > 6) return false;
 
-    array.forEach((cur) => {
-        if (!emojiSelection.includes(cur)) return false;
-    });
+    for (let i = 0; i < array.length; i++) if (!emojiSelection.includes(array[i])) return false;
 
     return true;
 }
