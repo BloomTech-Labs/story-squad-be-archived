@@ -8,7 +8,7 @@ import { StoryDTO } from '../../models';
 import { Transcription, Readability, WeekMatches } from '../../models/internal/DS';
 import { connection } from '../../util/typeorm-connection';
 import { Only } from '../../middleware';
-import { Child, Stories } from '../../database/entity';
+import { Child, Stories, Admin } from '../../database/entity';
 import { Pages } from '../../database/entity/Pages';
 
 const storyRoutes = Router();
@@ -21,6 +21,20 @@ storyRoutes.get('/:week', Only(Child), async (req, res) => {
         res.json({ story });
     } catch (err) {
         if (err.toString() === 'Error: 404') res.status(404).json({ message: `Story not found` });
+        else res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
+    }
+});
+
+// Returns all stories associated with a specific child identified by id
+storyRoutes.get('/children/:id', Only(Admin), async (req, res) => {
+    try {
+        const { id } = req.params;
+        const stories = await getRepository(Stories, connection()).find({ where: { childId: id } });
+        //const story = stories.find(({ week }) => week === parseInt(req.params.week));
+        if (!stories) throw Error('404');
+        res.json({ stories });
+    } catch (err) {
+        if (err.toString() === 'Error: 404') res.status(404).json({ message: `No stories not found` });
         else res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
     }
 });
@@ -74,16 +88,16 @@ storyRoutes.post('/', Only(Child), async (req, res) => {
                 ...readabilityStats[0],
                 transcribed_text: transcribed
                     ? {
-                          t_page1: transcribed.images[0]
-                              ? storyText
-                                  ? storyText
-                                  : transcribed.images[0]
-                              : '',
-                          t_page2: transcribed.images[1] ? transcribed.images[1] : '',
-                          t_page3: transcribed.images[2] ? transcribed.images[2] : '',
-                          t_page4: transcribed.images[3] ? transcribed.images[3] : '',
-                          t_page5: transcribed.images[4] ? transcribed.images[4] : '',
-                      }
+                        t_page1: transcribed.images[0]
+                            ? storyText
+                                ? storyText
+                                : transcribed.images[0]
+                            : '',
+                        t_page2: transcribed.images[1] ? transcribed.images[1] : '',
+                        t_page3: transcribed.images[2] ? transcribed.images[2] : '',
+                        t_page4: transcribed.images[3] ? transcribed.images[3] : '',
+                        t_page5: transcribed.images[4] ? transcribed.images[4] : '',
+                    }
                     : null,
             });
 

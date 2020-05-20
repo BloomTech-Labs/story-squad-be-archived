@@ -60,6 +60,7 @@ adminRoutes.get('/:id', CheckJwt(), Only(Admin), async (req, res) => {
 adminRoutes.post('/', CheckJwt(), Only(Admin), async (req, res) => {
     try {
         const { role } = req.user as Admin;
+        //const { role } = req.body as Admin;
         if (role !== 'admin') throw Error('401');
 
         const user = res.locals.body as Admin;
@@ -82,7 +83,9 @@ adminRoutes.post('/', CheckJwt(), Only(Admin), async (req, res) => {
     } catch (err) {
         if (err.toString() === 'Error: 401')
             res.status(401).send({ message: 'You are not allowed to do that sorry!' });
-        else res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
+        else {
+            res.status(500).json({ message: 'Hmm... That did not work, please try again later.' })
+        };
     }
 });
 
