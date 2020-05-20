@@ -7,7 +7,7 @@ import { Versus } from '../../database/entity/Versus';
 import { FindMatchByUID } from '../../util/db-utils';
 import { TypeCast } from '../../util/utils';
 import { storyReturn, illustrationReturn } from './votingRoutes.imports';
-import { randomIgnoring } from './votingRoutes.functions';
+import { randomIgnoring, validEmojiArray } from './votingRoutes.functions';
 import { Emojis } from '../../database/entity/Emojis';
 
 const votingRoutes = Router();
@@ -105,8 +105,7 @@ votingRoutes.post('/voting', Only(Child), async (req, res) => {
         }
 
         if (!targetChild || !opposingChild) {
-            res.status(300).json({ msg: 'Invalid children in match..' });
-            return;
+            throw 'Invalid children in match...';
         }
 
         //Update the voters votes
@@ -116,6 +115,11 @@ votingRoutes.post('/voting', Only(Child), async (req, res) => {
         //Update the versus matches votes
         VersusMatchup.votes++;
         await VersusRepo.save(VersusMatchup);
+
+        //Validate emojis
+        if (!validEmojiArray(Emoji[targetChild.id]) || !validEmojiArray(Emoji[opposingChild.id])) {
+            throw 'Invalid emoji array';
+        }
 
         if (VersusMatchup.story) {
             //We need to add 1 vote to the childs tied story
@@ -153,7 +157,7 @@ votingRoutes.post('/voting', Only(Child), async (req, res) => {
 
         res.status(200).json({ msg: 'Good.' });
     } catch (ex) {
-        res.status(500).json({ message: ex.toString() });
+        res.status(500).json({ msg: ex.toString() });
     }
 });
 

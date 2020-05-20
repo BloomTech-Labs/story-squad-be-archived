@@ -2,6 +2,7 @@ import { getManager, Not } from 'typeorm';
 import { connection } from '../../util/typeorm-connection';
 import { Versus } from '../../database/entity/Versus';
 import { Matches } from '../../database/entity';
+import { emojiSelection } from './votingRoutes.imports';
 
 export async function randomIgnoring(ignore: Matches) {
     const manager = getManager(connection());
@@ -36,4 +37,14 @@ export async function randomIgnoring(ignore: Matches) {
     } catch (error) {
         console.log(error);
     }
+}
+
+export function validEmojiArray(array: string[]) {
+    if (array.length < 4 || array.length > 6) return false;
+
+    array.forEach((cur) => {
+        if (!emojiSelection.includes(cur)) return false;
+    });
+
+    return true;
 }
