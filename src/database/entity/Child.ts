@@ -55,10 +55,7 @@ class Child {
     @ManyToOne((type) => Parent, (parent) => parent.children)
     parent: Parent;
 
-    @Column()
-    cohortId: number;
     @ManyToOne((type) => Cohort, (cohort) => cohort.children)
-    @JoinColumn({ name: 'cohortId' })
     cohort: Cohort;
 
     @OneToMany((type) => Illustrations, (illustrations) => illustrations.child)
