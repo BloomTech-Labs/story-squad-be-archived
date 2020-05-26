@@ -91,6 +91,21 @@ describe('GET /illustrationRoutes/:week', () => {
     });
 });
 
+describe('GET /illustrationRoutes/children/:id', () => {
+    it("should list child's illustration by id", async () => {
+        const { body } = await request(app)
+            .get('/illustrationRoutes/children/1')
+            .expect(200);
+        expect(body.illustration.id).toBe(1);
+    });
+
+    it('should return 404 if it does not exist', async () => {
+        await request(app)
+            .get('/illustrationRoutes/children/3')
+            .expect(404);
+    });
+});
+
 // Post Block
 describe('POST /illustrationRoutes', () => {
     it('should return 201 on creation', async () => {
