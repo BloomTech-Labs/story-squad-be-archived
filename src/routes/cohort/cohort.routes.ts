@@ -52,18 +52,16 @@ cohortRoutes.get('/list/:id/children', Only(Admin), async (req, res) => {
     try {
         const { id } = req.params;
 
-        const kidsInCohort = await getRepository(Cohort, connection()).find({
+        const cohort = await getRepository(Cohort, connection()).find({
             where: { id },
-            relations: ['children']
+            relations: ['children'],
         });
 
-        res.status(200).json({ kidsInCohort });
+        res.status(200).json({ cohort });
     } catch (err) {
         res.status(500).json(err.toString());
     }
 });
-
-
 
 cohortRoutes.post('/list', Only(Admin), async (req, res) => {
     try {

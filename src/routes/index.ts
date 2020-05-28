@@ -1,5 +1,5 @@
 export * from './admin/admin.routes';
-export * from './moderator/moderator.routes';
+//export * from './moderator/moderator.routes';
 export * from './auth/auth.routes';
 export * from './battles/battles.routes';
 export * from './canon/canon.routes';

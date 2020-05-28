@@ -12,7 +12,7 @@ import {
     stripeRoutes,
     canonRoutes,
     adminRoutes,
-    moderatorRoutes,
+    //moderatorRoutes,
     storyRoutes,
     illustrationRoutes,
     cohortRoutes,
@@ -39,7 +39,7 @@ const main = async () => {
         app.use(express.static(path.join(__dirname, '../', 'public')));
         app;
         app.use('/admin', adminRoutes);
-        app.use('/moderator', moderatorRoutes);
+        //app.use('/moderator', moderatorRoutes);
         app.use('/auth', authRoutes);
         app.use('/canon', CheckJwt(), canonRoutes);
         app.use('/cohort', CheckJwt(), cohortRoutes);
