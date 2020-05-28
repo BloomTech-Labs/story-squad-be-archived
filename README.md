@@ -1,9 +1,7 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/027a84a375d801c1cbd9/maintainability)](https://codeclimate.com/github/Lambda-School-Labs/story-squad-be/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/027a84a375d801c1cbd9/test_coverage)](https://codeclimate.com/github/Lambda-School-Labs/story-squad-be/test_coverage)  
+[![Test Coverage](https://api.codeclimate.com/v1/badges/027a84a375d801c1cbd9/test_coverage)](https://codeclimate.com/github/Lambda-School-Labs/story-squad-be/test_coverage)
 
 # API Documentation
-
-#### Backend deployed at [heroku](https://story-squad.herokuapp.com/) <br>
 
 ## Getting started
 
@@ -32,6 +30,7 @@ Check the wiki for a [setup guide](https://github.com/Lambda-School-Labs/story-s
 -   Integration testing
 
 ## Endpoints
+
 [Postman Documentation](https://documenter.getpostman.com/view/9969236/SzS1UpP9?version=latest)
 
 #### Authorization Routes
@@ -40,7 +39,6 @@ Check the wiki for a [setup guide](https://github.com/Lambda-School-Labs/story-s
 | ------ | ---------------- | -------------- | ------------------------------------------- |
 | POST   | `/auth/register` | all users      | Creates parent account and Stripe customer. |
 | USE    | `/auth/login`    | adult users    | Returns parent token.                       |
-
 
 #### Admin Routes
 
@@ -112,125 +110,18 @@ Check the wiki for a [setup guide](https://github.com/Lambda-School-Labs/story-s
 | POST   | `/submissions`       | child users    | upload image and receive json object of a user's new submission and the transcribed text |
 | DELETE | `/submissions/:week` | child users    | delete and receive json object of a user's removed submission                            |
 
-# Database Entities
-/src/database/entity
+#### Versus Routes
 
-#### Admin
+| Method | Endpoint               | Access Control | Description                   |
+| ------ | ---------------------- | -------------- | ----------------------------- |
+| GET    | `/versusRoutes/versus` | child          | Gets a childs full match data |
 
----
+#### Voting Routes
 
-```
-{
-  id: NUM
-  email: STRING
-  password: STRING
-  temptoken: STRING
-  role: STRING
-}
-```
-
-#### Canon
-
----
-
-```
-{
-  week: NUMBER
-  base64: STRING
-  altbase64: STRING
-}
-```
-
-#### Child
-
----
-
-```
-{
-  id: NUM
-  username: STRING
-  grade: NUM
-  subscription: boolean
-  avatar: STRING
-  preferences: Preferences { dyslexia: boolean }
-  progress: Progress
-  parentId: ManyToOne(Parent)
-  cohortId: ManyToOne(Cohort)
-  submissions: OneToMany(ARRAY[Submissions])
-}
-```
-
-#### Cohort
-
----
-
-```
-{
-  id: NUMBER
-  name: STRING
-  week: NUMBER
-  activity: STRING
-  dueDates: DueDates { reading: Date, writing: Date, submission: Date }
-  children: OneToMany(ARRAY[Child])
-}
-```
-
-#### Parent
-
----
-
-```
-{
-  id: NUM
-  name: STRING
-  children: OneToMany(ARRAY[Child])
-  email: STRING
-  password: STRING
-  stripeID: STRING
-}
-```
-
-
-#### Submissions
-
----
-
-```
-{
-  id: NUM
-  childId: ManyToOne(Child)
-  week: NUM
-  story: Pages{ page1: STRING, page2: STRING, page3: STRING, page4: STRING, page5: STRING }
-  storyText: STRING
-  illustration: STRING
-  
-  // readability
-  
-  flesch_reading_ease: NUM
-  smog_index: NUM
-  flesch_kincaid_grade: NUM
-  coleman_liau_index: NUM
-  automated_readability_index: NUM
-  dale_chall_readability_score: NUM
-  difficult_words: NUM
-  linsear_write_formula: NUM
-  gunning_fog: NUM
-  consolidated_score: STRING
-  doc_length: NUM
-  quote_count: NUM
-  transcribed_text: Pages{ page1: STRING, page2: STRING, page3: STRING, page4: STRING, page5: STRING }
-}
-```
-
-#### Environment Variables
-```
-PORT=4000
-SALT=10
-SECRET_SIGNATURE=Its a secret (example - create your own)
-STRIPE_API=sk_test_v666XmnGJcP1Oz3GBg2iFmvd004Q3qp4jZ
-DATABASE_URL=postgresql://postgres:1234@localhost:5432/postgres
-GOOGLE_APPLICATION_CREDENTIALS='YOUR_GOOGLE_CLOUD_VISION_SERVICE_ACCOUNT_API_INFORMATION'
-```
+| Method | Endpoint               | Access Control | Description                    |
+| ------ | ---------------------- | -------------- | ------------------------------ |
+| GET    | `/votingRoutes/voting` | child          | Gets a random match to vote on |
+| POST   | `/votingRoutes/voting` | child          | Submits a vote                 |
 
 ## Contributing
 
@@ -244,3 +135,5 @@ These contribution guidelines have been adapted from [this good-Contributing.md-
 ## Documentation
 
 See [Frontend Documentation](https://github.com/Lambda-School-Labs/story-squad-fe/blob/master/README.md) for details on the frontend of our project.
+
+For information on database entities and environment variables, see the [backend documentation](https://github.com/Lambda-School-Labs/story-squad-be/wiki).
