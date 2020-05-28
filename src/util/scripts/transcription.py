@@ -21,8 +21,8 @@ client = vision.ImageAnnotatorClient(credentials=api_key)
 def transcribe(uri):
     # Parses a URI and gets the encoded data string out
     data = DataURI(uri).data
-    image = types.Image(content=data)
-    response = client.document_text_detection(image)
+    image = types.Image(content=data) # pylint: disable=no-member
+    response = client.document_text_detection(image) # pylint: disable=no-member
 
     if response.text_annotations:
         return response.text_annotations[0].description.replace('\n', ' ')
