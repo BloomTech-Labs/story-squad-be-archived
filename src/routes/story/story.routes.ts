@@ -82,7 +82,6 @@ storyRoutes.post('/', Only(Child), async (req, res) => {
             }
         }
 
-        console.log('transcribed', transcribed);
         let possible_words = transcribed.possible_words;
         let is_flagged = false;
 
@@ -98,8 +97,6 @@ storyRoutes.post('/', Only(Child), async (req, res) => {
             console.log(err.toString());
             res.json({ err: err.toString(), message: 'Could not determine readability' });
         }
-
-        console.log('storyText ', storyText);
 
         try {
             const { child, ...stories } = await getRepository(Stories, connection()).save({
