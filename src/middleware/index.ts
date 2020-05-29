@@ -11,6 +11,7 @@ import {
     AddCanonDTO,
     SubscribeDTO,
     UpdateCohortDTO,
+    UpdateStoryDTO,
 } from '../models';
 import { Validation } from './validate/validate.middleware';
 
@@ -36,6 +37,8 @@ declare global {
             addCanon?: AddCanonDTO;
 
             updateCohort?: UpdateCohortDTO;
+
+            updateStory?: UpdateStoryDTO;
 
             subscribe?: SubscribeDTO;
         }

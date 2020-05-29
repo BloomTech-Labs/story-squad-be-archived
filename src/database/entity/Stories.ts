@@ -2,6 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 't
 
 import { Child } from './Child';
 import { Pages, Transcribed_Pages } from './Pages';
+import { ColumnMetadata } from 'typeorm/metadata/ColumnMetadata';
 
 @Entity()
 class Stories {
@@ -22,6 +23,12 @@ class Stories {
 
     @Column({ nullable: true })
     storyText: string;
+
+    @Column({ nullable: true })
+    possible_words: string;
+
+    @Column({ nullable: true })
+    is_flagged: boolean;
 
     @Column({ nullable: true })
     points: number;

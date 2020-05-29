@@ -38,7 +38,6 @@ storyRoutes.get('/children/:id', Only(Admin), async (req, res) => {
     }
 });
 
-
 storyRoutes.get('/children/:id/week/:week', Only(Admin), async (req, res) => {
     try {
         const { id } = req.params;
@@ -47,11 +46,11 @@ storyRoutes.get('/children/:id/week/:week', Only(Admin), async (req, res) => {
         if (!story) throw Error('404');
         res.json({ story });
     } catch (err) {
-        if (err.toString() === 'Error: 404') res.status(404).json({ message: `No stories not found` });
+        if (err.toString() === 'Error: 404')
+            res.status(404).json({ message: `No stories not found` });
         else res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
     }
 });
-
 
 storyRoutes.post('/', Only(Child), async (req, res) => {
     try {
@@ -83,6 +82,14 @@ storyRoutes.post('/', Only(Child), async (req, res) => {
             }
         }
 
+        console.log('transcribed', transcribed);
+        let possible_words = transcribed.possible_words;
+        let is_flagged = false;
+
+        if (possible_words.length > 0) {
+            is_flagged = true;
+        }
+
         try {
             readabilityStats = await readable({
                 story: transcribed ? transcribed.images[0] : storyText,
@@ -92,26 +99,30 @@ storyRoutes.post('/', Only(Child), async (req, res) => {
             res.json({ err: err.toString(), message: 'Could not determine readability' });
         }
 
+        console.log('storyText ', storyText);
+
         try {
             const { child, ...stories } = await getRepository(Stories, connection()).save({
                 week,
                 story,
                 storyText,
+                possible_words,
+                is_flagged,
                 child: req.user,
 
                 ...readabilityStats[0],
                 transcribed_text: transcribed
                     ? {
-                        t_page1: transcribed.images[0]
-                            ? storyText
-                                ? storyText
-                                : transcribed.images[0]
-                            : '',
-                        t_page2: transcribed.images[1] ? transcribed.images[1] : '',
-                        t_page3: transcribed.images[2] ? transcribed.images[2] : '',
-                        t_page4: transcribed.images[3] ? transcribed.images[3] : '',
-                        t_page5: transcribed.images[4] ? transcribed.images[4] : '',
-                    }
+                          t_page1: transcribed.images[0]
+                              ? storyText
+                                  ? storyText
+                                  : transcribed.images[0]
+                              : '',
+                          t_page2: transcribed.images[1] ? transcribed.images[1] : '',
+                          t_page3: transcribed.images[2] ? transcribed.images[2] : '',
+                          t_page4: transcribed.images[3] ? transcribed.images[3] : '',
+                          t_page5: transcribed.images[4] ? transcribed.images[4] : '',
+                      }
                     : null,
             });
 
@@ -124,6 +135,33 @@ storyRoutes.post('/', Only(Child), async (req, res) => {
         if (err.toString() === 'Error: 400')
             res.status(400).json({ message: `Submission already exists` });
         else res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
+    }
+});
+
+// edit story "is_flagged" value, based on story :id
+storyRoutes.put('/stories/:id', Only(Admin), async (req, res) => {
+    try {
+        const storyRepo = getRepository(Stories, connection());
+        const storyToUpdate = await storyRepo.findOne(Number(req.params.id));
+        const is_flagged = req.body.is_flagged;
+        if (!storyToUpdate) throw new Error('404');
+
+        const story = { ...storyToUpdate, ...req.updateStory, is_flagged };
+        const { affected } = await storyRepo.update(req.params.id, story);
+        if (!affected) throw new Error();
+
+        res.json({ story });
+    } catch (err) {
+        switch (err.toString()) {
+            case 'Error: 404':
+                res.status(404).json({ message: 'Could Not Update - Story not found!' });
+                break;
+            default:
+                res.status(500).json({
+                    message: 'Hmm... That did not work, please try again later.',
+                });
+                break;
+        }
     }
 });
 
