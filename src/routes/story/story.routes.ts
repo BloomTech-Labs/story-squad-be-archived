@@ -82,11 +82,11 @@ storyRoutes.post('/', Only(Child), async (req, res) => {
             }
         }
 
-        let possible_words = transcribed.possible_words;
-        let is_flagged = false;
+        let possibleWords = transcribed.possible_words;
+        let isFlagged = false;
 
-        if (possible_words.length > 0) {
-            is_flagged = true;
+        if (possibleWords.length > 0) {
+            isFlagged = true;
         }
 
         try {
@@ -103,8 +103,8 @@ storyRoutes.post('/', Only(Child), async (req, res) => {
                 week,
                 story,
                 storyText,
-                possible_words,
-                is_flagged,
+                possibleWords,
+                isFlagged,
                 child: req.user,
 
                 ...readabilityStats[0],
@@ -135,15 +135,15 @@ storyRoutes.post('/', Only(Child), async (req, res) => {
     }
 });
 
-// edit story "is_flagged" value, based on story :id
+// edit story "isFlagged" value, based on story :id
 storyRoutes.put('/stories/:id', Only(Admin), async (req, res) => {
     try {
         const storyRepo = getRepository(Stories, connection());
         const storyToUpdate = await storyRepo.findOne(Number(req.params.id));
-        const is_flagged = req.body.is_flagged;
+        const isFlagged = req.body.isFlagged;
         if (!storyToUpdate) throw new Error('404');
 
-        const story = { ...storyToUpdate, ...req.updateStory, is_flagged };
+        const story = { ...storyToUpdate, ...req.updateStory, isFlagged };
         const { affected } = await storyRepo.update(req.params.id, story);
         if (!affected) throw new Error();
 

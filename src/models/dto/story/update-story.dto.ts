@@ -1,4 +1,4 @@
-import { IsEmpty, IsString, IsBoolean } from 'class-validator';
+import { IsEmpty, IsBoolean } from 'class-validator';
 
 export class UpdateStoryDTO {
     @IsEmpty()
@@ -8,5 +8,5 @@ export class UpdateStoryDTO {
     week?: number;
 
     @IsBoolean()
-    is_flagged?: boolean;
+    isFlagged?: boolean;
 }

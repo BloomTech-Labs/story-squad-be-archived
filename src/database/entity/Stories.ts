@@ -25,10 +25,10 @@ class Stories {
     storyText: string;
 
     @Column({ nullable: true })
-    possible_words: string;
+    possibleWords: string;
 
     @Column({ nullable: true })
-    is_flagged: boolean;
+    isFlagged: boolean;
 
     @Column({ nullable: true })
     points: number;
