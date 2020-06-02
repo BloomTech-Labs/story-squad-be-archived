@@ -5,6 +5,7 @@ export interface Transcribable {
 export interface Transcription {
     images: string[];
     metadata: Metadata[];
+    possible_words: string[];
 }
 
 export interface Metadata {

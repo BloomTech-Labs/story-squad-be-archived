@@ -36,6 +36,22 @@ cohortRoutes.get('/list/:id', Only(Admin), async (req, res) => {
     }
 });
 
+// Returns all children associated with a single cohort, identified by :id
+cohortRoutes.get('/list/:id/children', Only(Admin), async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const cohort = await getRepository(Cohort, connection()).find({
+            where: { id },
+            relations: ['children'],
+        });
+
+        res.status(200).json({ cohort });
+    } catch (err) {
+        res.status(500).json(err.toString());
+    }
+});
+
 cohortRoutes.post('/list', Only(Admin), async (req, res) => {
     try {
         const cohort = await getRepository(Cohort, connection()).save({

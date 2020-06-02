@@ -90,71 +90,85 @@ describe('GET /storyRoutes/:week', () => {
     });
 });
 
-// Post Block
-describe('POST /stories', () => {
-    it('should return 201 on creation', async () => {
-        await request(app)
-            .post('/storyRoutes')
-            .send({
-                storyText: 'Text3',
-                story: {
-                    page1: '',
-                    page2: '',
-                    page3: '',
-                    page4: '',
-                    page5: '',
-                },
-            })
-            .expect(201);
-    });
-
-    it('should transcribe text from image', async () => {
+describe('GET /storyRoutes/children/:id', () => {
+    it("should list child's story by id", async () => {
         const { body } = await request(app)
-            .post('/storyRoutes')
-            .send({
-                storyText: '',
-                story: {
-                    page1: noImage,
-                    page2: '',
-                    page3: '',
-                    page4: '',
-                    page5: '',
-                },
-            });
-        expect(body.transcribed.images[0].trim()).toBe('no image');
-    });
-
-    it('should return 400 if already exists', async () => {
-        child.cohort.week = 1;
-        await request(app)
-            .post('/storyRoutes')
-            .send({
-                storyText: 'Text2',
-                illustration: '',
-                story: {
-                    page1: '',
-                    page2: '',
-                    page3: '',
-                    page4: '',
-                    page5: '',
-                },
-            })
-            .expect(400);
-        child.cohort.week = 3;
-    });
-});
-
-//Delete Block
-describe('DELETE /storyRoutes/:week', () => {
-    it('should return 200 on deletion', async () => {
-        await request(app)
-            .delete('/storyRoutes/2')
+            .get('/storyRoutes/children/1')
             .expect(200);
+        expect(body.story.id).toBe(1);
     });
 
     it('should return 404 if it does not exist', async () => {
         await request(app)
-            .delete('/storyRoutes/3')
+            .get('/storyRoutes/children/3')
             .expect(404);
     });
-});
+
+    // Post Block
+    describe('POST /stories', () => {
+        it('should return 201 on creation', async () => {
+            await request(app)
+                .post('/storyRoutes')
+                .send({
+                    storyText: 'Text3',
+                    story: {
+                        page1: '',
+                        page2: '',
+                        page3: '',
+                        page4: '',
+                        page5: '',
+                    },
+                })
+                .expect(201);
+        });
+
+        it('should transcribe text from image', async () => {
+            const { body } = await request(app)
+                .post('/storyRoutes')
+                .send({
+                    storyText: '',
+                    story: {
+                        page1: noImage,
+                        page2: '',
+                        page3: '',
+                        page4: '',
+                        page5: '',
+                    },
+                });
+            expect(body.transcribed.images[0].trim()).toBe('no image');
+        });
+
+        it('should return 400 if already exists', async () => {
+            child.cohort.week = 1;
+            await request(app)
+                .post('/storyRoutes')
+                .send({
+                    storyText: 'Text2',
+                    illustration: '',
+                    story: {
+                        page1: '',
+                        page2: '',
+                        page3: '',
+                        page4: '',
+                        page5: '',
+                    },
+                })
+                .expect(400);
+            child.cohort.week = 3;
+        });
+    });
+
+    //Delete Block
+    describe('DELETE /storyRoutes/:week', () => {
+        it('should return 200 on deletion', async () => {
+            await request(app)
+                .delete('/storyRoutes/2')
+                .expect(200);
+        });
+
+        it('should return 404 if it does not exist', async () => {
+            await request(app)
+                .delete('/storyRoutes/3')
+                .expect(404);
+        });
+    });

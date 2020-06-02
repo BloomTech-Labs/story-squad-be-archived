@@ -6,6 +6,7 @@ import {
     OneToMany,
     ManyToMany,
     JoinTable,
+    JoinColumn,
 } from 'typeorm';
 
 import { Preferences } from './Preferences';

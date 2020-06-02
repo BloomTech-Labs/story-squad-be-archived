@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { getRepository } from 'typeorm';
 import { connection } from '../../util/typeorm-connection';
 import { Only } from '../../middleware';
-import { Child, Illustrations } from '../../database/entity';
+import { Child, Illustrations, Admin } from '../../database/entity';
 
 const illustrationRoutes = Router();
 
@@ -30,6 +30,30 @@ illustrationRoutes.get('/:week', Only(Child), async (req, res) => {
             return res
                 .status(500)
                 .json({ message: 'Hmm... That did not work, please try again later.' });
+    }
+});
+illustrationRoutes.get('/children/:id', Only(Admin), async (req, res) => {
+    try {
+        const { id } = req.params;
+        const illustrations = await getRepository(Illustrations, connection()).find({ where: { childId: id } });
+        if (!illustrations) throw Error('404');
+        res.json({ illustrations });
+    } catch (err) {
+        if (err.toString() === 'Error: 404') res.status(404).json({ message: `No illustration found` });
+        else res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
+    }
+});
+
+illustrationRoutes.get('/children/:id/week/:week', Only(Admin), async (req, res) => {
+    try {
+        const { id } = req.params;
+        const illustrations = await getRepository(Illustrations, connection()).find({ where: { childId: id } });
+        const illustration = illustrations.find(({ week }) => week === parseInt(req.params.week));
+        if (!illustration) throw Error('404');
+        res.json({ illustration });
+    } catch (err) {
+        if (err.toString() === 'Error: 404') res.status(404).json({ message: `No illustration found` });
+        else res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
     }
 });
 

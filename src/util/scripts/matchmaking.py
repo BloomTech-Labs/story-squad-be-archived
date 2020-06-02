@@ -133,3 +133,6 @@ data_in = stdin.read()
 output = main(data_in)
 
 stdout.write(output)
+
+# Can be tested with this command
+# pipenv run python3 dotPy/matchmaking.py < integration/src/matchmaking_test.json

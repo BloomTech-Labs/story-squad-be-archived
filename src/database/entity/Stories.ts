@@ -2,6 +2,8 @@ import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, OneToMan
 
 import { Child } from './Child';
 import { Pages, Transcribed_Pages } from './Pages';
+
+import { ColumnMetadata } from 'typeorm/metadata/ColumnMetadata';
 import { Emojis } from './Emojis';
 
 @Entity()
@@ -23,6 +25,12 @@ class Stories {
 
     @Column({ nullable: true })
     storyText: string;
+
+    @Column({ nullable: true })
+    possibleWords: string;
+
+    @Column({ nullable: true })
+    isFlagged: boolean;
 
     @Column({ nullable: true })
     points: number;
