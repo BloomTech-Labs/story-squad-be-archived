@@ -1,6 +1,7 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 
 import { Child } from './Child';
+import { Emojis } from './Emojis';
 
 @Entity()
 class Illustrations {
@@ -24,6 +25,9 @@ class Illustrations {
 
     @Column({ nullable: true })
     votes: number;
+
+    @OneToMany((type) => Emojis, (emoji) => emoji.illustration, { eager: true })
+    emojis: Emojis[];
 }
 
 export { Illustrations };

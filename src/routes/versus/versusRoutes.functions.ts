@@ -14,7 +14,7 @@ export function MatchSortByTeam(match, home_team) {
     let newRange = {} as any;
     newRange.points = match.points;
 
-    if (match[0].id === home_team[0].id || match[0].id === home_team[1].id) {
+    if (match[0].childId === home_team[0].id || match[0].childId === home_team[1].id) {
         newRange = match;
     } else {
         newRange[0] = match[1];

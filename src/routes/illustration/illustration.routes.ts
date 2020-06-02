@@ -73,6 +73,7 @@ illustrationRoutes.post('/', Only(Child), async (req, res) => {
             ).save({
                 week,
                 illustration,
+                votes: 0,
                 child: req.user,
             });
 
