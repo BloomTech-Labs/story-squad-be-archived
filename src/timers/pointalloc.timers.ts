@@ -105,6 +105,11 @@ async function point_allocation_timer() {
 
                 //Set teamReview & save
                 i.activity = 'randomReview';
+
+                let randomReviewDate = Current;
+                randomReviewDate.setHours(randomReviewDate.getHours() + 48);
+                i.dueDates.randomReview = randomReviewDate;
+
                 await CohortRepo.save(i);
             }
         });

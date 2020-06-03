@@ -12,3 +12,4 @@ export * from './illustration/illustration.routes';
 export * from './matchmaking/matchmaking.routes';
 export * from './versus/versus.Routes';
 export * from './voting/voting.Routes';
+export * from './finalScreen/final.routes';

@@ -20,6 +20,7 @@ import {
     battlesRoutes,
     versusRoutes,
     votingRoutes,
+    finalRoutes,
 } from './routes';
 import { connection } from './util/typeorm-connection';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
@@ -52,6 +53,7 @@ const main = async () => {
         app.use('/storyRoutes', CheckJwt(), storyRoutes);
         app.use('/illustrationRoutes', CheckJwt(), illustrationRoutes);
         app.use('/votingRoutes', CheckJwt(), votingRoutes);
+        app.use('/finalScreen', CheckJwt(), finalRoutes);
 
         point_allocation_timer();
 
