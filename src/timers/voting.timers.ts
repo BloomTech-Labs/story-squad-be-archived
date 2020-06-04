@@ -15,12 +15,12 @@ async function vote_allocation_timer() {
 
         let Current = new Date();
 
-        let cohortEnd = await CohortRepo.find({
+        let Cohorts = await CohortRepo.find({
             where: [{ activity: 'randomReview' }],
             relations: ['children'],
         });
 
-        await cohortEnd.forEach(async (i) => {
+        await Cohorts.forEach(async (i) => {
             if (Current > i.dueDates.randomReview) {
                 // We need matches from a DIFFERENT cohort, not the same cohort.
                 //Find matches from this cohort
@@ -54,7 +54,8 @@ async function vote_allocation_timer() {
                     let T1ApplyVotes = 0;
                     let T2ApplyVotes = 0;
 
-                    //teamReview on child's progress is set to true if they've actually voted
+                    // We need to see if the child has any remaining votes. Child.votes < 3
+                    //randomReview on child's progress is set to true if they've actually voted
                     if (!T1C1.progress.randomReview) T1ApplyVotes += 25;
                     if (!T1C2.progress.randomReview) T1ApplyVotes += 25;
                     if (!T2C1.progress.randomReview) T2ApplyVotes += 25;
@@ -62,7 +63,7 @@ async function vote_allocation_timer() {
 
                     //T1C1.progress.randomReview = T1C2.progress.randomReview = T2C1.progress.randomReview = T2C2.progress.randomReview = true;
 
-                    await ChildRepo.save([T1C1, T1C2, T2C1, T2C2]);
+                    //await ChildRepo.save([T1C1, T1C2, T2C1, T2C2]);
                 });
             }
         });
