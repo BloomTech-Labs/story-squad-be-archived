@@ -1,17 +1,15 @@
 import { Router } from 'express';
 import { getRepository } from 'typeorm';
 
-import { transformAndValidate } from 'class-transformer-validator';
-
 import { connection } from '../../util/typeorm-connection';
-import { Child, Stories, Admin } from '../../database/entity';
+import { Child, Admin } from '../../database/entity';
 import { Only } from '../../middleware';
 
 const finalRoutes = Router();
 
 finalRoutes.get('/', Only(Child), async (req, res) => {
     try {
-        const { id, cohort, username, avatar, stories, illustrations } = req.user as Child;
+        const { cohort } = req.user as Child;
 
         let randomReviewEndDate = '';
         if (cohort && cohort.dueDates && cohort.dueDates.randomReview) {
