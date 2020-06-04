@@ -25,6 +25,7 @@ import {
 import { connection } from './util/typeorm-connection';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 import { point_allocation_timer } from './timers/pointalloc.timers';
+import { vote_allocation_timer } from './timers/voting.timers';
 
 dotenv.config();
 
@@ -56,6 +57,7 @@ const main = async () => {
         app.use('/finalScreen', CheckJwt(), finalRoutes);
 
         point_allocation_timer();
+        vote_allocation_timer();
 
         const port = process.env.PORT || 4000;
         app.listen(port);
