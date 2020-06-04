@@ -22,11 +22,11 @@ async function vote_allocation_timer() {
 
         await Cohorts.forEach(async (i) => {
             if (Current > i.dueDates.randomReview) {
-                // We need matches from a DIFFERENT cohort, not the same cohort.
                 //Find matches from this cohort
                 let MatchesInWeek = await MatchesRepo.find({
                     where: [{ week: i.week }],
                 });
+                // we need verus sets from different matchups.
                 let CohortMatches = FindMatchesByChildren(MatchesInWeek, i.children) as Matches[];
 
                 //Check if children in each match have voted
