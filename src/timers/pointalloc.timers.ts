@@ -112,7 +112,99 @@ async function point_allocation_timer() {
 
                 await CohortRepo.save(i);
             }
+
+
         });
+
+        // Votes
+        let cohortEnd = await CohortRepo.find({
+            where: [{ activity: 'randomReview' }],
+            relations: ['children'],
+        });
+
+        await cohortEnd.forEach(async (i) => {
+            if (Current > i.dueDates.randomReview {
+                // We need matches from a DIFFERENT cohort, not the same cohort. 
+                //Find matches from this cohort
+                let MatchesInWeek = await MatchesRepo.find({
+                    where: [{ week: i.week }],
+                });
+                let CohortMatches = FindMatchesByChildren(MatchesInWeek, i.children) as Matches[];
+
+                //Check if children in each match have voted
+
+                //For every match
+                await CohortMatches.forEach(async (match) => {
+                    //Check children
+                    let T1C1 = (await ChildRepo.findOne({
+                        where: [{ id: match.team1_child1_id }],
+                        relations: ['illustrations', 'stories'],
+                    })) as Child;
+                    let T1C2 = (await ChildRepo.findOne({
+                        where: [{ id: match.team1_child2_id }],
+                        relations: ['illustrations', 'stories'],
+                    })) as Child;
+                    let T2C1 = (await ChildRepo.findOne({
+                        where: [{ id: match.team2_child1_id }],
+                        relations: ['illustrations', 'stories'],
+                    })) as Child;
+                    let T2C2 = (await ChildRepo.findOne({
+                        where: [{ id: match.team2_child2_id }],
+                        relations: ['illustrations', 'stories'],
+                    })) as Child;
+
+                    let T1ApplyVotes = 0;
+                    let T2ApplyVotes = 0;
+
+                    //teamReview on child's progress is set to true if they've actually voted
+                    if (!T1C1.progress.randomReview) T1ApplyVotes += 25;
+                    if (!T1C2.progress.randomReview) T1ApplyVotes += 25;
+                    if (!T2C1.progress.randomReview) T2ApplyVotes += 25;
+                    if (!T2C2.progress.randomReview) T2ApplyVotes += 25;
+
+                    await T1C1.stories.forEach(async (story) => {
+                        story.votes += T1ApplyVotes;
+                        await StoryRepo.save(story);
+                    });
+                    await T1C1.illustrations.forEach(async (illustration) => {
+                        illustration.votes += T1ApplyVotes;
+                        await IllustrationRepo.save(illustration);
+                    });
+                    await T1C2.stories.forEach(async (story) => {
+                        story.votes += T1ApplyVotes;
+                        await StoryRepo.save(story);
+                    });
+                    await T1C2.illustrations.forEach(async (illustration) => {
+                        illustration.votes += T1ApplyVotes;
+                        await IllustrationRepo.save(illustration);
+                    });
+
+                    await T2C1.stories.forEach(async (story) => {
+                        story.votes += T2ApplyVotes;
+                        await StoryRepo.save(story);
+                    });
+                    await T2C1.illustrations.forEach(async (illustration) => {
+                        illustration.votes += T2ApplyVotes;
+                        await IllustrationRepo.save(illustration);
+                    });
+                    await T2C2.stories.forEach(async (story) => {
+                        story.votes += T2ApplyVotes;
+                        await StoryRepo.save(story);
+                    });
+                    await T2C2.illustrations.forEach(async (illustration) => {
+                        illustration.votes += T2ApplyVotes;
+                        await IllustrationRepo.save(illustration);
+                    });
+
+                    //T1C1.progress.randomReview = T1C2.progress.randomReview = T2C1.progress.randomReview = T2C2.progress.randomReview = true;
+
+                    await ChildRepo.save([T1C1, T1C2, T2C1, T2C2]);
+
+                });
+
+
+            }
+        })
     }, 30000);
 }
 
