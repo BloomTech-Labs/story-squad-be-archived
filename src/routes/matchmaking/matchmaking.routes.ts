@@ -9,6 +9,7 @@ import { Matchmaking, WeekMatches } from '../../models';
 import { connection } from '../../util/typeorm-connection';
 
 const matchMakingRoutes = Router();
+const pointAllocationPeriod = 24; // How long users have to assign their points, in hours
 
 matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
     // add delete functionality to this route so deletes matches before repopulating mathes, prevent spamming
@@ -108,7 +109,7 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
                     where: { week: thisWeek },
                 });
                 let teamReviewDate = new Date();
-                teamReviewDate.setHours(teamReviewDate.getHours() + 24);
+                teamReviewDate.setHours(teamReviewDate.getHours() + pointAllocationPeriod);
                 Cohorts.forEach((i) => {
                     i.activity = 'teamReview';
                     i.dueDates.teamReview = teamReviewDate;

@@ -59,15 +59,18 @@ async function vote_allocation_timer() {
                         //Get a random versus matchup that is NOT from this childs match
                         let ChildMatch = await FindMatchByUID(T1C1.id, i.week);
                         let response = await randomIgnoring(ChildMatch); // response is a versus matchup with lowest votes.
-
+                        let rand = Math.round(Math.random()); // random number, either 0 or 1
                         if (response.story) {
-                            let Story = await StoryRepo.findOne({ child: T1C1, week: i.week });
+                            let Story = await StoryRepo.findOne({
+                                child: response.children[rand],
+                                week: i.week,
+                            });
                             Story.votes++;
                             await StoryRepo.save(Story);
                         } else {
                             // else it is an illustration
                             let Illustration = await IllustrationRepo.findOne({
-                                child: T1C1,
+                                child: response.children[rand],
                                 week: i.week,
                             });
                             Illustration.votes++;
@@ -83,15 +86,19 @@ async function vote_allocation_timer() {
                         //Get a random versus matchup that is NOT from this childs match
                         let ChildMatch = await FindMatchByUID(T1C2.id, i.week);
                         let response = await randomIgnoring(ChildMatch); // response is a versus matchup with lowest votes.
+                        let rand = Math.round(Math.random()); // random number, either 0 or 1
 
                         if (response.story) {
-                            let Story = await StoryRepo.findOne({ child: T1C2, week: i.week });
+                            let Story = await StoryRepo.findOne({
+                                child: response.children[rand],
+                                week: i.week,
+                            });
                             Story.votes++;
                             await StoryRepo.save(Story);
                         } else {
                             // else it is an illustration
                             let Illustration = await IllustrationRepo.findOne({
-                                child: T1C2,
+                                child: response.children[rand],
                                 week: i.week,
                             });
                             Illustration.votes++;
@@ -107,15 +114,19 @@ async function vote_allocation_timer() {
                         //Get a random versus matchup that is NOT from this childs match
                         let ChildMatch = await FindMatchByUID(T2C1.id, i.week);
                         let response = await randomIgnoring(ChildMatch); // response is a versus matchup with lowest votes.
+                        let rand = Math.round(Math.random()); // random number, either 0 or 1
 
                         if (response.story) {
-                            let Story = await StoryRepo.findOne({ child: T2C1, week: i.week });
+                            let Story = await StoryRepo.findOne({
+                                child: response.children[rand],
+                                week: i.week,
+                            });
                             Story.votes++;
                             await StoryRepo.save(Story);
                         } else {
                             // else it is an illustration
                             let Illustration = await IllustrationRepo.findOne({
-                                child: T2C1,
+                                child: response.children[rand],
                                 week: i.week,
                             });
                             Illustration.votes++;
@@ -131,15 +142,19 @@ async function vote_allocation_timer() {
                         //Get a random versus matchup that is NOT from this childs match
                         let ChildMatch = await FindMatchByUID(T2C2.id, i.week);
                         let response = await randomIgnoring(ChildMatch); // response is a versus matchup with lowest votes.
+                        let rand = Math.round(Math.random()); // random number, either 0 or 1
 
                         if (response.story) {
-                            let Story = await StoryRepo.findOne({ child: T2C2, week: i.week });
+                            let Story = await StoryRepo.findOne({
+                                child: response.children[rand],
+                                week: i.week,
+                            });
                             Story.votes++;
                             await StoryRepo.save(Story);
                         } else {
                             // else it is an illustration
                             let Illustration = await IllustrationRepo.findOne({
-                                child: T2C2,
+                                child: response.children[rand],
                                 week: i.week,
                             });
                             Illustration.votes++;
