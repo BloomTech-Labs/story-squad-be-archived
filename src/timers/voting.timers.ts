@@ -4,6 +4,7 @@ import { connection } from '../util/typeorm-connection';
 import { sortByPoints } from '../routes/versus/versusRoutes.functions';
 import { Versus } from '../database/entity/Versus';
 import { randomIgnoring } from '../routes/voting/votingRoutes.functions';
+import { FindMatchByUID } from '../util/db-utils';
 
 async function vote_allocation_timer() {
     setInterval(async function () {
@@ -12,6 +13,7 @@ async function vote_allocation_timer() {
         let MatchesRepo = getRepository(Matches, connection());
         let StoryRepo = getRepository(Stories, connection());
         let IllustrationRepo = getRepository(Illustrations, connection());
+        let VersusRepo = getRepository(Versus, connection());
 
         let Current = new Date();
 
@@ -51,20 +53,112 @@ async function vote_allocation_timer() {
                         relations: ['illustrations', 'stories'],
                     })) as Child;
 
-                    let T1ApplyVotes = 0;
-                    let T2ApplyVotes = 0;
-
                     // We need to see if the child has any remaining votes. Child.votes < 3
-                    //randomReview on child's progress is set to true if they've actually voted
-                    if (!T1C1.progress.randomReview) T1ApplyVotes += 25;
-                    if (!T1C2.progress.randomReview) T1ApplyVotes += 25;
-                    if (!T2C1.progress.randomReview) T2ApplyVotes += 25;
-                    if (!T2C2.progress.randomReview) T2ApplyVotes += 25;
+                    for (T1C1.votes; T1C1.votes < 3; T1C1.votes++) {
+                        // loop through child.votes until it equals 3
+                        //Get a random versus matchup that is NOT from this childs match
+                        let ChildMatch = await FindMatchByUID(T1C1.id, i.week);
+                        let response = await randomIgnoring(ChildMatch); // response is a versus matchup with lowest votes.
 
-                    //T1C1.progress.randomReview = T1C2.progress.randomReview = T2C1.progress.randomReview = T2C2.progress.randomReview = true;
+                        if (response.story) {
+                            let Story = await StoryRepo.findOne({ child: T1C1, week: i.week });
+                            Story.votes++;
+                            await StoryRepo.save(Story);
+                        } else {
+                            // else it is an illustration
+                            let Illustration = await IllustrationRepo.findOne({
+                                child: T1C1,
+                                week: i.week,
+                            });
+                            Illustration.votes++;
+                            await IllustrationRepo.save(Illustration);
+                        }
 
-                    //await ChildRepo.save([T1C1, T1C2, T2C1, T2C2]);
+                        response.votes++;
+                        await VersusRepo.save(response);
+                    } // end for
+
+                    for (T1C2.votes; T1C2.votes < 3; T1C2.votes++) {
+                        // loop through child.votes until it equals 3
+                        //Get a random versus matchup that is NOT from this childs match
+                        let ChildMatch = await FindMatchByUID(T1C2.id, i.week);
+                        let response = await randomIgnoring(ChildMatch); // response is a versus matchup with lowest votes.
+
+                        if (response.story) {
+                            let Story = await StoryRepo.findOne({ child: T1C2, week: i.week });
+                            Story.votes++;
+                            await StoryRepo.save(Story);
+                        } else {
+                            // else it is an illustration
+                            let Illustration = await IllustrationRepo.findOne({
+                                child: T1C2,
+                                week: i.week,
+                            });
+                            Illustration.votes++;
+                            await IllustrationRepo.save(Illustration);
+                        }
+
+                        response.votes++;
+                        await VersusRepo.save(response);
+                    } // end for
+
+                    for (T2C1.votes; T2C1.votes < 3; T2C1.votes++) {
+                        // loop through child.votes until it equals 3
+                        //Get a random versus matchup that is NOT from this childs match
+                        let ChildMatch = await FindMatchByUID(T2C1.id, i.week);
+                        let response = await randomIgnoring(ChildMatch); // response is a versus matchup with lowest votes.
+
+                        if (response.story) {
+                            let Story = await StoryRepo.findOne({ child: T2C1, week: i.week });
+                            Story.votes++;
+                            await StoryRepo.save(Story);
+                        } else {
+                            // else it is an illustration
+                            let Illustration = await IllustrationRepo.findOne({
+                                child: T2C1,
+                                week: i.week,
+                            });
+                            Illustration.votes++;
+                            await IllustrationRepo.save(Illustration);
+                        }
+
+                        response.votes++;
+                        await VersusRepo.save(response);
+                    } // end for
+
+                    for (T2C2.votes; T2C2.votes < 3; T2C2.votes++) {
+                        // loop through child.votes until it equals 3
+                        //Get a random versus matchup that is NOT from this childs match
+                        let ChildMatch = await FindMatchByUID(T2C2.id, i.week);
+                        let response = await randomIgnoring(ChildMatch); // response is a versus matchup with lowest votes.
+
+                        if (response.story) {
+                            let Story = await StoryRepo.findOne({ child: T2C2, week: i.week });
+                            Story.votes++;
+                            await StoryRepo.save(Story);
+                        } else {
+                            // else it is an illustration
+                            let Illustration = await IllustrationRepo.findOne({
+                                child: T2C2,
+                                week: i.week,
+                            });
+                            Illustration.votes++;
+                            await IllustrationRepo.save(Illustration);
+                        }
+
+                        response.votes++;
+                        await VersusRepo.save(response);
+                    } // end for
+
+                    T1C1.progress.randomReview = T1C2.progress.randomReview = T2C1.progress.randomReview = T2C2.progress.randomReview = true;
+
+                    await ChildRepo.save([T1C1, T1C2, T2C1, T2C2]);
                 });
+
+                //Set teamReview & save
+                i.activity = 'randomReview';
+
+                await CohortRepo.save(i);
             }
         });
     }, 60000);

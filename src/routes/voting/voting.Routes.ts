@@ -77,13 +77,6 @@ votingRoutes.post('/voting', Only(Child), async (req, res) => {
         let matchupID = req.body.matchupID as number;
         let Emoji = req.body.emojiObj as any;
 
-        let childDidVote = (await ChildRepo.findOne({
-            where: [{ id: childID }],
-        })) as Child;
-
-        childDidVote.progress.randomReview = true;
-        await ChildRepo.save(childDidVote);
-
         if (!childID || !matchupID || !Emoji) {
             res.status(300).json({ msg: 'Invalid match paramaters' });
             return;
@@ -117,6 +110,9 @@ votingRoutes.post('/voting', Only(Child), async (req, res) => {
 
         //Update the voters votes
         User.votes++;
+        if (User.votes === 3) {
+            User.progress.randomReview = true;
+        }
         await ChildRepo.save(User);
 
         //Update the versus matches votes
