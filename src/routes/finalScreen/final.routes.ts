@@ -5,6 +5,8 @@ import { connection } from '../../util/typeorm-connection';
 import { Child, Matches, Stories, Illustrations, Cohort } from '../../database/entity';
 import { Only } from '../../middleware';
 
+import { FindMatchByUID } from '../../util/db-utils';
+
 const finalRoutes = Router();
 
 finalRoutes.get('/', Only(Child), async (req, res) => {
@@ -40,48 +42,69 @@ finalRoutes.get('/results/', Only(Child), async (req, res) => {
         const { cohort, id } = req.user as Child;
         let ChildRepo = getRepository(Child, connection());
         let StoryRepo = getRepository(Stories, connection());
+        let IllustrationRepo = getRepository(Illustrations, connection());
         let MatchesRepo = getRepository(Matches, connection());
         let CohortRepo = getRepository(Cohort, connection());
 
-        let Cohorts = await CohortRepo.find({
-            where: [{ id: cohort.id }],
-            relations: ['children'],
-        });
-        let MatchesInWeek = await MatchesRepo.find({
-            where: [{ week: cohort.week }],
-        });
-        //let ChildrenInCohort = await ChildRepo.find({ where: { cohort: cohort.id } });
-        let CohortMatches = FindMatchesByChildren(MatchesInWeek, Cohorts[0].children) as Matches[];
+        let ChildMatch = await FindMatchByUID(id, cohort.week);
+
+        if (!ChildMatch) {
+            //Error?
+            res.status(300).json({ msg: 'No match could be determined' });
+            return;
+        }
 
         let Build = {} as any;
-        let test = 'initial';
-        await CohortMatches.forEach(async (match) => {
-            //Check children
-            let T1C1 = (await ChildRepo.findOne({
-                where: [{ id: match.team1_child1_id }],
-                relations: ['illustrations', 'stories'],
-            })) as Child;
-            let T1C2 = (await ChildRepo.findOne({
-                where: [{ id: match.team1_child2_id }],
-                relations: ['illustrations', 'stories'],
-            })) as Child;
-            let T2C1 = (await ChildRepo.findOne({
-                where: [{ id: match.team2_child1_id }],
-                relations: ['illustrations', 'stories'],
-            })) as Child;
-            let T2C2 = (await ChildRepo.findOne({
-                where: [{ id: match.team2_child2_id }],
-                relations: ['illustrations', 'stories'],
-            })) as Child;
-            Build.child1votes = T1C1.stories[0].votes;
-            test = 'different';
 
-            console.log('T1C2', T1C2.stories[0].points);
+        let StoryT1C1 = await StoryRepo.findOne({
+            where: [{ id: ChildMatch.team1_child1_id, week: cohort.week }],
+        });
+        let StoryT1C2 = await StoryRepo.findOne({
+            where: [{ id: ChildMatch.team1_child2_id, week: cohort.week }],
+        });
+        let StoryT2C1 = await StoryRepo.findOne({
+            where: [{ id: ChildMatch.team2_child1_id, week: cohort.week }],
+        });
+        let StoryT2C2 = await StoryRepo.findOne({
+            where: [{ id: ChildMatch.team2_child2_id, week: cohort.week }],
         });
 
-        console.log('test . . .', test);
+        let PictureT1C1 = await IllustrationRepo.findOne({
+            where: [{ id: ChildMatch.team1_child1_id, week: cohort.week }],
+        });
+        let PictureT1C2 = await IllustrationRepo.findOne({
+            where: [{ id: ChildMatch.team1_child2_id, week: cohort.week }],
+        });
+        let PictureT2C1 = await IllustrationRepo.findOne({
+            where: [{ id: ChildMatch.team2_child1_id, week: cohort.week }],
+        });
+        let PictureT2C2 = await IllustrationRepo.findOne({
+            where: [{ id: ChildMatch.team2_child2_id, week: cohort.week }],
+        });
+
+        Build.StoryT1C1votes = StoryT1C1.votes;
+        Build.StoryT1C2votes = StoryT1C2.votes;
+        Build.StoryT2C1votes = StoryT2C1.votes;
+        Build.StoryT2C2votes = StoryT2C2.votes;
+
+        Build.StoryT1C1points = StoryT1C1.points;
+        Build.StoryT1C2points = StoryT1C2.points;
+        Build.StoryT2C1points = StoryT2C1.points;
+        Build.StoryT2C2points = StoryT2C2.points;
+
+        Build.PictureT1C1votes = PictureT1C1.votes;
+        Build.PictureT1C2votes = PictureT1C2.votes;
+        Build.PictureT2C1votes = PictureT2C1.votes;
+        Build.PictureT2C2votes = PictureT2C2.votes;
+
+        Build.PictureT1C1points = PictureT1C1.points;
+        Build.PictureT1C2points = PictureT1C2.points;
+        Build.PictureT2C1points = PictureT2C1.points;
+        Build.PictureT2C2points = PictureT2C2.points;
+
         return res.status(200).json({
-            CohortMatches,
+            ChildMatch,
+            Build,
         });
     } catch (err) {
         console.log('error', err.toString());
