@@ -57,29 +57,29 @@ finalRoutes.get('/results/', Only(Child), async (req, res) => {
         let Build = {} as any;
 
         let StoryT1C1 = await StoryRepo.findOne({
-            where: [{ id: ChildMatch.team1_child1_id, week: cohort.week }],
+            where: [{ childId: ChildMatch.team1_child1_id, week: cohort.week }],
         });
         let StoryT1C2 = await StoryRepo.findOne({
-            where: [{ id: ChildMatch.team1_child2_id, week: cohort.week }],
+            where: [{ childId: ChildMatch.team1_child2_id, week: cohort.week }],
         });
         let StoryT2C1 = await StoryRepo.findOne({
-            where: [{ id: ChildMatch.team2_child1_id, week: cohort.week }],
+            where: [{ childId: ChildMatch.team2_child1_id, week: cohort.week }],
         });
         let StoryT2C2 = await StoryRepo.findOne({
-            where: [{ id: ChildMatch.team2_child2_id, week: cohort.week }],
+            where: [{ childId: ChildMatch.team2_child2_id, week: cohort.week }],
         });
 
         let PictureT1C1 = await IllustrationRepo.findOne({
-            where: [{ id: ChildMatch.team1_child1_id, week: cohort.week }],
+            where: [{ childId: ChildMatch.team1_child1_id, week: cohort.week }],
         });
         let PictureT1C2 = await IllustrationRepo.findOne({
-            where: [{ id: ChildMatch.team1_child2_id, week: cohort.week }],
+            where: [{ childId: ChildMatch.team1_child2_id, week: cohort.week }],
         });
         let PictureT2C1 = await IllustrationRepo.findOne({
-            where: [{ id: ChildMatch.team2_child1_id, week: cohort.week }],
+            where: [{ childId: ChildMatch.team2_child1_id, week: cohort.week }],
         });
         let PictureT2C2 = await IllustrationRepo.findOne({
-            where: [{ id: ChildMatch.team2_child2_id, week: cohort.week }],
+            where: [{ childId: ChildMatch.team2_child2_id, week: cohort.week }],
         });
 
         Build.StoryT1C1votes = StoryT1C1.votes;
@@ -105,6 +105,7 @@ finalRoutes.get('/results/', Only(Child), async (req, res) => {
         return res.status(200).json({
             ChildMatch,
             Build,
+            StoryT2C2,
         });
     } catch (err) {
         console.log('error', err.toString());

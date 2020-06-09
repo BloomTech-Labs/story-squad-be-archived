@@ -60,6 +60,7 @@ async function vote_allocation_timer() {
                         let ChildMatch = await FindMatchByUID(T1C1.id, i.week);
                         let response = await randomIgnoring(ChildMatch); // response is a versus matchup with lowest votes.
                         let rand = Math.round(Math.random()); // random number, either 0 or 1
+                        console.log('response', response);
                         if (response.story) {
                             let Story = await StoryRepo.findOne({
                                 child: response.children[rand],

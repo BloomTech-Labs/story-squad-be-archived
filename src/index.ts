@@ -54,7 +54,7 @@ const main = async () => {
         app.use('/storyRoutes', CheckJwt(), storyRoutes);
         app.use('/illustrationRoutes', CheckJwt(), illustrationRoutes);
         app.use('/votingRoutes', CheckJwt(), votingRoutes);
-        app.use('/finalScreen', CheckJwt(), finalRoutes);
+        app.use('/finalRoutes', CheckJwt(), finalRoutes);
 
         point_allocation_timer();
         vote_allocation_timer();
