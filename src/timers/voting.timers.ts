@@ -66,7 +66,7 @@ async function vote_allocation_timer() {
                 await CohortRepo.save(i);
             }
         });
-    }, 30000);
+    }, 60000);
 }
 
 function FindMatchesByChildren(allMatches, children) {

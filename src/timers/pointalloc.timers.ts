@@ -115,7 +115,7 @@ async function point_allocation_timer() {
                 await CohortRepo.save(i);
             }
         });
-    }, 15000);
+    }, 30000);
 }
 
 function FindMatchesByChildren(allMatches, children) {
