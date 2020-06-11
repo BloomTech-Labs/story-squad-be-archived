@@ -16,12 +16,16 @@ export class storyReturn {
     doc_length: number;
     story: Stories;
     transcribed_text: Transcribed_Pages;
+    isFlagged: boolean;
+    possible_words: string;
 
     constructor() {
         this.childId = null;
         this.doc_length = null;
         this.story = null;
         this.transcribed_text = null;
+        this.isFlagged = null;
+        this.possible_words = null;
     }
 }
 

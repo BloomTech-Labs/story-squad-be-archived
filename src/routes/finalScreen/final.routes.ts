@@ -67,6 +67,8 @@ finalRoutes.get('/results', Only(Child), async (req, res) => {
         let V4 = {} as any;
         V4.versus = 4;
 
+        //Build[j].versus = singleVersus.id - maybe?
+
         let Build = [V1, V2, V3, V4] as any;
 
         // get stories and pics for one versus. Repeat x4

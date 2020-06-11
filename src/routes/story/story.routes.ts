@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import { getRepository } from 'typeorm';
 import { transcribe, readable } from './storyDSintegration';
+import { TypeCast } from '../../util/utils';
+import { storyReturn } from '../voting/votingRoutes.imports';
 
 import { transformAndValidate } from 'class-transformer-validator';
 import { StoryDTO } from '../../models';
@@ -29,7 +31,10 @@ storyRoutes.get('/:week', Only(Child), async (req, res) => {
 storyRoutes.get('/children/:id', Only(Admin), async (req, res) => {
     try {
         const { id } = req.params;
-        const stories = await getRepository(Stories, connection()).find({ where: { childId: id } });
+        const stories = TypeCast(
+            storyReturn,
+            await getRepository(Stories, connection()).find({ where: { childId: id } })
+        );
         if (!stories) throw Error('404');
         res.json({ stories });
     } catch (err) {
@@ -41,7 +46,11 @@ storyRoutes.get('/children/:id', Only(Admin), async (req, res) => {
 storyRoutes.get('/children/:id/week/:week', Only(Admin), async (req, res) => {
     try {
         const { id } = req.params;
-        const stories = await getRepository(Stories, connection()).find({ where: { childId: id } });
+        const stories = TypeCast(
+            storyReturn,
+            await getRepository(Stories, connection()).find({ where: { childId: id } })
+        );
+        if (!stories) throw Error('404');
         const story = stories.find(({ week }) => week === parseInt(req.params.week));
         if (!story) throw Error('404');
         res.json({ story });
