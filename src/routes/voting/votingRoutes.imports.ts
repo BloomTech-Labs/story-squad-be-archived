@@ -17,7 +17,7 @@ export class storyReturn {
     story: Stories;
     transcribed_text: Transcribed_Pages;
     isFlagged: boolean;
-    possible_words: string;
+    possibleWords: string;
 
     constructor() {
         this.childId = null;
@@ -25,7 +25,7 @@ export class storyReturn {
         this.story = null;
         this.transcribed_text = null;
         this.isFlagged = null;
-        this.possible_words = null;
+        this.possibleWords = null;
     }
 }
 

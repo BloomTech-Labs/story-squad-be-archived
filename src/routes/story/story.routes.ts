@@ -31,11 +31,15 @@ storyRoutes.get('/:week', Only(Child), async (req, res) => {
 storyRoutes.get('/children/:id', Only(Admin), async (req, res) => {
     try {
         const { id } = req.params;
-        const stories = TypeCast(
-            storyReturn,
-            await getRepository(Stories, connection()).find({ where: { childId: id } })
-        );
-        if (!stories) throw Error('404');
+        let stories = [];
+        const storiesArray = await getRepository(Stories, connection()).find({
+            where: { childId: id },
+        });
+        if (!storiesArray) throw Error('404');
+        storiesArray.forEach(async (story) => {
+            let temp = TypeCast(storyReturn, story);
+            stories.push(temp);
+        });
         res.json({ stories });
     } catch (err) {
         if (err.toString() === 'Error: 404') res.status(404).json({ message: `No stories found` });
@@ -45,13 +49,10 @@ storyRoutes.get('/children/:id', Only(Admin), async (req, res) => {
 
 storyRoutes.get('/children/:id/week/:week', Only(Admin), async (req, res) => {
     try {
-        const { id } = req.params;
-        const stories = TypeCast(
-            storyReturn,
-            await getRepository(Stories, connection()).find({ where: { childId: id } })
-        );
-        if (!stories) throw Error('404');
-        const story = stories.find(({ week }) => week === parseInt(req.params.week));
+        const { id, week } = req.params;
+        let StoryRepo = getRepository(Stories, connection());
+        const fullStory = await StoryRepo.find({ where: { childId: id, week: week } });
+        const story = TypeCast(storyReturn, fullStory[0]);
         if (!story) throw Error('404');
         res.json({ story });
     } catch (err) {
