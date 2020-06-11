@@ -26,7 +26,7 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
         let stories;
         try {
             stories = await getRepository(Stories, connection()).find({
-                where: { week: req.params.week },
+                where: { week: req.params.week, isFlagged: false },
             });
         } catch (err) {
             console.log(err.toString());
@@ -42,7 +42,7 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
                 });
                 // Checks for presence of picture
                 const pictureCheck = await getRepository(Illustrations, connection()).find({
-                    where: { id: childusMinimus.id, week: req.params.week },
+                    where: { id: childusMinimus.id, week: req.params.week }, //Labs 24. add isFlagged: false
                 });
                 console.log(
                     `PICTURE CHECK - id: ${story.childId}`,

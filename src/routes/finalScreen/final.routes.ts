@@ -59,13 +59,9 @@ finalRoutes.get('/results', Only(Child), async (req, res) => {
         });
 
         let V1 = {} as any;
-        V1.versus = 1;
         let V2 = {} as any;
-        V2.versus = 2;
         let V3 = {} as any;
-        V3.versus = 3;
         let V4 = {} as any;
-        V4.versus = 4;
 
         //Build[j].versus = singleVersus.id - maybe?
 
@@ -93,6 +89,7 @@ finalRoutes.get('/results', Only(Child), async (req, res) => {
                 let StoryC2 = await StoryRepo.findOne({
                     where: [{ childId: versusC2 }],
                 });
+                Build[j].versusId = singleVersus.id;
                 Build[j].C1Id = versusC1;
                 Build[j].C2Id = versusC2;
                 Build[j].StoryC1votes = StoryC1.votes;
@@ -111,6 +108,7 @@ finalRoutes.get('/results', Only(Child), async (req, res) => {
                 let PictureC2 = await IllustrationRepo.findOne({
                     where: [{ childId: versusC2 }],
                 });
+                Build[j].versusId = singleVersus.id;
                 Build[j].C1Id = versusC1;
                 Build[j].C2Id = versusC2;
                 Build[j].PictureC1votes = PictureC1.votes;
@@ -126,44 +124,11 @@ finalRoutes.get('/results', Only(Child), async (req, res) => {
 
         return res.status(200).json({
             Build,
-            //VersusInMatch,
         });
     } catch (err) {
         console.log('error', err.toString());
         return res.status(500).json({ message: err.toString() });
     }
 });
-
-function FindMatchesByChildren(allMatches, children) {
-    //This can be removed IF the matches get
-    //team1: child[], team2: child[]
-    //instead of literal number id's
-    let Matches = [];
-    allMatches.forEach((match) => {
-        for (let x = 0; x < children.length; x++) {
-            switch (children[x].id) {
-                case match.team1_child1_id:
-                    Matches.push(match);
-                    x = children.length;
-                    break;
-                case match.team1_child2_id:
-                    Matches.push(match);
-                    x = children.length;
-                    break;
-                case match.team2_child1_id:
-                    Matches.push(match);
-                    x = children.length;
-                    break;
-                case match.team2_child2_id:
-                    Matches.push(match);
-                    x = children.length;
-                    break;
-                default:
-                    break;
-            }
-        }
-    });
-    return Matches;
-}
 
 export { finalRoutes };
