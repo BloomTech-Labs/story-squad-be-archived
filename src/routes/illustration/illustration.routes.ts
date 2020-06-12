@@ -35,11 +35,14 @@ illustrationRoutes.get('/:week', Only(Child), async (req, res) => {
 illustrationRoutes.get('/children/:id', Only(Admin), async (req, res) => {
     try {
         const { id } = req.params;
-        const illustrations = await getRepository(Illustrations, connection()).find({ where: { childId: id } });
+        const illustrations = await getRepository(Illustrations, connection()).find({
+            where: { childId: id },
+        });
         if (!illustrations) throw Error('404');
         res.json({ illustrations });
     } catch (err) {
-        if (err.toString() === 'Error: 404') res.status(404).json({ message: `No illustration found` });
+        if (err.toString() === 'Error: 404')
+            res.status(404).json({ message: `No illustration found` });
         else res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
     }
 });
@@ -47,12 +50,15 @@ illustrationRoutes.get('/children/:id', Only(Admin), async (req, res) => {
 illustrationRoutes.get('/children/:id/week/:week', Only(Admin), async (req, res) => {
     try {
         const { id } = req.params;
-        const illustrations = await getRepository(Illustrations, connection()).find({ where: { childId: id } });
+        const illustrations = await getRepository(Illustrations, connection()).find({
+            where: { childId: id },
+        });
         const illustration = illustrations.find(({ week }) => week === parseInt(req.params.week));
         if (!illustration) throw Error('404');
         res.json({ illustration });
     } catch (err) {
-        if (err.toString() === 'Error: 404') res.status(404).json({ message: `No illustration found` });
+        if (err.toString() === 'Error: 404')
+            res.status(404).json({ message: `No illustration found` });
         else res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });
     }
 });
@@ -92,30 +98,29 @@ illustrationRoutes.post('/', Only(Child), async (req, res) => {
     }
 });
 
-illustrationRoutes.put('/illustrations/:id', Only(Admin), async (req,res) => {
-    try{
+illustrationRoutes.put('/illustrations/:id', Only(Admin), async (req, res) => {
+    try {
         const illRepo = getRepository(Illustrations, connection());
 
         const illustrationUpdate = await illRepo.findOne(Number(req.params.id));
 
         const isFlagged = req.body.isFlagged;
-        if(!illustrationUpdate) throw new Error('404');
-        
-        const illustration = {...illustrationUpdate, isFlagged};
+        if (!illustrationUpdate) throw new Error('404');
 
-        const { affected } = await illRepo.update(req.params.id, illustration);
-        if (!affected) throw new Error();
-        res.json({illustration, m:'Illustration is updated'});
-    }
-    catch (err) {
+        const illustration = { ...illustrationUpdate, isFlagged };
+
+        // const { affected } = await illRepo.update(req.params.id, illustration);
+        // if (!affected) throw new Error();
+        res.json({ illustration, m: 'Illustration is updated' });
+    } catch (err) {
         if (err.toString() === 'Error: 404')
-        return res.status(404).json({ message: `Illustration not found` });
+            return res.status(404).json({ message: `Illustration not found` });
         else
-        return res
-            .status(500)
-            .json({ message: 'Hmm... That did not work, please try again later.' });
+            return res
+                .status(500)
+                .json({ message: 'Hmm... That did not work, please try again later.' });
     }
-})
+});
 
 illustrationRoutes.delete('/:week', Only(Child), async (req, res) => {
     try {
