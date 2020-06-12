@@ -92,6 +92,31 @@ illustrationRoutes.post('/', Only(Child), async (req, res) => {
     }
 });
 
+illustrationRoutes.put('/illustrations/:id', Only(Admin), async (req,res) => {
+    try{
+        const illRepo = getRepository(Illustrations, connection());
+
+        const illustrationUpdate = await illRepo.findOne(Number(req.params.id));
+
+        const isFlagged = req.body.isFlagged;
+        if(!illustrationUpdate) throw new Error('404');
+        
+        const illustration = {...illustrationUpdate, isFlagged};
+
+        const { affected } = await illRepo.update(req.params.id, illustration);
+        if (!affected) throw new Error();
+        res.json({illustration, m:'Illustration is updated'});
+    }
+    catch (err) {
+        if (err.toString() === 'Error: 404')
+        return res.status(404).json({ message: `Illustration not found` });
+        else
+        return res
+            .status(500)
+            .json({ message: 'Hmm... That did not work, please try again later.' });
+    }
+})
+
 illustrationRoutes.delete('/:week', Only(Child), async (req, res) => {
     try {
         const reqWeek = parseInt(req.params.week);
