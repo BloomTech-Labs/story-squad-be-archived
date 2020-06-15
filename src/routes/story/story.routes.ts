@@ -149,14 +149,17 @@ storyRoutes.post('/', Only(Child), async (req, res) => {
 // edit story "isFlagged" value, based on story :id
 storyRoutes.put('/stories/:id', Only(Admin), async (req, res) => {
     try {
+        const { id } = req.params;
         const storyRepo = getRepository(Stories, connection());
-        const storyToUpdate = await storyRepo.findOne(Number(req.params.id));
+        const story = await storyRepo.findOne(id);
         const isFlagged = req.body.isFlagged;
-        if (!storyToUpdate) throw new Error('404');
+        if (!story) throw new Error('404');
+        story.isFlagged = isFlagged;
 
-        const story = { ...storyToUpdate, ...req.updateStory, isFlagged };
-        const { affected } = await storyRepo.update(req.params.id, story);
-        if (!affected) throw new Error();
+        await storyRepo.save(story);
+        //  const storyToUpdate = { ...story, isFlagged };
+        //  const { affected } = await storyRepo.update(id , story);
+        //  if (!affected) throw new Error();
 
         res.json({ story });
     } catch (err) {

@@ -108,7 +108,7 @@ illustrationRoutes.put('/illustrations/:id', Only(Admin), async (req, res) => {
         if (!illustrationUpdate) throw new Error('404');
 
         const illustration = { ...illustrationUpdate, isFlagged };
-
+        await illRepo.save(illustration);
         // const { affected } = await illRepo.update(req.params.id, illustration);
         // if (!affected) throw new Error();
         res.json({ illustration, m: 'Illustration is updated' });

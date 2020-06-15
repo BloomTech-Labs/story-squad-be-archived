@@ -12,6 +12,7 @@ export class illustrationReturn {
 }
 
 export class storyReturn {
+    id: number;
     childId: number;
     doc_length: number;
     story: Stories;
@@ -20,6 +21,7 @@ export class storyReturn {
     possibleWords: string;
 
     constructor() {
+        this.id = null;
         this.childId = null;
         this.doc_length = null;
         this.story = null;
