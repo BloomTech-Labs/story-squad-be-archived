@@ -12,6 +12,8 @@ async function point_allocation_timer() {
         let StoryRepo = getRepository(Stories, connection());
         let IllustrationRepo = getRepository(Illustrations, connection());
 
+        const votePeriod = 24; // How long users have to vote, in hours
+
         //Get current date
         let Current = new Date();
 
@@ -105,6 +107,11 @@ async function point_allocation_timer() {
 
                 //Set teamReview & save
                 i.activity = 'randomReview';
+
+                let randomReviewDate = Current;
+                randomReviewDate.setHours(randomReviewDate.getHours() + votePeriod);
+                i.dueDates.randomReview = randomReviewDate;
+
                 await CohortRepo.save(i);
             }
         });

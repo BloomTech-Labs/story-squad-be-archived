@@ -6,3 +6,4 @@ export * from './Parent';
 export * from './Matches';
 export * from './Stories';
 export * from './Illustrations';
+export * from './Versus';

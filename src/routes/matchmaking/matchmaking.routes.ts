@@ -9,6 +9,7 @@ import { Matchmaking, WeekMatches } from '../../models';
 import { connection } from '../../util/typeorm-connection';
 
 const matchMakingRoutes = Router();
+const pointAllocationPeriod = 24; // How long users have to assign their points, in hours
 
 matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
     // add delete functionality to this route so deletes matches before repopulating mathes, prevent spamming
@@ -25,7 +26,7 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
         let stories;
         try {
             stories = await getRepository(Stories, connection()).find({
-                where: { week: req.params.week },
+                where: { week: req.params.week, isFlagged: false },
             });
         } catch (err) {
             console.log(err.toString());
@@ -41,7 +42,7 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
                 });
                 // Checks for presence of picture
                 const pictureCheck = await getRepository(Illustrations, connection()).find({
-                    where: { id: childusMinimus.id, week: req.params.week },
+                    where: { id: childusMinimus.id, week: req.params.week, isFlagged: false },
                 });
                 console.log(
                     `PICTURE CHECK - id: ${story.childId}`,
@@ -108,7 +109,7 @@ matchMakingRoutes.get('/:week', Only(Admin), async (req, res) => {
                     where: { week: thisWeek },
                 });
                 let teamReviewDate = new Date();
-                teamReviewDate.setHours(teamReviewDate.getHours() + 24);
+                teamReviewDate.setHours(teamReviewDate.getHours() + pointAllocationPeriod);
                 Cohorts.forEach((i) => {
                     i.activity = 'teamReview';
                     i.dueDates.teamReview = teamReviewDate;

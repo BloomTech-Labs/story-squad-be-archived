@@ -20,10 +20,12 @@ import {
     battlesRoutes,
     versusRoutes,
     votingRoutes,
+    finalRoutes,
 } from './routes';
 import { connection } from './util/typeorm-connection';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 import { point_allocation_timer } from './timers/pointalloc.timers';
+import { vote_allocation_timer } from './timers/voting.timers';
 
 dotenv.config();
 
@@ -52,8 +54,10 @@ const main = async () => {
         app.use('/storyRoutes', CheckJwt(), storyRoutes);
         app.use('/illustrationRoutes', CheckJwt(), illustrationRoutes);
         app.use('/votingRoutes', CheckJwt(), votingRoutes);
+        app.use('/finalRoutes', CheckJwt(), finalRoutes);
 
         point_allocation_timer();
+        vote_allocation_timer();
 
         const port = process.env.PORT || 4000;
         app.listen(port);

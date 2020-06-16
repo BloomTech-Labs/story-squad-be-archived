@@ -123,6 +123,31 @@ Check the wiki for a [setup guide](https://github.com/Lambda-School-Labs/story-s
 | GET    | `/votingRoutes/voting` | child          | Gets a random match to vote on |
 | POST   | `/votingRoutes/voting` | child          | Submits a vote                 |
 
+#### Story Routes
+
+| Method | Endpoint                               | Access Control | Description                                                                 |
+| ------ | -------------------------------------- | -------------- | --------------------------------------------------------------------------- |
+| GET    | `/storyRoutes/:week`                   | child          | Returns a story based on week                                               |
+| GET    | `/storyRoutes/children/:id`            | admin          | Returns all stories for child with :id                                      |
+| GET    | `/storyRoutes/children/:id/week/:week` | admin          | Returns story based on week for child with :id                              |
+| PUT    | `/storyRoutes/stories/:id`             | admin          | edits isFlagged value for story with :id. Body needs {"isFlagged": boolean} |
+
+#### Illustration Routes
+
+| Method | Endpoint                                      | Access Control | Description                                                                   |
+| ------ | --------------------------------------------- | -------------- | ----------------------------------------------------------------------------- |
+| GET    | `/illustrationRoutes/:week`                   | child          | Returns a picture based on week                                               |
+| GET    | `/illustrationRoutes/children/:id`            | admin          | Returns all pictures for child with :id                                       |
+| GET    | `/illustrationRoutes/children/:id/week/:week` | admin          | Returns picture based on week for child with :id                              |
+| PUT    | `/illustrationRoutes/illustration/:id`        | admin          | edits isFlagged value for picture with :id. Body needs {"isFlagged": boolean} |
+
+#### Final Routes
+
+| Method | Endpoint               | Access Control | Description                                                                                   |
+| ------ | ---------------------- | -------------- | --------------------------------------------------------------------------------------------- |
+| GET    | `/finalRoutes/time`    | child          | Returns true or false, depending on whether or not voting time is over                        |
+| POST   | `/finalRoutes/results` | child          | Returns the results of the match for the child that is logged in. assumes voting time is over |
+
 ## Contributing
 
 When contributing to this repository, please first discuss the change you wish to make via issue, email, or any other method with the owners of this repository before making a change.

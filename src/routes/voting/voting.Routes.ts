@@ -110,6 +110,9 @@ votingRoutes.post('/voting', Only(Child), async (req, res) => {
 
         //Update the voters votes
         User.votes++;
+        if (User.votes === 3) {
+            User.progress.randomReview = true;
+        }
         await ChildRepo.save(User);
 
         //Update the versus matches votes

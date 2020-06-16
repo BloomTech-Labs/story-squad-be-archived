@@ -26,6 +26,9 @@ class Illustrations {
     @Column({ nullable: true })
     votes: number;
 
+    @Column({ default: false })
+    isFlagged: boolean;
+
     @OneToMany((type) => Emojis, (emoji) => emoji.illustration, { eager: true })
     emojis: Emojis[];
 }

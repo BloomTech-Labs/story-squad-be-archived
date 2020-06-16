@@ -8,6 +8,8 @@ class Versus {
     @PrimaryGeneratedColumn()
     id: number;
 
+    @Column()
+    cohortId: number;
     @ManyToOne((type) => Cohort, (cohort) => cohort.versusMatches)
     cohort: Cohort;
 

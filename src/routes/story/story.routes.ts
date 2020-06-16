@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import { getRepository } from 'typeorm';
 import { transcribe, readable } from './storyDSintegration';
+import { TypeCast } from '../../util/utils';
+import { storyReturn } from '../voting/votingRoutes.imports';
 
 import { transformAndValidate } from 'class-transformer-validator';
 import { StoryDTO } from '../../models';
@@ -29,8 +31,15 @@ storyRoutes.get('/:week', Only(Child), async (req, res) => {
 storyRoutes.get('/children/:id', Only(Admin), async (req, res) => {
     try {
         const { id } = req.params;
-        const stories = await getRepository(Stories, connection()).find({ where: { childId: id } });
-        if (!stories) throw Error('404');
+        let stories = [];
+        const storiesArray = await getRepository(Stories, connection()).find({
+            where: { childId: id },
+        });
+        if (!storiesArray) throw Error('404');
+        storiesArray.forEach(async (story) => {
+            let temp = TypeCast(storyReturn, story);
+            stories.push(temp);
+        });
         res.json({ stories });
     } catch (err) {
         if (err.toString() === 'Error: 404') res.status(404).json({ message: `No stories found` });
@@ -40,9 +49,10 @@ storyRoutes.get('/children/:id', Only(Admin), async (req, res) => {
 
 storyRoutes.get('/children/:id/week/:week', Only(Admin), async (req, res) => {
     try {
-        const { id } = req.params;
-        const stories = await getRepository(Stories, connection()).find({ where: { childId: id } });
-        const story = stories.find(({ week }) => week === parseInt(req.params.week));
+        const { id, week } = req.params;
+        let StoryRepo = getRepository(Stories, connection());
+        const fullStory = await StoryRepo.find({ where: { childId: id, week: week } });
+        const story = TypeCast(storyReturn, fullStory[0]);
         if (!story) throw Error('404');
         res.json({ story });
     } catch (err) {
@@ -139,14 +149,17 @@ storyRoutes.post('/', Only(Child), async (req, res) => {
 // edit story "isFlagged" value, based on story :id
 storyRoutes.put('/stories/:id', Only(Admin), async (req, res) => {
     try {
+        const { id } = req.params;
         const storyRepo = getRepository(Stories, connection());
-        const storyToUpdate = await storyRepo.findOne(Number(req.params.id));
+        const story = await storyRepo.findOne(id);
         const isFlagged = req.body.isFlagged;
-        if (!storyToUpdate) throw new Error('404');
+        if (!story) throw new Error('404');
+        story.isFlagged = isFlagged;
 
-        const story = { ...storyToUpdate, ...req.updateStory, isFlagged };
-        const { affected } = await storyRepo.update(req.params.id, story);
-        if (!affected) throw new Error();
+        await storyRepo.save(story);
+        //  const storyToUpdate = { ...story, isFlagged };
+        //  const { affected } = await storyRepo.update(id , story);
+        //  if (!affected) throw new Error();
 
         res.json({ story });
     } catch (err) {
