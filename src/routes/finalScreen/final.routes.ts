@@ -58,6 +58,12 @@ finalRoutes.get('/results', Only(Child), async (req, res) => {
             where: { match: ChildMatch.id },
         });
 
+        if (!VersusInMatch) {
+            //Error?
+            res.status(300).json({ msg: 'No versus could be determined' });
+            return;
+        }
+
         let V1 = {} as any;
         let V2 = {} as any;
         let V3 = {} as any;
@@ -65,7 +71,7 @@ finalRoutes.get('/results', Only(Child), async (req, res) => {
 
         let Build = [V1, V2, V3, V4] as any;
 
-        // get stories and pics for one versus. Repeat x4
+        // get stories and pics for one versus. Repeat x4, for each versus in a matchup
 
         for (let j = 0; j < 4; j++) {
             let singleVersus = VersusInMatch[j];
@@ -81,6 +87,7 @@ finalRoutes.get('/results', Only(Child), async (req, res) => {
             Build[j].C2Name = C2Name.username;
 
             if (singleVersus.story) {
+                // if it is a story, give me the votes and points for the children in a versus
                 let StoryC1 = await StoryRepo.findOne({
                     where: [{ childId: versusC1 }],
                 });
