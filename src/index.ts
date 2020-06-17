@@ -59,7 +59,7 @@ const main = async () => {
 
         point_allocation_timer();
         vote_allocation_timer();
-        //results_timer();
+        results_timer();
 
         const port = process.env.PORT || 4000;
         app.listen(port);
