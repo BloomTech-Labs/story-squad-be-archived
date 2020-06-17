@@ -60,7 +60,11 @@ async function vote_allocation_timer() {
                     await ChildRepo.save(kid);
                 });
 
-                i.activity = 'randomReview';
+                i.activity = 'results';
+
+                let resultsDate = Current;
+                resultsDate.setHours(resultsDate.getHours() + 24);
+                i.dueDates.results = resultsDate;
 
                 await CohortRepo.save(i);
             }

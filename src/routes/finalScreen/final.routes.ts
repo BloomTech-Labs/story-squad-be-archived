@@ -64,6 +64,13 @@ finalRoutes.get('/results', Only(Child), async (req, res) => {
             return;
         }
 
+        console.log('Child Match ', ChildMatch);
+
+        const T1C1 = ChildMatch.team1_child1_id;
+        const T1C2 = ChildMatch.team1_child2_id;
+        const T2C1 = ChildMatch.team2_child1_id;
+        const T2C2 = ChildMatch.team2_child2_id;
+
         let V1 = {} as any;
         let V2 = {} as any;
         let V3 = {} as any;
