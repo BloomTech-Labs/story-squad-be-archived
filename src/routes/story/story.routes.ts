@@ -52,10 +52,11 @@ storyRoutes.get('/children/:id/week/:week', Only(Admin), async (req, res) => {
         const { id, week } = req.params;
         let StoryRepo = getRepository(Stories, connection());
         const fullStory = await StoryRepo.find({ where: { childId: id, week: week } });
+        if (!fullStory) throw Error('404');
         const story = TypeCast(storyReturn, fullStory[0]);
-        if (!story) throw Error('404');
         res.json({ story });
     } catch (err) {
+        console.log('StoryRoutes get error', err);
         if (err.toString() === 'Error: 404')
             res.status(404).json({ message: `No stories not found` });
         else res.status(500).json({ message: 'Hmm... That did not work, please try again later.' });

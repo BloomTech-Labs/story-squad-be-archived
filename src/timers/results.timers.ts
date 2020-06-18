@@ -21,12 +21,7 @@ async function results_timer() {
 
         await Cohorts.forEach(async (i) => {
             if (Current > i.dueDates.results) {
-                // reset all the data here.
-
-                // What data do we reset for the next week?
-
-                // correctly calculate wins/losses
-                // Handle kids that are not in a match.
+                // reset data for the next game week.
 
                 // child.progress
                 i.children.forEach(async (kid) => {
@@ -44,16 +39,11 @@ async function results_timer() {
                             where: { match: ChildMatch.id },
                         });
 
+                        // Set career stats of wins, losses, and total points
                         for (let j = 0; j < 4; j++) {
                             let singleVersus = VersusInMatch[j];
                             let versusC1 = singleVersus.children[0].id;
-                            let C1Name = await ChildRepo.findOne({
-                                where: { id: versusC1 },
-                            });
                             let versusC2 = singleVersus.children[1].id;
-                            let C2Name = await ChildRepo.findOne({
-                                where: { id: versusC2 },
-                            });
 
                             if (singleVersus.story) {
                                 let StoryC1 = await StoryRepo.findOne({
@@ -95,8 +85,6 @@ async function results_timer() {
                         } // end for
                     }
 
-                    // child career stats - TODO ************************
-
                     await ChildRepo.save(kid);
                 });
 
@@ -111,12 +99,11 @@ async function results_timer() {
                 i.dueDates.randomReview = null;
                 i.dueDates.results = null;
 
-                // ???
-
                 // *********************************************
                 // What tables get truncated? Matches and versus, but actually we want to keep the previous week for
                 // the trophy room?
-                // We might need to add a week column on versus tables.
+                // delete matches and versus that are two weeks old or more?
+                // *********************************************
 
                 // cohort.week
                 i.week++;
@@ -124,7 +111,7 @@ async function results_timer() {
                 await CohortRepo.save(i);
             }
         });
-    }, 3000);
+    }, 90000);
 }
 
 export { results_timer };

@@ -1,16 +1,32 @@
 import { Router } from 'express';
 import { getRepository } from 'typeorm';
 import { sign } from 'jsonwebtoken';
-import { Parent, Child } from '../../database/entity';
+import { Parent, Child, Stories } from '../../database/entity';
 import { Only } from '../../middleware';
 import { connection } from '../../util/typeorm-connection';
 import { Cohort } from '../../database/entity/Cohort';
+import { memory } from 'console';
 
 const childRoutes = Router();
 
 childRoutes.get('/me', Only(Child), async (req, res) => {
     try {
-        const { parent, ...me } = req.user as Child;
+        let { parent, ...me } = req.user as Child;
+        let CohortRepo = getRepository(Cohort, connection());
+        let kidsCohort = await CohortRepo.findOne({ where: { id: me.cohort.id } });
+
+        const currentWeekIllustration = me.illustrations.filter((element) => {
+            element.week === kidsCohort.week;
+        });
+
+        me.illustrations = currentWeekIllustration;
+
+        const currentWeekStory = me.stories.filter((element) => {
+            element.week === kidsCohort.week;
+        });
+
+        me.stories = currentWeekStory;
+
         res.json({ me });
     } catch (err) {
         res.status(500).json({
