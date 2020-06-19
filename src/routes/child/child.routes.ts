@@ -12,20 +12,20 @@ const childRoutes = Router();
 childRoutes.get('/me', Only(Child), async (req, res) => {
     try {
         let { parent, ...me } = req.user as Child;
-        let CohortRepo = getRepository(Cohort, connection());
-        let kidsCohort = await CohortRepo.findOne({ where: { id: me.cohort.id } });
+        // let CohortRepo = getRepository(Cohort, connection());
+        // let kidsCohort = await CohortRepo.findOne({ where: { id: me.cohort.id } });
 
-        const currentWeekIllustration = me.illustrations.filter((element) => {
-            element.week === kidsCohort.week;
-        });
+        // const currentWeekIllustration = me.illustrations.filter((element) => {
+        //     element.week === kidsCohort.week;
+        // });
 
-        me.illustrations = currentWeekIllustration;
+        // me.illustrations = currentWeekIllustration;
 
-        const currentWeekStory = me.stories.filter((element) => {
-            element.week === kidsCohort.week;
-        });
+        // const currentWeekStory = me.stories.filter((element) => {
+        //     element.week === kidsCohort.week;
+        // });
 
-        me.stories = currentWeekStory;
+        // me.stories = currentWeekStory;
 
         res.json({ me });
     } catch (err) {
