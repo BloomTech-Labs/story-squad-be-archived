@@ -14,14 +14,9 @@ finalRoutes.get('/time', Only(Child), async (req, res) => {
     try {
         const { cohort } = req.user as Child;
 
-        let randomReviewEndDate = '';
-        if (cohort && cohort.dueDates && cohort.dueDates.randomReview) {
-            randomReviewEndDate = cohort.dueDates.randomReview.toISOString();
-        }
-
         let votingTimeIsOver = false;
         let Current = new Date();
-        if (Current > cohort.dueDates.randomReview) {
+        if (cohort.dueDates.randomReview && Current > cohort.dueDates.randomReview) {
             votingTimeIsOver = true;
         }
 
