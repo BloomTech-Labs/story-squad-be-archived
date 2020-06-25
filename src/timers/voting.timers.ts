@@ -69,7 +69,7 @@ async function vote_allocation_timer() {
                 await CohortRepo.save(i);
             }
         });
-    }, 60000);
+    }, 420000);
 }
 
 export { vote_allocation_timer };
