@@ -111,7 +111,7 @@ async function results_timer() {
                 await CohortRepo.save(i);
             }
         });
-    }, 90000);
+    }, 540000);
 }
 
 export { results_timer };
