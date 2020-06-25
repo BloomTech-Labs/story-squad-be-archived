@@ -148,6 +148,31 @@ Check the wiki for a [setup guide](https://github.com/Lambda-School-Labs/story-s
 | GET    | `/finalRoutes/time`    | child          | Returns true or false, depending on whether or not voting time is over                        |
 | POST   | `/finalRoutes/results` | child          | Returns the results of the match for the child that is logged in. assumes voting time is over |
 
+## Game Walkthrough from Labs24
+
+-   https://www.loom.com/share/20308b4772d2411fb76616053133d5ee
+
+## Known issues at the end of Labs24 6/24/20
+
+-   The versus switcheroo bug
+    https://github.com/Lambda-School-Labs/story-squad-be/blob/master/src/timers/pointalloc.timers.ts#L156-L194 - this happens to generate 1 on 1 matches because it became really needed for voting
+
+    and it saves everything into this https://github.com/Lambda-School-Labs/story-squad-be/blob/master/src/database/entity/Versus.ts
+
+    but versus still just recalculates using the same thing https://github.com/Lambda-School-Labs/story-squad-be/blob/master/src/routes/versus/versus.Routes.ts#L48-L82
+
+    The general LEFT/RIGHT/points structure still needs to be followed, but it doesn't need to "sortbypoints" and find the matches again
+
+    If teammates end up with the same number of points for both their stories, then recalculating could in an off-chance swap 1 person for the other on the matchmaking screen.
+
+-   The Week 2+ submissions bug
+    For any week after week 1, the front end will think that players have already submitted a story and picture, even if they haven't. This is because they are checking for Array.length in
+    https://github.com/Lambda-School-Labs/story-squad-fe/blob/master/src/app/components/child-dashboard/kid-progress/kid-progress.component.tsx#L52-L80 - The Checkboxes
+
+    We need to send an array for only the current week in this endpoint - https://github.com/Lambda-School-Labs/story-squad-be/blob/master/src/routes/child/child.routes.ts#L12-L36
+
+    Alternatively, you could alter what the front end checkboxes are looking for.
+
 ## Contributing
 
 When contributing to this repository, please first discuss the change you wish to make via issue, email, or any other method with the owners of this repository before making a change.
